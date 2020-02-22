@@ -19,7 +19,7 @@ services:
 
     client:
         build: 
-            context: ./client/web/
+            context: ./client/
             dockerfile: Dockerfile.dev
         restart: always
         volumes: 
