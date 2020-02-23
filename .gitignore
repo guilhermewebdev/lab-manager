@@ -1,1 +1,8 @@
 lab-manager/server/api/api/__pycache__/*.pyc
+lab-manager/server/api/labs/__pycache__/__init__.cpython-38.pyc
+lab-manager/server/api/labs/__pycache__/admin.cpython-38.pyc
+lab-manager/server/api/labs/__pycache__/apps.cpython-38.pyc
+lab-manager/server/api/labs/__pycache__/models.cpython-38.pyc
+lab-manager/server/api/labs/__pycache__/*.pyc
+lab-manager/server/api/labs/migrations/__pycache__/__init__.cpython-38.pyc
+lab-manager/server/api/labs/migrations/__pycache__/*.pyc
