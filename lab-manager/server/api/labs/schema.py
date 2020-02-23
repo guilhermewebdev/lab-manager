@@ -124,3 +124,15 @@ class Query(object):
             return get_lab(info.context.user.labs.filter(**kwargs), index)                
         else:
             return models.Laboratory.objects.get()    
+
+class Mutation(object):
+    create_professional = ProfessionalMutation.Field()
+    update_professional = ProfessionalMutation.Field()
+    create_laboratory = LaboratoryMutation.Field()
+    update_laboratory = LaboratoryMutation.Field()
+
+class RegMutation(object):
+    create_professional = ProfessionalMutation.Field()
+    create_laboratory = LaboratoryMutation.Field()
+
+registration_schema = graphene.Schema(mutation=RegMutation)
