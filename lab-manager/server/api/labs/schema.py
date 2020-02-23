@@ -1,11 +1,14 @@
 import graphene 
 from graphene_django import types
+from graphene_django.forms import mutation
 from . import models, forms
 
 def get_lab(queryset, index):
     labs = list(queryset.all())
     return labs[max(min(index, len(labs)), 0)] 
 
+
+# Queries
 class ProfessionalType(types.DjangoObjectType):
 
     class Meta:
@@ -19,22 +22,6 @@ class ProfessionalType(types.DjangoObjectType):
             'roles',
         )
 
-class ProfessionalMutation(graphene.Mutation):
-    professional = graphene.Field(ProfessionalType)
-
-    def mutate(self, info, **kwargs):
-        lab_index = kwargs.pop('lab')
-        lab = get_lab(info.context.user.labs.all(), lab_index)
-        professional = models.Professional(**kwargs)
-        professional.labs.add(lab)
-        professional.save()
-        return ProfessionalMutation(professional=professional)
-
-    class Meta:
-        form_class = forms.ProfessionalForm
-        input_field_name = 'data'
-        return_field_name = 'professional'
-
 class RoleType(types.DjangoObjectType):
 
     class Meta:
@@ -47,92 +34,89 @@ class RoleType(types.DjangoObjectType):
         )
 
 class LaboratoryType(types.DjangoObjectType):
-    roles = graphene.Field(RoleType)
+    roles = graphene.List(RoleType)
     professionals = graphene.List(ProfessionalType)
 
     def resolve_professionals(self, info, **kwargs):
-        return models.Professional.objects.filter(**kwargs).all()
+        lab = get_lab(info.context.user.labs.all(), kwargs.pop('lab'))
+        return models.Professional.objects.filter(
+            **kwargs,
+            labs__in=[lab],
+        ).all()
 
     def resolve_roles(self, info, **kwargs):
-        return models.Role.objects.filter(**kwargs).all()
+        lab = get_lab(info.context.user.labs.all(), kwargs.pop('lab'))
+        return models.Role.objects.filter(
+            **kwargs,
+            lab=lab,
+        ).all()
 
     class Meta:
         model = models.Laboratory
         fields = (
             'id',
             'name',
+            'roles',
+            'professionals',
             'permissions',
             'registration_date',
         )
 
-class LaboratoryMutation(graphene.Mutation):
-    laboratory = graphene.Field(LaboratoryType)
-
-    class Meta:
-        form_class = forms.LaboratoryForm
-        input_field_name = 'data'
-        return_field_name = 'laboratory'
-
-    def mutate(self, info, **kwargs):
-        laboratory = models.Laboratory(**kwargs)
-        laboratory.save()
-        info.context.user.labs.add(laboratory)
-        return LaboratoryMutation(laboratory=laboratory)
-
-class RegistrationMutation(graphene.Mutation):
-    laboratory = graphene.Field(LaboratoryType)
-    professional = graphene.Field(ProfessionalType)
-
-    def mutate(self, info, **kwargs):
-        lab = kwargs.pop('lab')
-        laboratory = models.Laboratory(name=lab)
-        laboratory.save()
-        professional = models.Professional.objects.create_user(**kwargs)
-        professional.labs.add(laboratory)
-        return RegistrationMutation(
-            professional=professional,
-            laboratory=laboratory
-        )
-
-    class Meta:
-        form_class = forms.RegistrationForm
-        input_field_name = 'data'
-        return_field_name = 'professional'
-
 class Query(object):
     laboratories = graphene.List(
         LaboratoryType,
-        index=graphene.Int()
+        lab=graphene.Int()
     )
     laboratory = graphene.Field(
         LaboratoryType,
-        index=graphene.Int()
+        lab=graphene.Int()
     )
 
     def resolve_laboratories(self, info, **kwargs):
         if info.context.user.is_authenticated:
-            if 'index' in kwargs:
-                index = kwargs.pop('index')
-                return get_lab(info.context.user.labs.filter(**kwargs), index)
+            if 'lab' in kwargs:
+                lab = kwargs.pop('lab')
+                return get_lab(info.context.user.labs.filter(**kwargs), lab)
             return info.context.user.labs.filter(**kwargs).all()
         else:
             return models.Laboratory.objects.none()
 
     def resolve_laboratory(self, info, **kwargs):
         if info.context.user.is_authenticated:
-            index = kwargs.pop('index')
-            return get_lab(info.context.user.labs.filter(**kwargs), index)                
+            lab = kwargs.pop('lab')
+            return get_lab(info.context.user.labs.filter(**kwargs), lab)                
         else:
             return models.Laboratory.objects.get()    
 
-class Mutation(object):
-    create_professional = ProfessionalMutation.Field()
-    update_professional = ProfessionalMutation.Field()
-    create_laboratory = LaboratoryMutation.Field()
-    update_laboratory = LaboratoryMutation.Field()
+# Mutations
 
-class RegMutation(object):
-    create_professional = ProfessionalMutation.Field()
-    create_laboratory = LaboratoryMutation.Field()
+class RoleMutation(mutation.DjangoFormMutation):
+    role = graphene.Field(RoleType)
 
-registration_schema = graphene.Schema(mutation=RegMutation)
+    class Meta:
+        form_class = forms.RoleForm
+
+class Mutation(graphene.ObjectType):
+    create_role = RoleMutation.Field()
+    update_role = RoleMutation.Field()
+
+
+# Registration
+
+class ProfessionaRegistrationlMutation(mutation.DjangoFormMutation):
+    professional = graphene.Field(ProfessionalType)
+
+    class Meta:
+        form_class = forms.ProfessionalRegistrationForm
+
+class LaboratoryMutation(mutation.DjangoFormMutation):
+    laboratory = graphene.Field(LaboratoryType)
+
+    class Meta:
+        form_class = forms.LaboratoryForm
+
+class RegistrationMutation(graphene.ObjectType):
+    create_professional = ProfessionaRegistrationlMutation.Field(required=True)
+    create_laboratory = LaboratoryMutation.Field(required=True)
+
+auth_schema = graphene.Schema(mutation=RegistrationMutation)

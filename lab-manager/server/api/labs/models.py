@@ -25,6 +25,8 @@ class Role(Group):
         Laboratory,
         on_delete=models.CASCADE,
         related_name='roles',
+        null=True,
+        blank=True,        
     )
 
     def __str__(self):
@@ -44,8 +46,8 @@ class Professional(AbstractUser):
             'The labs this user belongs to. A user will get all permissions '
             'granted to each of their groups.'
         ),
-        related_name="user_set",
-        related_query_name="user",
+        related_name="professionals",
+        related_query_name="professional",
     )
     full_name = models.CharField(
         _('full name'),
