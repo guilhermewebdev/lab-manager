@@ -4,8 +4,8 @@ services:
     proxy:
         image: nginx
         volumes:
-          - ./server/proxy/dev/nginx/:/etc/nginx/:wr
-        #   - ./server/api/static/:/usr/share/nginx/html/api/static/:wr
+          - ./server/proxy/dev/nginx/:/etc/nginx/
+        #   - ./server/api/static/:/usr/share/nginx/html/api/static/
         restart: always
         environment:
           - NGINX_HOST=172.25.10.30
@@ -15,7 +15,7 @@ services:
           - 443:443
         networks: 
           backend:
-            ipv4_address: 172.25.10.30
+            ipv4_address: 172.35.10.40
 
     client:
         build: 
@@ -23,13 +23,11 @@ services:
             dockerfile: Dockerfile.dev
         restart: always
         volumes: 
-            - ./client/web:/app:wr
+            - ./client/web:/app
         command: npm run serve
-        networks: 
-            backend:
-                ipv4_address: 172.35.10.30
         depends_on: 
             - api
+            - proxy
         networks: 
             backend:
                 ipv4_address: 172.35.10.30
@@ -43,13 +41,14 @@ services:
             DB_PASSWORD: password
             DB_USER: protetics
             DB_NAME: database
-            DB_HOST: 172.25.20.10
+            DB_HOST: 172.25.20.20
             DB_PORT: 5432
         volumes: 
-            - ./server/api:/code:wr
+            - ./server/api:/code
         restart: always
         depends_on: 
             - db
+            - proxy
         networks: 
             db:
                 ipv4_address: 172.25.20.10
@@ -65,7 +64,7 @@ services:
             POSTGRES_DB: database
         networks: 
             db:
-                ipv4_address: 172.25.20.10
+                ipv4_address: 172.25.20.20
 
 networks:     
     backend:
@@ -77,4 +76,4 @@ networks:
         driver: bridge
         ipam:
             config: 
-                - subnet: 172.25.20.1/32
+                - subnet: 172.25.20.1/16

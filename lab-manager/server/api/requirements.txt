@@ -3,5 +3,6 @@ djangorestframework
 djangorestframework-serializer-extensions
 argon2-cffi
 psycopg2
+markdown
 gunicorn
 django-axes
