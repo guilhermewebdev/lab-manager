@@ -16,6 +16,7 @@ class Laboratory(Group):
         verbose_name = _('Laboratório')
         verbose_name_plural = _('Laboratórios')
 
+
 class Role(Group):
     registration_date = models.DateField(
         auto_now=True,
@@ -58,6 +59,11 @@ class Professional(AbstractUser):
     roles = models.ManyToManyField(
         Role,
         related_name='professionals',
+    )
+    email = models.EmailField(
+        _('Endereço de email'),
+        blank=True,
+        unique=True,
     )
     
     class Meta(AbstractUser.Meta):

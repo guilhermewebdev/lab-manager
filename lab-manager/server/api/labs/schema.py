@@ -29,7 +29,6 @@ class RoleType(types.DjangoObjectType):
         fields = (
             'id',
             'name',
-            'permissions',
             'registration_date'
         )
 
@@ -58,14 +57,12 @@ class LaboratoryType(types.DjangoObjectType):
             'name',
             'roles',
             'professionals',
-            'permissions',
             'registration_date',
         )
 
 class Query(object):
     laboratories = graphene.List(
         LaboratoryType,
-        lab=graphene.Int()
     )
     laboratory = graphene.Field(
         LaboratoryType,
@@ -96,27 +93,44 @@ class RoleMutation(mutation.DjangoFormMutation):
     class Meta:
         form_class = forms.RoleForm
 
-class Mutation(graphene.ObjectType):
-    create_role = RoleMutation.Field()
-    update_role = RoleMutation.Field()
-
-
-# Registration
-
-class ProfessionaRegistrationlMutation(mutation.DjangoFormMutation):
-    professional = graphene.Field(ProfessionalType)
-
-    class Meta:
-        form_class = forms.ProfessionalRegistrationForm
-
 class LaboratoryMutation(mutation.DjangoFormMutation):
     laboratory = graphene.Field(LaboratoryType)
+
+    @classmethod
+    def perform_mutate(cls, form, info):
+        lab = models.Laboratory(**form.cleaned_data)
+        lab.save()
+        return LaboratoryMutation(laboratory=lab)
 
     class Meta:
         form_class = forms.LaboratoryForm
 
-class RegistrationMutation(graphene.ObjectType):
-    create_professional = ProfessionaRegistrationlMutation.Field(required=True)
-    create_laboratory = LaboratoryMutation.Field(required=True)
+class Mutation(graphene.ObjectType):
+    create_role = RoleMutation.Field()
 
-auth_schema = graphene.Schema(mutation=RegistrationMutation)
+# Registration
+class RegisterMutation(mutation.DjangoFormMutation):
+    professional = graphene.Field(ProfessionalType)
+    laboratory = graphene.Field(LaboratoryType)
+
+    @classmethod
+    def perform_mutate(cls, form, info):
+        lab = models.Laboratory(name=form.cleaned_data.pop('lab'))
+        lab.save()
+        professional = models.Professional.objects.create_user(
+            **form.cleaned_data
+        )
+        professional.save()
+        professional.labs.add(lab)
+        professional.save()
+        return RegisterMutation(
+            professional=professional,
+            laboratory=lab
+        )
+
+
+    class Meta:
+        form_class = forms.RegistrationForm
+
+class PublicMutation(graphene.ObjectType):
+    register = RegisterMutation.Field()

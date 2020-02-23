@@ -18,10 +18,10 @@ from django.urls import path
 from graphene_django.views import GraphQLView
 from django.views.decorators.csrf import csrf_exempt
 from labs.views import PrivateGraphQLView
-from labs.schema import auth_schema
+from api.schema import public_schema, schema
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', csrf_exempt(PrivateGraphQLView.as_view(graphiql=True))),
-    path('api/register/', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=auth_schema))),
+    path('api/', csrf_exempt(PrivateGraphQLView.as_view(graphiql=True, schema=schema))),
+    path('api/public/', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=public_schema))),
 ]

@@ -25,8 +25,15 @@ class ProfessionalUpdateForm(ProfessionalForm):
         queryset=models.Role.objects.all(),
     )
 
-class ProfessionalRegistrationForm(ProfessionalForm):    
-    password = forms.PasswordInput()
+class RegistrationForm(ProfessionalForm):    
+    password = forms.CharField(
+        max_length=200,
+        required=True,
+    )
+    lab = forms.CharField(
+        max_length=100,
+        required=True
+    )
 
 class RoleForm(forms.Form):
     id = forms.IntegerField(

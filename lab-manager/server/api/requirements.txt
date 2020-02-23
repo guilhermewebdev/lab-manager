@@ -7,3 +7,4 @@ django-filter
 gunicorn
 django-axes
 django-guardian
+django-oauth-toolkit
