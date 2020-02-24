@@ -56,7 +56,6 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'axes.middleware.AxesMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
-
 ]
 
 ROOT_URLCONF = 'api.urls'
@@ -133,7 +132,7 @@ AUTHENTICATION_BACKENDS = [
     'axes.backends.AxesBackend',
 
     # Django ModelBackend is the default authentication backend.
-    #'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
     'oauth2_provider.backends.OAuth2Backend',
 
 ]

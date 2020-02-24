@@ -3,11 +3,11 @@ from graphene_django import types
 from graphene_django.forms import mutation
 from . import models, forms
 from django.contrib.auth import authenticate, login
+from django.utils.translation import gettext as _
 
 def get_lab(queryset, index):
     labs = list(queryset.all())
-    return labs[max(min(index, len(labs)), 0)] 
-
+    return labs[max(min(index, len(labs)), 0)]
 
 # Queries
 class ProfessionalType(types.DjangoObjectType):
@@ -30,12 +30,53 @@ class RoleType(types.DjangoObjectType):
         fields = (
             'id',
             'name',
-            'registration_date'
-        )
+            'registration_date',
+        )        
+
+class RoleMutation(mutation.DjangoFormMutation):
+    role = graphene.Field(RoleType)
+
+    @classmethod
+    def perform_mutate(cls, form, info):
+        permissions = []
+        role = None
+        lab = get_lab(info.context.user.labs, form.cleaned_data.pop('lab'))
+        if 'permissions' in form.cleaned_data:
+            permissions = form.cleaned_data.pop('permissions')
+        if 'id' in form.cleaned_data:
+            role = models.Role.objects.filter(
+                id=form.cleaned_data.pop('id'),
+                lab=lab
+            ).update(**form.cleaned_data)
+        else: role = models.Role(
+                **form.cleaned_data,
+                lab=lab,
+            )
+        role.save()
+        if permissions != []:
+            role.permissions.clear()
+            role.permissions.add(*permissions)
+        return RoleMutation(role=role)
+
+    class Meta:
+        form_class = forms.RoleForm
+
+class DeleteRoleMutation(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    class Arguments:
+        id = graphene.ID()
+
+    @classmethod
+    def mutate(cls, root, info, **kwargs):
+        obj = models.Role.objects.get(pk=kwargs['id'])
+        return cls(ok=obj.delete())
+
 
 class LaboratoryType(types.DjangoObjectType):
     roles = graphene.List(RoleType)
     professionals = graphene.List(ProfessionalType)
+    create_role = RoleMutation.Field()
 
     def resolve_professionals(self, info, **kwargs):
         lab = get_lab(info.context.user.labs.all(), kwargs.pop('lab'))
@@ -64,6 +105,7 @@ class LaboratoryType(types.DjangoObjectType):
 class Query(object):
     laboratories = graphene.List(
         LaboratoryType,
+        lab=graphene.Int()
     )
     laboratory = graphene.Field(
         LaboratoryType,
@@ -88,12 +130,6 @@ class Query(object):
 
 # Mutations
 
-class RoleMutation(mutation.DjangoFormMutation):
-    role = graphene.Field(RoleType)
-
-    class Meta:
-        form_class = forms.RoleForm
-
 class LaboratoryMutation(mutation.DjangoFormMutation):
     laboratory = graphene.Field(LaboratoryType)
 
@@ -108,7 +144,8 @@ class LaboratoryMutation(mutation.DjangoFormMutation):
         form_class = forms.LaboratoryForm
 
 class Mutation(graphene.ObjectType):
-    create_role = RoleMutation.Field()
+    create_or_update_role = RoleMutation.Field()
+    delete_role = DeleteRoleMutation.Field()
 
 # Registration
 class RegisterMutation(mutation.DjangoFormMutation):
@@ -146,7 +183,7 @@ class LoginMutation(mutation.DjangoFormMutation):
         if user is not None:
             login(info.context, user, 'axes.backends.AxesBackend')
             return LoginMutation(professional=user)
-        else: return LoginMutation()
+        else: return LoginMutation(errors=[_('Crendenciais incorretas')])
 
     class Meta:
         form_class = forms.LoginForm

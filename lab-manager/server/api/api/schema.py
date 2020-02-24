@@ -20,12 +20,12 @@ schema = graphene.Schema(query=Query, mutation=Mutation)
 class PublicQuery(
     graphene.ObjectType
 ):
-    pass
+    debug = graphene.Field(DjangoDebug, name="_debug")
 
 class PublicMutation(
     labs.PublicMutation,
     graphene.ObjectType,
 ):
-    pass
+    debug = graphene.Field(DjangoDebug, name="_debug")
 
 public_schema = graphene.Schema(mutation=PublicMutation)
