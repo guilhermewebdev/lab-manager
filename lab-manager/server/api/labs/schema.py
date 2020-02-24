@@ -2,6 +2,7 @@ import graphene
 from graphene_django import types
 from graphene_django.forms import mutation
 from . import models, forms
+from django.contrib.auth import authenticate, login
 
 def get_lab(queryset, index):
     labs = list(queryset.all())
@@ -100,6 +101,7 @@ class LaboratoryMutation(mutation.DjangoFormMutation):
     def perform_mutate(cls, form, info):
         lab = models.Laboratory(**form.cleaned_data)
         lab.save()
+        info.context.user.labs.add(lab)
         return LaboratoryMutation(laboratory=lab)
 
     class Meta:
@@ -115,7 +117,7 @@ class RegisterMutation(mutation.DjangoFormMutation):
 
     @classmethod
     def perform_mutate(cls, form, info):
-        lab = models.Laboratory(name=form.cleaned_data.pop('lab'))
+        lab = models.Laboratory(name=form.cleaned_data.pop('lab'))        
         lab.save()
         professional = models.Professional.objects.create_user(
             **form.cleaned_data
@@ -131,5 +133,24 @@ class RegisterMutation(mutation.DjangoFormMutation):
     class Meta:
         form_class = forms.RegistrationForm
 
+class LoginMutation(mutation.DjangoFormMutation):
+    professional = graphene.Field(ProfessionalType)
+
+    @classmethod
+    def perform_mutate(cls, form, info):
+        user = authenticate(
+            info.context,
+            username=form.cleaned_data.pop('username'),
+            password=form.cleaned_data.pop('password'),
+        )
+        if user is not None:
+            login(info.context, user, 'axes.backends.AxesBackend')
+            return LoginMutation(professional=user)
+        else: return LoginMutation()
+
+    class Meta:
+        form_class = forms.LoginForm
+
 class PublicMutation(graphene.ObjectType):
     register = RegisterMutation.Field()
+    login = LoginMutation.Field()

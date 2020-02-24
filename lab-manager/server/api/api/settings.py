@@ -55,6 +55,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'axes.middleware.AxesMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
+
 ]
 
 ROOT_URLCONF = 'api.urls'
@@ -131,14 +133,16 @@ AUTHENTICATION_BACKENDS = [
     'axes.backends.AxesBackend',
 
     # Django ModelBackend is the default authentication backend.
-    'django.contrib.auth.backends.ModelBackend',
+    #'django.contrib.auth.backends.ModelBackend',
+    'oauth2_provider.backends.OAuth2Backend',
+
 ]
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-BR'
 
 TIME_ZONE = 'UTC'
 
