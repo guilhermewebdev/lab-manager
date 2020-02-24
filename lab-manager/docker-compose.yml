@@ -5,7 +5,7 @@ services:
         image: nginx
         volumes:
           - ./server/proxy/dev/nginx/:/etc/nginx/
-        #   - ./server/api/static/:/usr/share/nginx/html/api/static/
+          - ./server/api/static/:/usr/share/nginx/html/api/static/
         restart: always
         environment:
           - NGINX_HOST=172.25.10.30
