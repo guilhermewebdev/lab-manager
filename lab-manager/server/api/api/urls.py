@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from graphene_django.views import GraphQLView
 from django.views.decorators.csrf import csrf_exempt
 from labs.views import PrivateGraphQLView
@@ -24,4 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', csrf_exempt(PrivateGraphQLView.as_view(graphiql=True, schema=schema))),
     path('api/public/', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=public_schema))),
+    path('api/oauth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]

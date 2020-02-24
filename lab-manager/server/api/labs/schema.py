@@ -128,7 +128,6 @@ class RegisterMutation(mutation.DjangoFormMutation):
             laboratory=lab
         )
 
-
     class Meta:
         form_class = forms.RegistrationForm
 

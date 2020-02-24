@@ -8,3 +8,4 @@ gunicorn
 django-axes
 django-guardian
 django-oauth-toolkit
+django-cors-middleware
