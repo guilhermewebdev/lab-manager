@@ -26,7 +26,7 @@ SECRET_KEY = 'f59oj)-2^8vjt2bcneida$u(6yq=h--@p6n2rb!mc(30^ghvy7'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+AXES_ENABLED = not DEBUG
 AXES_PROXY_COUNT = 1
 
 # Application definition

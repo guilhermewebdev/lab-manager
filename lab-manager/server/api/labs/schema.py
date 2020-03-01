@@ -75,22 +75,20 @@ class DeleteRoleMutation(graphene.Mutation):
 
 class LaboratoryType(types.DjangoObjectType):
     roles = graphene.List(RoleType)
+    role = graphene.Field(
+        RoleType,
+        id=graphene.ID(required=True)
+    )
     professionals = graphene.List(ProfessionalType)
-    create_role = RoleMutation.Field()
 
-    def resolve_professionals(self, info, **kwargs):
-        lab = get_lab(info.context.user.labs.all(), kwargs.pop('lab'))
-        return models.Professional.objects.filter(
-            **kwargs,
-            labs__in=[lab],
-        ).all()
+    def resolve_professionals(parent, info, **kwargs):
+        return parent.professionals.filter(**kwargs).all()
 
-    def resolve_roles(self, info, **kwargs):
-        lab = get_lab(info.context.user.labs.all(), kwargs.pop('lab'))
-        return models.Role.objects.filter(
-            **kwargs,
-            lab=lab,
-        ).all()
+    def resolve_role(parent, info, **kwargs):
+        return parent.roles.get(**kwargs)
+    
+    def resolve_roles(parent, info, **kwargs):
+        return parent.roles.filter(**kwargs).all()
 
     class Meta:
         model = models.Laboratory
@@ -115,8 +113,7 @@ class Query(object):
     def resolve_laboratories(self, info, **kwargs):
         if info.context.user.is_authenticated:
             if 'lab' in kwargs:
-                lab = kwargs.pop('lab')
-                return get_lab(info.context.user.labs.filter(**kwargs), lab)
+                return self.resolve_laboratory(info, **kwargs)
             return info.context.user.labs.filter(**kwargs).all()
         else:
             return models.Laboratory.objects.none()
@@ -144,7 +141,7 @@ class LaboratoryMutation(mutation.DjangoFormMutation):
         form_class = forms.LaboratoryForm
 
 class Mutation(graphene.ObjectType):
-    create_or_update_role = RoleMutation.Field()
+    upsert_role = RoleMutation.Field()
     delete_role = DeleteRoleMutation.Field()
 
 # Registration
@@ -161,7 +158,6 @@ class RegisterMutation(mutation.DjangoFormMutation):
         )
         professional.save()
         professional.labs.add(lab)
-        professional.save()
         return RegisterMutation(
             professional=professional,
             laboratory=lab
@@ -175,6 +171,7 @@ class LoginMutation(mutation.DjangoFormMutation):
 
     @classmethod
     def perform_mutate(cls, form, info):
+        print(form.cleaned_data)
         user = authenticate(
             info.context,
             username=form.cleaned_data.pop('username'),
