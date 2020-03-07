@@ -4,7 +4,7 @@ from graphene_django.forms import mutation
 from labs import models, forms, get_lab
 from django.contrib.auth import authenticate, login
 from django.utils.translation import gettext as _
-from .roles import RoleType
+from .role import RoleType
 from .professional import ProfessionalType
 from .laboratory import LaboratoryType
 

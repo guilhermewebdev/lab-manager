@@ -24,7 +24,8 @@ class RoleMutation(mutation.DjangoFormMutation):
         role = None
         lab = get_lab(info.context.user.labs, form.cleaned_data.pop('lab'))
         if 'permissions' in form.cleaned_data:
-            permissions = form.cleaned_data.pop('permissions')        
+            permissions = form.cleaned_data.pop('permissions')
+        role = models.Role(lab=lab, **form.cleaned_data)
         role.save()
         if permissions != []:
             role.permissions.clear()

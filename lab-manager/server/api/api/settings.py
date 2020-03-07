@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'labs.apps.LabsConfig',
+    'crm.apps.CrmConfig',
     'graphene_django',
     'oauth2_provider',
     'corsheaders',

@@ -4,18 +4,15 @@ from graphene_django.forms import mutation
 from labs import models, forms, get_lab
 from django.contrib.auth import authenticate, login
 from django.utils.translation import gettext as _
-from .roles import RoleType, RoleMutation, DeleteRoleMutation
-from .professional import ProfessionalType, ProfessionalMutation
-from .laboratory import LaboratoryType, LaboratoryMutation
-from .registration import RegisterMutation, LoginMutation
+from . import registration, laboratory, role, professional
 
 class Query(object):
     laboratories = graphene.List(
-        LaboratoryType,
+        laboratory.LaboratoryType,
         lab=graphene.Int()
     )
     laboratory = graphene.Field(
-        LaboratoryType,
+        laboratory.LaboratoryType,
         lab=graphene.Int()
     )
 
@@ -36,9 +33,10 @@ class Query(object):
 
 # Mutations
 class Mutation(graphene.ObjectType):
-    upsert_role = RoleMutation.Field()
-    delete_role = DeleteRoleMutation.Field()
+    upsert_role = role.RoleMutation.Field()
+    delete_role = role.DeleteRoleMutation.Field()
+    upsert_professional = professional.ProfessionalMutation.Field()
 
 class PublicMutation(graphene.ObjectType):
-    register = RegisterMutation.Field()
-    login = LoginMutation.Field()
+    register = registration.RegisterMutation.Field()
+    login = registration.LoginMutation.Field()

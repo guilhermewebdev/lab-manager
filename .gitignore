@@ -11,3 +11,12 @@ lab-manager/server/api/labs/schemas/__pycache__/laboratory.cpython-38.pyc
 lab-manager/server/api/labs/schemas/__pycache__/professional.cpython-38.pyc
 lab-manager/server/api/labs/schemas/__pycache__/registration.cpython-38.pyc
 lab-manager/server/api/labs/schemas/__pycache__/roles.cpython-38.pyc
+lab-manager/server/api/labs/schemas/__pycache__/*.pyc
+lab-manager/server/api/labs/schemas/__pycache__
+lab-manager/server/api/crm/__pycache__/__init__.cpython-38.pyc
+lab-manager/server/api/crm/__pycache__/admin.cpython-38.pyc
+lab-manager/server/api/crm/__pycache__/apps.cpython-38.pyc
+lab-manager/server/api/crm/__pycache__/models.cpython-38.pyc
+lab-manager/server/api/crm/__pycache__
+lab-manager/server/api/crm/migrations/__pycache__/__init__.cpython-38.pyc
+lab-manager/server/api/crm/migrations/__pycache__
