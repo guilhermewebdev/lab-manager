@@ -7,7 +7,8 @@ def remove_server_header(get_response):
     return middleware
 
 def set_laboratory(next, root, info, **args):
-    if 'lab' in args:
+    print('info')
+    if 'lab' in info:
         labs = list(info.context.user.labs.all())
         lab = labs[max(min(args.pop('lab'), len(labs)), 0)]
         args.update({'lab':lab})

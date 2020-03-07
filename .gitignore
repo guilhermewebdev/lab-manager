@@ -6,3 +6,8 @@ lab-manager/server/api/labs/__pycache__/models.cpython-38.pyc
 lab-manager/server/api/labs/__pycache__/*.pyc
 lab-manager/server/api/labs/migrations/__pycache__/__init__.cpython-38.pyc
 lab-manager/server/api/labs/migrations/__pycache__/*.pyc
+lab-manager/server/api/labs/schemas/__pycache__/__init__.cpython-38.pyc
+lab-manager/server/api/labs/schemas/__pycache__/laboratory.cpython-38.pyc
+lab-manager/server/api/labs/schemas/__pycache__/professional.cpython-38.pyc
+lab-manager/server/api/labs/schemas/__pycache__/registration.cpython-38.pyc
+lab-manager/server/api/labs/schemas/__pycache__/roles.cpython-38.pyc

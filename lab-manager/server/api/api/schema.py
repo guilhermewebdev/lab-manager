@@ -1,7 +1,7 @@
 import graphene
-from labs import schema as labs
+from labs import schemas as labs
 from graphene_django.debug import DjangoDebug
-
+from .middlewares import set_laboratory
 
 class Query(
     graphene.ObjectType,
