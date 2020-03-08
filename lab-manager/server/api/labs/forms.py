@@ -39,7 +39,9 @@ class RoleForm(forms.Form):
     id = forms.IntegerField(
         required=False,
     )
-    lab = forms.IntegerField()
+    lab = forms.ModelChoiceField(
+        queryset=models.Laboratory.objects.all()
+    )
     name = forms.CharField(
         max_length=100,
         required=True,

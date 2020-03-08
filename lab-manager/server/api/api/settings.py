@@ -84,6 +84,7 @@ WSGI_APPLICATION = 'api.wsgi.application'
 GRAPHENE = {
     'SCHEMA': 'api.schema.schema',
     'MIDDLEWARE': [
+        'api.middlewares.set_laboratory',
         'graphene_django.debug.DjangoDebugMiddleware',
     ]
 }
