@@ -1,11 +1,12 @@
-Django
-graphene-django
+gunicorn
 argon2-cffi
 psycopg2
-markdown
+Django
 django-filter
-gunicorn
 django-axes
 django-guardian
 django-oauth-toolkit
 django-cors-middleware
+djangorestframework
+django-restql
+graphene-django

@@ -6,8 +6,12 @@ from django.contrib.auth import authenticate, login
 from django.utils.translation import gettext as _
 from .role import RoleType
 from .professional import ProfessionalType
+from crm import schemas as crm
 
-class LaboratoryType(types.DjangoObjectType):
+class LaboratoryType(
+    types.DjangoObjectType,
+    crm.Query
+):
     roles = graphene.List(RoleType)
     role = graphene.Field(
         RoleType,
