@@ -1,7 +1,8 @@
 from graphene_django import types
 import graphene
+from graphene import relay
 from graphene_django.rest_framework import mutation
-from crm import models, serializers
+from crm import models
 
 class ClientType(types.DjangoObjectType):
 
@@ -31,10 +32,14 @@ class ClientQuery(types.ObjectType):
     def resolve_client(parent, info, **kwargs):
         return parent.clients.get(**kwargs)
 
-class ClientMutation(mutation.SerializerMutation):
+class TelephoneInput(graphene.InputObjectType):
+    telephone = graphene.String(required=True)
+
+class ClientMutation(graphene.Mutation):
     client = graphene.Field(ClientType)
 
-    class Meta:
-        serializer_class = serializers.ClientSerializer
-        model_operations = ('create', 'update')
-        lookup_field = 'index'
+    def mutate():
+        pass
+
+    class Arguments:
+        telephones = TelephoneInput()

@@ -10,9 +10,7 @@ class TelephoneSerializer(serializers.ModelSerializer):
         )
 
 class ClientSerializer(serializers.ModelSerializer):
-    telephones = TelephoneSerializer(
-        many=True
-    )
+   
 
     def create(self, validated_data):
         if 'telephones' in validated_data:

@@ -7,4 +7,4 @@ class Query(
     pass
 
 class Mutation(graphene.ObjectType):
-    pass
+    upsert_client = client.ClientMutation.Field()

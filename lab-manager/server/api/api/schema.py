@@ -2,6 +2,7 @@ import graphene
 from labs import schemas as labs
 from graphene_django.debug import DjangoDebug
 from .middlewares import set_laboratory
+from crm import schemas as crm
 
 class Query(
     graphene.ObjectType,
@@ -11,9 +12,11 @@ class Query(
 
 class Mutation(
     labs.Mutation,
+    crm.Mutation,
     graphene.ObjectType,
 ):
     debug = graphene.Field(DjangoDebug, name="_debug")
+    upsert_client = crm.client.ClientMutation.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
 
