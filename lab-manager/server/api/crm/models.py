@@ -213,7 +213,6 @@ class Telephone(models.Model):
     telephone = models.CharField(
         max_length=20,
         verbose_name=_('Telefone ou celular'),
-        unique=True
     )
     client = models.ForeignKey(
         Client,
@@ -234,13 +233,14 @@ class Telephone(models.Model):
         return self.telephone
 
     def save(self, *args, **kwargs):
-        queryset = Telephone.objects.filter(client=self.client).order_by('index').reverse()
-        if queryset: self.index = queryset[0].index + 1
+        last = Telephone.objects.filter(client=self.client).order_by('index').first()
+        print(last)
+        if last: self.index = last.index + 1
         else: self.index = 0
-        return super(Telephone, self).save(self, *args, **kwargs)
+        return super(Telephone, self).save(*args, **kwargs)
 
     class Meta:
-        unique_together = ('telephone', 'client')
+        unique_together = ('index', 'client')
         ordering = ['index']
         verbose_name_plural = _('Telefones')
         verbose_name = _('Telefone')

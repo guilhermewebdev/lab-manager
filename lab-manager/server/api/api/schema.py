@@ -16,7 +16,6 @@ class Mutation(
     graphene.ObjectType,
 ):
     debug = graphene.Field(DjangoDebug, name="_debug")
-    upsert_client = crm.client.ClientMutation.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
 
