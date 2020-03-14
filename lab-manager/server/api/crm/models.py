@@ -197,8 +197,8 @@ class Patient(models.Model):
         return self.client.discount
 
     def save(self, *args, **kwargs):
-        queryset = Patient.objects.filter(client=self.client).order_by('index').reverse()
-        if queryset: self.index = queryset[0].index + 1
+        last = Patient.objects.filter(client=self.client).order_by('index').reverse().last()
+        if last: self.index = last.index + 1
         else: self.index = 0
         return super(Patient, self).save(*args, **kwargs)
 
@@ -233,8 +233,7 @@ class Telephone(models.Model):
         return self.telephone
 
     def save(self, *args, **kwargs):
-        last = Telephone.objects.filter(client=self.client).order_by('index').first()
-        print(last)
+        last = Telephone.objects.filter(client=self.client).order_by('index').last()
         if last: self.index = last.index + 1
         else: self.index = 0
         return super(Telephone, self).save(*args, **kwargs)

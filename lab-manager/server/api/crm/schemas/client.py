@@ -81,19 +81,28 @@ class ClientMutation(graphene.Mutation):
                 client.telephones.clear()
                 tels = []
                 for tel in telephones:
-                    tel.append(client.telephone.create(telephone=tel, client=client))
+                    tel.append(
+                        client.telephone.create(telephone=tel, client=client)
+                    )
                 client.telephone.bulk_create(tels)
             models.Client.objects.filter(
                 id=client,
             ).update(**input)
         else:
             print(input)
+            print(telephones)
             client = models.Client(**input)
             client.save()
             if telephones != []:
                 tels = []
                 for tel in telephones:
-                    tels.append(models.Telephone.objects.create(**tel, client=client))
+                    tels.append(
+                        models.Telephone(
+                            telephone=tel['telephone'],
+                            client=client,
+                            index=0,
+                        )
+                    )
                 result = models.Telephone.objects.bulk_create(tels)
         return ClientMutation(client=client)
 
