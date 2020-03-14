@@ -2,7 +2,7 @@ import graphene
 from graphene_django import types
 from graphene_django.forms import mutation
 from labs import models, forms, get_lab
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.utils.translation import gettext as _
 from .role import RoleType
 from .professional import ProfessionalType
@@ -48,3 +48,12 @@ class LoginMutation(mutation.DjangoFormMutation):
 
     class Meta:
         form_class = forms.LoginForm
+
+class LogOutMutation(graphene.Mutation):
+    ok = graphene.Boolean()
+    
+    @staticmethod
+    def mutate(root, info):
+        return LogOutMutation(
+            ok=logout(info.context)
+        )

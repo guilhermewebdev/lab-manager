@@ -20,6 +20,7 @@ class Mutation(
 schema = graphene.Schema(query=Query, mutation=Mutation)
 
 class PublicQuery(
+    labs.PublicQuery,
     graphene.ObjectType
 ):
     debug = graphene.Field(DjangoDebug, name="_debug")
@@ -30,4 +31,4 @@ class PublicMutation(
 ):
     debug = graphene.Field(DjangoDebug, name="_debug")
 
-public_schema = graphene.Schema(mutation=PublicMutation)
+public_schema = graphene.Schema(mutation=PublicMutation, query=PublicQuery)
