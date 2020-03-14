@@ -110,4 +110,17 @@ class ClientMutation(graphene.Mutation):
     class Arguments:
         input = ClientInput(required=True)
 
-        
+class ClientDeletionInput(graphene.InputObjectType):
+    index = graphene.Int(required=True)
+    lab = graphene.Int(required=True)
+
+class ClientDeletion(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    @staticmethod
+    def mutate(root, info, input):
+        deleted = models.Client.objects.filter(**input).delete()
+        return ClientDeletion(ok=deleted)
+
+    class Arguments:
+        input = ClientDeletionInput(required=True)
