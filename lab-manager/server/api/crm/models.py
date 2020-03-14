@@ -54,7 +54,7 @@ class State(BaseFunnel):
         ordering = ['index']
         verbose_name = _('Estado')
         verbose_name_plural = _('Estados')
-
+ 
 class Funnel(BaseFunnel):
     index = models.IntegerField(
         verbose_name=_('índice'),

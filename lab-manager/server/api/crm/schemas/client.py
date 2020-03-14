@@ -3,7 +3,8 @@ import graphene
 from graphene import relay
 from graphene_django.rest_framework import mutation
 from crm import models
-
+from . import patient
+ 
 class TelephoneType(types.DjangoObjectType):
 
     class Meta:
@@ -15,7 +16,10 @@ class TelephoneType(types.DjangoObjectType):
             'registration_date',
         )
 
-class ClientType(types.DjangoObjectType):
+class ClientType(
+    patient.PatientQuery,
+    types.DjangoObjectType
+):
     telephones = graphene.List(TelephoneType)
 
     def resolve_telephones(parent, info, **kwargs):
