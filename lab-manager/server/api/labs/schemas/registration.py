@@ -54,6 +54,7 @@ class LogOutMutation(graphene.Mutation):
     
     @staticmethod
     def mutate(root, info):
+        logout(info.context)
         return LogOutMutation(
-            ok=logout(info.context)
+            ok=(not info.context.user.is_authenticated)
         )
