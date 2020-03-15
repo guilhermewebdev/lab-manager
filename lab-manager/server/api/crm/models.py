@@ -197,9 +197,10 @@ class Patient(models.Model):
         return self.client.discount
 
     def save(self, *args, **kwargs):
-        last = Patient.objects.filter(client=self.client).order_by('index').reverse().last()
-        if last: self.index = last.index + 1
-        else: self.index = 0
+        if not self.id:
+            last = Patient.objects.filter(client=self.client).order_by('index').last()
+            if last: self.index = last.index + 1
+            else: self.index = 0
         return super(Patient, self).save(*args, **kwargs)
 
     class Meta:
