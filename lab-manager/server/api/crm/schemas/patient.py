@@ -61,3 +61,26 @@ class PatientMutation(graphene.Mutation):
 
     class Arguments:
         input = PatientInput()
+
+class PatientDeletionInput(graphene.InputObjectType):
+    index = graphene.Int(required=True)
+    lab = graphene.Int(required=True)
+    client = graphene.Int(required=True)
+
+class PatientDeletion(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    @staticmethod
+    def mutate(root, info, input):
+        return PatientDeletion(
+            ok=bool(
+                models.Patient.objects.filter(
+                    client__index=input['client'],
+                    client__lab=input['lab'],
+                    index=input['index']
+                ).delete()[0]
+            )
+        )
+
+    class Arguments:
+        input = PatientDeletionInput(required=True)
