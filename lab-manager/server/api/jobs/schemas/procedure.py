@@ -58,3 +58,21 @@ class ProcedureMutation(graphene.Mutation):
     
     class Arguments:
         input = ProcedureInput()
+
+class ProcedureDeletionInput(graphene.InputObjectType):
+    index = graphene.Int(required=True)
+    lab = graphene.Int(required=True)
+
+class ProcedureDeletion(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    @staticmethod
+    def mutate(root, info, input):
+        return ProcedureDeletion(
+            ok=bool(
+                models.Procedure.objects.filter(**input).delete()[0]
+            )
+        )
+
+    class Arguments:
+        input = ProcedureDeletionInput()
