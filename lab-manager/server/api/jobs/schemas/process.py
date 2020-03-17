@@ -1,8 +1,12 @@
 from graphene_django import types
 import graphene
 from jobs import models
+from . import stage
 
-class ProcessType(types.DjangoObjectType):
+class ProcessType(
+    stage.StageQuery,
+    types.DjangoObjectType
+):
 
     class Meta:
         model = models.Process
@@ -12,6 +16,8 @@ class ProcessType(types.DjangoObjectType):
             'name',
             'description',
             'price',
+            'stage',
+            'stages',
             'registration_date',
             'get_default_price',
         )

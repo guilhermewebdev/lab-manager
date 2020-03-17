@@ -1,8 +1,12 @@
 from graphene_django import types
 import graphene
 from jobs import models
+from . import stage
 
-class ProcedureType(types.DjangoObjectType):
+class ProcedureType(
+    stage.StageQuery,
+    types.DjangoObjectType
+):
 
     class Meta:
         model = models.Procedure
@@ -10,6 +14,8 @@ class ProcedureType(types.DjangoObjectType):
             'index',
             'id',
             'name',
+            'stage',
+            'stages',
             'description',
             'price',
             'registration_date',

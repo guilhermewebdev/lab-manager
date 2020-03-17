@@ -23,6 +23,7 @@ class StageType(types.DjangoObjectType):
             'registration_date',
             'get_default_price',
         )
+        
 class StageQuery(types.ObjectType):
     stages = graphene.List(StageType)
     stage = graphene.Field(StageType)
@@ -33,4 +34,3 @@ class StageQuery(types.ObjectType):
     def resolve_stage(parent, info, **kwargs):
         return parent.stages.get(**kwargs)
 
-        
