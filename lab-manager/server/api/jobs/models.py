@@ -42,9 +42,10 @@ class Procedure(BaseJob):
     )
 
     def save(self, *args, **kwargs):
-        queryset = Procedure.objects.filter(lab=self.lab).order_by('index').reverse()
-        if queryset: self.index = queryset[0].index + 1
-        else: self.index = 0
+        if not self.id:
+            queryset = Procedure.objects.filter(lab=self.lab).order_by('index').reverse()
+            if queryset: self.index = queryset[0].index + 1
+            else: self.index = 0
         return super(Procedure, self).save(*args, **kwargs)
 
     class Meta:
@@ -119,11 +120,12 @@ class Process(BaseJob):
     def save(self, *args, **kwargs):
         if not self.price:
             self.set_default_price()
-        queryset = list(Process.objects.filter(
-            lab=self.lab
-        ).order_by('index').reverse())
-        if queryset: self.index = queryset[0].index + 1
-        else: self.index = 0
+        if not self.id:
+            queryset = list(Process.objects.filter(
+                lab=self.lab
+            ).order_by('index').reverse())
+            if queryset: self.index = queryset[0].index + 1
+            else: self.index = 0
         return super(Process, self).save(*args, **kwargs)
 
     class Meta:
@@ -193,11 +195,12 @@ class Job(BaseJob):
 
     def save(self, *args, **kwargs):
         self.price = self.get_price()
-        queryset = Job.objects.filter(
-            patient=self.patient,
-        ).order_by('index').reverse()
-        if queryset: self.index = queryset[0].index + 1
-        else: self.index = 0
+        if not self.id:
+            queryset = Job.objects.filter(
+                patient=self.patient,
+            ).order_by('index').reverse()
+            if queryset: self.index = queryset[0].index + 1
+            else: self.index = 0
         return super(Job, self).save(*args, **kwargs)
 
     class Meta:
