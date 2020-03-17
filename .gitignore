@@ -25,3 +25,8 @@ lab-manager/server/api/crm/schemas/__pycache__/client.cpython-38.pyc
 lab-manager/server/api/crm/serializers/__pycache__/__init__.cpython-38.pyc
 lab-manager/server/api/crm/serializers/__pycache__/client.cpython-38.pyc
 lab-manager/server/api/crm/schemas/__pycache__/patient.cpython-38.pyc
+lab-manager/server/api/jobs/__pycache__/__init__.cpython-38.pyc
+lab-manager/server/api/jobs/__pycache__/admin.cpython-38.pyc
+lab-manager/server/api/jobs/__pycache__/apps.cpython-38.pyc
+lab-manager/server/api/jobs/__pycache__/models.cpython-38.pyc
+lab-manager/server/api/jobs/migrations/__pycache__/__init__.cpython-38.pyc

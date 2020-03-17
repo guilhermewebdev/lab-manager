@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'labs.apps.LabsConfig',
     'crm.apps.CrmConfig',
+    'jobs.apps.JobsConfig',
     'graphene_django',
     'oauth2_provider',
     'corsheaders',
