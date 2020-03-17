@@ -28,9 +28,10 @@ class ProcessQuery(types.ObjectType):
 
 class ProcessInput(graphene.InputObjectType):
     index = graphene.Int()
-    name = graphene.String()
+    name = graphene.String(rquired=True)
     description = graphene.String()
-    price = graphene.Float()
+    price = graphene.Float(required=True)
+    lab = graphene.Int(required=True)
 
 class ProcessMutation(graphene.Mutation):
     process = graphene.Field(ProcessType)
@@ -55,3 +56,6 @@ class ProcessMutation(graphene.Mutation):
             process=obj,
             created=created,
         )
+
+    class Arguments:
+        input = ProcessInput(required=True)
