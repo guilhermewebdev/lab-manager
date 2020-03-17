@@ -27,13 +27,26 @@ class Role(Group):
         on_delete=models.CASCADE,
         related_name='roles',
         null=True,
-        blank=True,        
+        blank=True,
+    )
+    index = models.IntegerField(
+        verbose_name=_('Índice'),
+        blank=True,
+        editable=False,
     )
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            last = Role.objects.filter(lab=self.lab).last()
+            if last: self.index = last.index + 1
+            else: self.index = 0
+        return super(Role, self).save(*args, **kwargs)
+
     class Meta:
+        unique_together = ('index', 'lab')
         verbose_name = _('Cargo')
         verbose_name_plural = _('Cargos')
 

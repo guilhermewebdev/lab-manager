@@ -108,14 +108,12 @@ class Process(BaseJob):
         related_name='processes'
     )
 
-    def get_stages(self):
-        return self.stages.all()
-
-    def get_default_price(self):
+    @property
+    def default_price(self):
         return self.stages.all().aggregate(models.Sum('price'))['price__sum'] or 0
 
     def set_default_price(self):
-        self.price = self.get_default_price()
+        self.price = self.default_price()
 
     def save(self, *args, **kwargs):
         if not self.price:

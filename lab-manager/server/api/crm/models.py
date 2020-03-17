@@ -44,9 +44,10 @@ class State(BaseFunnel):
         return self.title
 
     def save(self, *args, **kwargs):
-        queryset = State.objects.filter(lab=self.lab).latest('index').order_by('index').reverse()
-        if queryset: self.index = queryset[0].index + 1
-        else: self.index = 0
+        if not self.id:
+            queryset = State.objects.filter(lab=self.lab).latest('index').order_by('index').reverse()
+            if queryset: self.index = queryset[0].index + 1
+            else: self.index = 0
         return super(State, self).save(*args, **kwargs)
 
     class Meta:
@@ -72,9 +73,10 @@ class Funnel(BaseFunnel):
         return _('Funil do %s' % (self.lab))
     
     def save(self, *args, **kwargs):
-        queryset = Funnel.objects.filter(lab=self.lab).order_by('index').reverse()
-        if queryset: self.index = queryset[0].index + 1
-        else: self.index = 0
+        if not self.id:
+            queryset = Funnel.objects.filter(lab=self.lab).order_by('index').reverse()
+            if queryset: self.index = queryset[0].index + 1
+            else: self.index = 0
         return super(Funnel, self).save(*args, **kwargs)
 
     class Meta:
@@ -158,9 +160,10 @@ class Client(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        queryset = Client.objects.filter(lab=self.lab).order_by('index').reverse()
-        if queryset: self.index = queryset[0].index + 1
-        else: self.index = 0
+        if not self.id:
+            queryset = Client.objects.filter(lab=self.lab).order_by('index').reverse()
+            if queryset: self.index = queryset[0].index + 1
+            else: self.index = 0
         return super(Client, self).save(*args, **kwargs)
 
     class Meta:
@@ -234,9 +237,10 @@ class Telephone(models.Model):
         return self.telephone
 
     def save(self, *args, **kwargs):
-        last = Telephone.objects.filter(client=self.client).order_by('index').last()
-        if last: self.index = last.index + 1
-        else: self.index = 0
+        if not self.id:
+            last = Telephone.objects.filter(client=self.client).order_by('index').last()
+            if last: self.index = last.index + 1
+            else: self.index = 0
         return super(Telephone, self).save(*args, **kwargs)
 
     class Meta:
