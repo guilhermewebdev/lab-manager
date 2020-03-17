@@ -59,3 +59,23 @@ class ProcessMutation(graphene.Mutation):
 
     class Arguments:
         input = ProcessInput(required=True)
+
+class ProcessDeletionInput(graphene.InputObjectType):
+    index = graphene.Int(required=True)
+    lab = graphene.Int(required=True)
+
+class ProcessDeletion(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    @staticmethod
+    def mutate(root, info, input):
+        return ProcessDeletion(
+            ok=bool(
+                models.Process.objects.filter(
+                    **input,
+                ).delete()[0]
+            )
+        )
+    
+    class Arguments:
+        input = ProcessDeletionInput()
