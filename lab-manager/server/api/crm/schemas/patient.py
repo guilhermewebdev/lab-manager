@@ -1,7 +1,5 @@
 from graphene_django import types
 import graphene
-from graphene import relay
-from graphene_django.rest_framework import mutation
 from crm import models
 
 class PatientType(types.DjangoObjectType):
@@ -14,6 +12,7 @@ class PatientType(types.DjangoObjectType):
             'registration_date',
             'index',
             'id',
+            'jobs',
         )
 
 class PatientQuery(types.ObjectType):
@@ -42,7 +41,6 @@ class PatientMutation(graphene.Mutation):
             index=input.pop('client'),
             lab=input.pop('lab')
         )
-        print(input)
         obj = None
         created = False
         if 'index' in input:

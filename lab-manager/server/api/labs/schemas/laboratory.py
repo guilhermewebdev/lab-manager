@@ -7,10 +7,12 @@ from django.utils.translation import gettext as _
 from .role import RoleType
 from .professional import ProfessionalType
 from crm import schemas as crm
+from jobs import schemas as jobs
 
 class LaboratoryType(
     types.DjangoObjectType,
-    crm.Query
+    crm.Query,
+    jobs.Query
 ):
     roles = graphene.List(RoleType)
     role = graphene.Field(
