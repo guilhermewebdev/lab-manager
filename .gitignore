@@ -38,3 +38,4 @@ lab-manager/server/api/jobs/schemas/__pycache__/process.cpython-38.pyc
 lab-manager/server/api/jobs/schemas/__pycache__/stage.cpython-38.pyc
 lab-manager/server/api/jobs/schemas/__pycache__/procedure_stage.cpython-38.pyc
 lab-manager/server/api/jobs/schemas/__pycache__/process_stage.cpython-38.pyc
+lab-manager/server/api/jobs/migrations/__pycache__/0002_auto_20200321_2340.cpython-38.pyc

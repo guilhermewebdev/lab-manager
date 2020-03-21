@@ -20,7 +20,6 @@ class ProcessType(
             'stage',
             'is_custom',
             'registration_date',
-            'get_default_price',
         )
 
 class ProcessQuery:
@@ -58,7 +57,7 @@ class ProcessMutation(graphene.Mutation):
         if 'stages' in input:
             stages = input.pop('stages')
         if 'index' in input:
-            process = models.Process.processects.get(
+            process = models.Process.objects.get(
                 index=input.pop('index'),
                 lab=input['lab'],
             )
@@ -69,14 +68,17 @@ class ProcessMutation(graphene.Mutation):
             created = True
         process.save()
         def set_stage(stage):
-            return dict(
+            stg:dict = dict(
                 process=process,
                 procedure=models.Procedure.objects.get(
                     lab=input['lab'],
                     index=stage['procedure']
                 ),
                 index=stage['index'],
+                price=False,
             )
+            if 'price' in stage: stg['price'] = stage['price']
+            return stg
         if created:
             stgs:list = []
             for stage in stages:

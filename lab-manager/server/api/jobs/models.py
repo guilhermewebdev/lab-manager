@@ -89,7 +89,10 @@ class Stage(models.Model):
         return super(Stage, self).save(*args, **kwargs)
 
     class Meta:
-        unique_together = ('process', 'index')
+        unique_together = (
+            ('process', 'index'),
+            ('procedure', 'process'),
+        )
         ordering = ['index', 'process']
 
 class Process(BaseJob):
@@ -108,7 +111,6 @@ class Process(BaseJob):
         related_name='processes'
     )
 
-    @property
     def get_default_price(self):
         return self.stages.all().aggregate(models.Sum('price'))['price__sum'] or None
 
