@@ -33,12 +33,18 @@ class ProcessQuery:
     def resolve_process(parent, info, **kwargs):
         return parent.processes.get(**kwargs)
 
+class StageProcessInput(graphene.InputObjectType):
+    index = graphene.Int(required=True)
+    procedure = graphene.Int(required=True)
+    price = graphene.Float()
+
 class ProcessInput(graphene.InputObjectType):
     index = graphene.Int()
     name = graphene.String(rquired=True)
     description = graphene.String()
-    price = graphene.Float(required=True)
+    price = graphene.Float()
     lab = graphene.Int(required=True)
+    stages = graphene.List(StageProcessInput)
 
 class ProcessMutation(graphene.Mutation):
     process = graphene.Field(ProcessType)
@@ -46,21 +52,45 @@ class ProcessMutation(graphene.Mutation):
 
     @staticmethod
     def mutate(root, info, input):
-        obj = None
-        created = False
+        process:models.Process = None
+        created:bool = False
+        stages:list = []
+        if 'stages' in input:
+            stages = input.pop('stages')
         if 'index' in input:
-            obj = models.Process.objects.get(
+            process = models.Process.processects.get(
                 index=input.pop('index'),
-                lab=input.pop('lab'),
+                lab=input['lab'],
             )
             for key, value in input.items():
-                setattr(obj, key, value)
+                setattr(process, key, value)
         else:
-            obj = models.Process(**input)
+            process = models.Process(**input)
             created = True
-        obj.save()
+        process.save()
+        def set_stage(stage):
+            return dict(
+                process=process,
+                procedure=models.Procedure.objects.get(
+                    lab=input['lab'],
+                    index=stage['procedure']
+                ),
+                index=stage['index'],
+            )
+        if created:
+            stgs:list = []
+            for stage in stages:
+                stgs.append(models.Stage(
+                    **set_stage(stage),
+                ))
+            models.Stage.objects.bulk_create(stgs)
+        else:
+            for stage in stages:
+                models.Stage.objects.update_or_create(
+                    **set_stage(stage)
+                )
         return ProcessMutation(
-            process=obj,
+            process=process,
             created=created,
         )
 

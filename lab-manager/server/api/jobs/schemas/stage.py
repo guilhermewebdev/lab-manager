@@ -30,3 +30,32 @@ class StageQuery:
     def resolve_stage(parent, info, **kwargs):
         return parent.stages.get(**kwargs)
 
+class StageInput(graphene.InputObjectType):
+    index = graphene.Int(required=True)
+    lab = graphene.Int(required=True)
+    procedure = graphene.Int(required=True)
+    price = graphene.Float()
+    process = graphene.Int(required=True)
+
+class StageMutation(graphene.Mutation):
+    stage = graphene.Field(StageType)
+    created = graphene.Boolean()
+
+    @staticmethod
+    def mutate(root, info, input):
+        data = dict(
+            index=input['index'],
+            procedure__lab=input['lab'],
+            procedure__index=input['procedure'],
+            process__lab=input['lab'],
+            process__index=input['process'],
+        )
+        if 'price' in input: data['price'] = input['price']
+        stage, created = models.Stage.objects.update_or_create(**data)
+        return StageMutation(
+            stage=stage,
+            created=created,
+        )
+
+    class Arguments:
+        input = StageInput(required=True)
