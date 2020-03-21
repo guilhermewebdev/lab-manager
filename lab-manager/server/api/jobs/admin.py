@@ -12,3 +12,7 @@ class ProcessAdmin(admin.ModelAdmin):
 @admin.register(models.Procedure)
 class ProcedureAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(models.Job)
+class JobAdmin(admin.ModelAdmin):
+    pass

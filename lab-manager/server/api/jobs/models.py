@@ -137,6 +137,7 @@ class Process(BaseJob):
 class Job(BaseJob):
     kind = models.ForeignKey(
         Process,
+        verbose_name=_('Tipo'),
         on_delete=models.SET_NULL,
         related_name='kind',
         null=True   
@@ -205,6 +206,6 @@ class Job(BaseJob):
 
     class Meta:
         verbose_name = _('Trabalho')
-        verbose_name_plural = _('Trabalho')
+        verbose_name_plural = _('Trabalhos')
         unique_together = ('index', 'patient')
         ordering = ('-registration_date', 'patient')
