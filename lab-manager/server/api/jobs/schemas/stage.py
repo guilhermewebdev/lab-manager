@@ -1,35 +1,31 @@
 from graphene_django import types
 import graphene
-from . import procedure, process
 from jobs import models
 
 class StageType(types.DjangoObjectType):
-    procedure = graphene.Field(procedure.ProcedureType)
-    process = graphene.Field(process.ProcessType)
-
-    def resolve_procedure(parent, info, **kwargs):
-        return parent.procedure
-
-    def resolve_process(parent, info, **kwargs):
-        return parent.process
 
     class Meta:
         model = models.Stage
         fields = (
-            'index',
             'procedure',
+            'index',
             'price',
             'process',
             'registration_date',
-            'get_default_price',
+            'id',
         )
-        
-class StageQuery(types.ObjectType):
+
+class StageQuery:
     stages = graphene.List(StageType)
-    stage = graphene.Field(StageType)
+    stage = graphene.List(
+        StageType,
+        index=graphene.Int(),
+        process__lab=graphene.Int(),
+        process=graphene.ID(),
+    )
 
     def resolve_stages(parent, info, **kwargs):
-        return parent.stages.filter(**kwargs).all()
+        return parent.stages.filter(**kwargs).all().iterator()
 
     def resolve_stage(parent, info, **kwargs):
         return parent.stages.get(**kwargs)

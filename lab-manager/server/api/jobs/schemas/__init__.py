@@ -1,9 +1,10 @@
 import graphene
-from . import procedure, process
+from . import  process, procedure, stage
 
 class Query(
     procedure.ProcedureQuery,
     process.ProcessQuery,
+    stage.StageQuery,
 ):
     pass
 

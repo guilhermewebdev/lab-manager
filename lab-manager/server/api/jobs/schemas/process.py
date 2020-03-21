@@ -4,8 +4,8 @@ from jobs import models
 from . import stage
 
 class ProcessType(
+    types.DjangoObjectType,
     stage.StageQuery,
-    types.DjangoObjectType
 ):
 
     class Meta:
@@ -16,13 +16,14 @@ class ProcessType(
             'name',
             'description',
             'price',
-            'stage',
             'stages',
+            'stage',
+            'is_custom',
             'registration_date',
             'get_default_price',
         )
 
-class ProcessQuery(types.ObjectType):
+class ProcessQuery:
     processes = graphene.List(ProcessType)
     process = graphene.Field(ProcessType)
 

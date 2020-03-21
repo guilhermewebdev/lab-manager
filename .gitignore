@@ -36,3 +36,5 @@ lab-manager/server/api/jobs/schemas/__pycache__/__init__.cpython-38.pyc
 lab-manager/server/api/jobs/schemas/__pycache__/procedure.cpython-38.pyc
 lab-manager/server/api/jobs/schemas/__pycache__/process.cpython-38.pyc
 lab-manager/server/api/jobs/schemas/__pycache__/stage.cpython-38.pyc
+lab-manager/server/api/jobs/schemas/__pycache__/procedure_stage.cpython-38.pyc
+lab-manager/server/api/jobs/schemas/__pycache__/process_stage.cpython-38.pyc

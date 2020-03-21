@@ -3,10 +3,7 @@ import graphene
 from jobs import models
 from . import stage
 
-class ProcedureType(
-    stage.StageQuery,
-    types.DjangoObjectType
-):
+class ProcedureType(types.DjangoObjectType):
 
     class Meta:
         model = models.Procedure
@@ -14,14 +11,12 @@ class ProcedureType(
             'index',
             'id',
             'name',
-            'stage',
-            'stages',
             'description',
             'price',
             'registration_date',
         )
 
-class ProcedureQuery(types.ObjectType):
+class ProcedureQuery:
     procedures = graphene.List(ProcedureType)
     procedure = graphene.Field(ProcedureType)
 
