@@ -8,3 +8,7 @@ class StageTabularInline(admin.TabularInline):
 @admin.register(models.Process)
 class ProcessAdmin(admin.ModelAdmin):
     inlines = [StageTabularInline]
+
+@admin.register(models.Procedure)
+class ProcedureAdmin(admin.ModelAdmin):
+    pass
