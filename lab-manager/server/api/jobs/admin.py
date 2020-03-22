@@ -15,4 +15,17 @@ class ProcedureAdmin(admin.ModelAdmin):
 
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
-    pass
+    list_filter = (
+        'patient__client__lab__name',
+        'patient__client',
+        'patient',
+    )
+    search_fields = (
+        'kind__description',
+        'kind__name',
+        'name',
+        'patient__name',
+        'patient__client__name',
+        'patient__client__lab__name'
+    )
+    ordering = ['index', 'patient']
