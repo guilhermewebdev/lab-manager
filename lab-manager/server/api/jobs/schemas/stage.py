@@ -59,3 +59,24 @@ class StageMutation(graphene.Mutation):
 
     class Arguments:
         input = StageInput(required=True)
+
+class StageInputDeletion(graphene.InputObjectType):
+    index = graphene.Int(required=True)
+    process = graphene.Int(required=True)
+    lab = graphene.Int(required=True)
+
+class StageDeletion(graphene.Mutation):
+    ok = graphene.Boolean(required=True)
+
+    @staticmethod
+    def mutate(root, info, input):
+        return StageDeletion(
+            ok=models.Stage.objects.filter(
+                index=input['index'],
+                process__index=input['process'],
+                process__lab=input['lab']
+            )[0]
+        )
+
+    class Arguments:
+        input = None

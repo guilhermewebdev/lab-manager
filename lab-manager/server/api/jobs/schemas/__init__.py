@@ -13,5 +13,6 @@ class Mutation(graphene.ObjectType):
     upsert_process = process.ProcessMutation.Field()
     delete_process = process.ProcessDeletion.Field()
     uspsert_stage = stage.StageMutation.Field()
+    delete_stage = stage.StageDeletion.Field()
     uspsert_job = job.JobMutation.Field()
     delete_job = job.JobDeletion.Field()
