@@ -36,3 +36,17 @@ class JobQuery:
     def resolve_job(parent, info, **kwargs):
         return parent.jobs.get(**kwargs)
 
+class JobInput(graphene.InputObjectType):
+    index = graphene.Int()
+    name = graphene.String(required=True)
+    description = graphene.String()
+    price = graphene.Float()
+    kind = graphene.Int(required=True)
+    patient = graphene.Int(required=True)
+    arrival = graphene.DateTime()
+    started = graphene.DateTime()
+    finished = graphene.DateTime()
+    delivered = graphene.DateTime()
+    deadline = graphene.DateTime()
+    
+
