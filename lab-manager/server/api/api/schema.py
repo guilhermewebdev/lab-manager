@@ -4,6 +4,7 @@ from graphene_django.debug import DjangoDebug
 from .middlewares import set_laboratory
 from crm import schemas as crm
 from jobs import schemas as jobs
+import graphql_jwt
 
 class Query(
     graphene.ObjectType,
@@ -32,5 +33,8 @@ class PublicMutation(
     graphene.ObjectType,
 ):
     debug = graphene.Field(DjangoDebug, name="_debug")
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
 
 public_schema = graphene.Schema(mutation=PublicMutation, query=PublicQuery)

@@ -87,6 +87,7 @@ GRAPHENE = {
     'MIDDLEWARE': [
         'api.middlewares.set_laboratory',
         'graphene_django.debug.DjangoDebugMiddleware',
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ]
 }
 
@@ -135,7 +136,8 @@ PASSWORD_HASHERS = [
 AUTHENTICATION_BACKENDS = [
     # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
     'axes.backends.AxesBackend',
-
+    # GraphQL jwt athentication backend.
+    'graphql_jwt.backends.JSONWebTokenBackend',
     # Django ModelBackend is the default authentication backend.
     'django.contrib.auth.backends.ModelBackend',
     'oauth2_provider.backends.OAuth2Backend',

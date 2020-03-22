@@ -49,6 +49,7 @@ class LaboratoryType(
         model = models.Laboratory
         fields = (
             'id',
+            'index',
             'name',
             'roles',
             'professionals',

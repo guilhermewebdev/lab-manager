@@ -6,6 +6,7 @@ django-filter
 django-axes
 django-guardian
 django-oauth-toolkit
+django-graphql-jwt
 django-cors-middleware
 djangorestframework
 django-restql
