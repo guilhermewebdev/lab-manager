@@ -15,4 +15,6 @@ class ClientAdmin(admin.ModelAdmin):
         TelephonesInline,
         PatientsInline,
     ]
-
+    list_filter = (
+        'lab__name',
+    )
