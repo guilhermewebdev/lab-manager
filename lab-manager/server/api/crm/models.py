@@ -183,6 +183,15 @@ class Patient(models.Model):
         on_delete=models.CASCADE,
         related_name='patients',
     )
+    gender = models.BooleanField(
+        verbose_name=_('Sexo'),
+        null=True,
+        blank=True,
+    )
+    tooth_color = models.CharField(
+        verbose_name=_('Cor dos dentes'),
+        max_length=100,
+    )
     registration_date = models.DateField(
         auto_now=True,
         verbose_name=_("Data de cadastro"),
