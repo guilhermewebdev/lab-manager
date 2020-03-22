@@ -7,7 +7,9 @@ class LaboratoryAdmin(admin.ModelAdmin):
 
 @admin.register(models.Role)
 class RoleAdmin(admin.ModelAdmin):
-    pass
+    list_filter = (
+        'lab__name'
+    )
 
 @admin.register(models.Professional)
 class ProfessionalAdmin(admin.ModelAdmin):
