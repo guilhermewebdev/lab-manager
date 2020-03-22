@@ -183,8 +183,13 @@ class Patient(models.Model):
         on_delete=models.CASCADE,
         related_name='patients',
     )
-    gender = models.BooleanField(
+    gender = models.CharField(
         verbose_name=_('Sexo'),
+        choices=(
+            ('M', _('Masculino')),
+            ('F', _('Feminino')),
+        ),
+        max_length=1,
         null=True,
         blank=True,
     )

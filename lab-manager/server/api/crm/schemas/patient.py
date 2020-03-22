@@ -36,7 +36,7 @@ class PatientInput(graphene.InputObjectType):
     client = graphene.ID(required=True)
     lab = graphene.Int(required=True)
     name = graphene.String(required=True)    
-    gender = graphene.Boolean()
+    gender = graphene.String()
     tooth_color = graphene.String(required=True)
 
 class PatientMutation(graphene.Mutation):
