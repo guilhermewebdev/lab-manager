@@ -45,6 +45,7 @@ class JobInput(graphene.InputObjectType):
     kind = graphene.Int(required=True)
     patient = graphene.Int(required=True)
     client = graphene.Int(required=True)
+    lab = graphene.Int(required=True)
     arrival = graphene.DateTime()
     started = graphene.DateTime()
     finished = graphene.DateTime()
@@ -66,8 +67,9 @@ class JobMutation(graphene.Mutation):
         input['patient'] = Patient.objects.get(
             index=input.pop('patient'),
             client__lab=input['lab'],
-            client=input.pop('client')
+            client__index=input.pop('client')
         )
+        print(input)
         if 'index' in input:
             job = models.Job.objects.get(
                 index=input.pop('index'),
@@ -76,6 +78,7 @@ class JobMutation(graphene.Mutation):
             for key, value in input.items():
                 setattr(job, key, value)
         else:
+            input.pop('lab')
             job = models.Job(**input)
             created = True
         job.save()
