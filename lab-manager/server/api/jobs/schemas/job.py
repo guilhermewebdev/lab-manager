@@ -69,7 +69,6 @@ class JobMutation(graphene.Mutation):
             client__lab=input['lab'],
             client__index=input.pop('client')
         )
-        print(input)
         if 'index' in input:
             job = models.Job.objects.get(
                 index=input.pop('index'),

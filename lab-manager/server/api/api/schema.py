@@ -7,7 +7,6 @@ from jobs import schemas as jobs
 
 class Query(
     graphene.ObjectType,
-    jobs.Query,
     labs.Query,
 ):
     debug = graphene.Field(DjangoDebug, name="_debug")

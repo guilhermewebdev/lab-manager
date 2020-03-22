@@ -1,8 +1,12 @@
 from graphene_django import types
 import graphene
 from crm import models
+from jobs.schemas import job
 
-class PatientType(types.DjangoObjectType):
+class PatientType(
+    job.JobQuery,
+    types.DjangoObjectType
+):
 
     class Meta:
         model = models.Patient

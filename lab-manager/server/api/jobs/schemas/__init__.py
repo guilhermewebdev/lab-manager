@@ -4,7 +4,6 @@ from . import  process, procedure, stage, job
 class Query(
     procedure.ProcedureQuery,
     process.ProcessQuery,
-    job.JobQuery,
 ):
     pass
 
