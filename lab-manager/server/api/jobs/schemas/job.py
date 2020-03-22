@@ -3,22 +3,24 @@ import graphene
 from jobs import models
 
 class JobType(types.DjangoObjectType):
-    model = models.Job
-    fields = (
-        'index',
-        'id',
-        'name',
-        'description',
-        'price',
-        'registration_date',
-        'kind',
-        'patient',
-        'arrival',
-        'started',
-        'finished',
-        'delivered',
-        'deadline',
-    )
+
+    class Meta:
+        model = models.Job
+        fields = (
+            'index',
+            'id',
+            'name',
+            'description',
+            'price',
+            'registration_date',
+            'kind',
+            'patient',
+            'arrival',
+            'started',
+            'finished',
+            'delivered',
+            'deadline',
+        )
 
 class JobQuery:
     jobs = graphene.List(JobType)
