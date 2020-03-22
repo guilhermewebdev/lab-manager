@@ -134,7 +134,7 @@ class Process(BaseJob):
         verbose_name_plural = _('Processos')
         ordering = ('-registration_date', 'lab')
 
-class Job(BaseJob):
+class Job(BaseJob): 
     kind = models.ForeignKey(
         Process,
         verbose_name=_('Tipo'),
