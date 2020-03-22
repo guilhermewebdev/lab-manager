@@ -17,6 +17,8 @@ class PatientType(
             'index',
             'id',
             'jobs',
+            'gender',
+            'tooth_color',
         )
 
 class PatientQuery(types.ObjectType):
@@ -34,6 +36,8 @@ class PatientInput(graphene.InputObjectType):
     client = graphene.ID(required=True)
     lab = graphene.Int(required=True)
     name = graphene.String(required=True)    
+    gender = graphene.Boolean()
+    tooth_color = graphene.String(required=True)
 
 class PatientMutation(graphene.Mutation):
     patient = graphene.Field(PatientType)
