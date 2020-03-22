@@ -89,3 +89,25 @@ class JobMutation(graphene.Mutation):
     class Arguments:
         input = JobInput(required=True)
 
+class JobInputDeletion(graphene.InputObjectType):
+    index = graphene.Int(required=True)
+    patient = graphene.Int(required=True)
+    client = graphene.Int(required=True)
+    lab = graphene.Int(required=True)
+
+class JobDeletion(graphene.Mutation):
+    ok = graphene.Boolean(required=True)
+
+    @staticmethod
+    def mutate(root, info, input):
+        return JobDeletion(
+            ok=models.Job.objects.filter(
+                index=input['index'],
+                patient__index=input['patient'],
+                patient__client__index=input['patient'],
+                patient__client__lab=input['patient'],
+            ).delete()[0]
+        )
+
+    class Arguments:
+        input = JobInputDeletion(required=True)
