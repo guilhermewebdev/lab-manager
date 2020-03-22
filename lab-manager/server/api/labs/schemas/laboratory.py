@@ -14,15 +14,30 @@ class LaboratoryType(
     crm.Query,
     jobs.Query
 ):
+    index = graphene.Int(required=True)
     roles = graphene.List(RoleType)
     role = graphene.Field(
         RoleType,
         id=graphene.ID(required=True)
     )
     professionals = graphene.List(ProfessionalType)
+    professional = graphene.Field(
+        ProfessionalType,
+        id=graphene.ID(required=True)
+    )
+    me = graphene.Field(ProfessionalType)
+
+    def resolve_index(parent, info):
+        return int(list(info.context.user.labs.all().iterator()).index(parent))
 
     def resolve_professionals(parent, info, **kwargs):
         return parent.professionals.filter(**kwargs).all()
+
+    def resolve_professional(parent, info, **kwargs):
+        return parent.professional.get(**kwargs)
+
+    def resolve_me(parent, info, **kwargs):
+        return info.context.user
 
     def resolve_role(parent, info, **kwargs):
         return parent.roles.get(**kwargs)
