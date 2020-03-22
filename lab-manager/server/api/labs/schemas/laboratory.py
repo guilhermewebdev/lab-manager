@@ -52,3 +52,23 @@ class LaboratoryMutation(mutation.DjangoFormMutation):
 
     class Meta:
         form_class = forms.LaboratoryForm
+
+class UpdateInput(graphene.InputObjectType):
+    lab = graphene.Int(required=True)
+    name = graphene.String(required=True)
+
+class UpdateMutation(graphene.Mutation):
+    laboratory = graphene.Field(LaboratoryType)
+
+    @staticmethod
+    def mutate(root, info, input):
+        lab = input.pop('lab')
+        for key, value in input.values():
+            setattr(lab, key, value)
+        lab.save(update_fields=input.keys())
+        return UpdateMutation(
+            laboratory=lab
+        )
+
+    class Arguments:
+        input = UpdateInput(required=True)

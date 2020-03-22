@@ -35,6 +35,8 @@ class Query(object):
 class Mutation(graphene.ObjectType):
     upsert_role = role.RoleMutation.Field()
     delete_role = role.DeleteRoleMutation.Field()
+    update_laboratory = laboratory.UpdateMutation.Field()
+    create_laboratory = laboratory.LaboratoryMutation.Field()
     upsert_professional = professional.ProfessionalMutation.Field()
 
 class PublicMutation(graphene.ObjectType):

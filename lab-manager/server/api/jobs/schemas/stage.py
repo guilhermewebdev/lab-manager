@@ -79,4 +79,4 @@ class StageDeletion(graphene.Mutation):
         )
 
     class Arguments:
-        input = None
+        input = StageInputDeletion(required=True)
