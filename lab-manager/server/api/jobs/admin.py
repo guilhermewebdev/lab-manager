@@ -8,10 +8,15 @@ class StageTabularInline(admin.TabularInline):
 @admin.register(models.Process)
 class ProcessAdmin(admin.ModelAdmin):
     inlines = [StageTabularInline]
+    list_filter = (
+        'lab__name',
+    )
 
 @admin.register(models.Procedure)
 class ProcedureAdmin(admin.ModelAdmin):
-    pass
+    list_filter = (
+        'lab__name',
+    )
 
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
