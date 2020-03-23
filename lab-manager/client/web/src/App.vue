@@ -4,7 +4,11 @@
       app
       color="primary"
       dark
+      dense
     >
+      <v-app-bar-nav-icon
+        @click.stop="drawer = !drawer"
+      ></v-app-bar-nav-icon>
       <div class="d-flex align-center">
         <v-img
           alt="Vuetify Logo"
@@ -36,7 +40,14 @@
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
-
+    <v-navigation-drawer
+      absolute
+      v-model="drawer"
+      bottom
+      temporary
+    >
+      Teste
+    </v-navigation-drawer>
     <v-content>
       <ApolloExample/>
     </v-content>
@@ -55,7 +66,7 @@ export default Vue.extend({
   },
 
   data: () => ({
-    //
+    drawer:false,
   }),
 });
 </script>
