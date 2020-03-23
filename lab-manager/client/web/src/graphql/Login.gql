@@ -1,0 +1,3 @@
+mutation tokenAuth($username:String!, $password:String!){
+    token
+}
