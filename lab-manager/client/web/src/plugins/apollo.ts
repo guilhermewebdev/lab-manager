@@ -12,7 +12,7 @@ const httpLink = createHttpLink({
 })
 
 const publicLink = createHttpLink({
-    uri: 'http://localhost/api/public/'
+    uri: 'http://localhost/api/public/',
 })
 
 // Cache implementation
@@ -20,10 +20,11 @@ const cache = new InMemoryCache()
 
 // Create the apollo client
 const apolloClient = new ApolloClient({
-  link: httpLink,
-  cache,
+    link: httpLink,
+    cache,
 })
 
+// Create the public client
 const publicClient = new ApolloClient({
     link: publicLink,
     cache,
