@@ -1,5 +1,7 @@
 <template>
-    <v-form>
+    <v-form
+        ref="form"
+    >
         <v-container
             fluid
         >
@@ -9,6 +11,7 @@
                         label="Nome de Usuário"
                         :rules="rules.username"
                         clearable
+                        v-model="data.username"
                         required
                     ></v-text-field>
                 </v-col>
@@ -21,19 +24,28 @@
                         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="show1 ? 'text' : 'password'"
                         counter
+                        v-model="data.password"
                         required
                         :rules="rules.password"
                         @click:append="show1 = !show1"
                     ></v-text-field>
                 </v-col>
             </v-row>
-            <v-switch
-                label="Manter conectado"
-                class="mt-0"
-            ></v-switch>
+            <v-row>
+                <v-col>
+                    <v-switch
+                        label="Manter conectado"
+                        class="mt-0"
+                    ></v-switch>
+                </v-col>
+                <v-col class="pt-4">
+                    <a to="#">Esqueceu o login ou a senha?</a>
+                </v-col>
+            </v-row>           
             <v-row>
                 <v-col>
                     <v-btn
+                        @click.stop="submit"
                         block
                         color="primary"
                     >Entrar</v-btn>
@@ -44,6 +56,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import LOGIN from '@/graphql/Login.gql'
 export default Vue.extend({
     data(){
         return {
@@ -56,8 +69,26 @@ export default Vue.extend({
                 password: [
                     v => !!v || "É preciso informar a senha"
                 ]
+            },
+            data: {
+                username: null,
+                password: null,
             }
         }
-    }  
+    },
+    apollo: {
+        login:LOGIN,
+        $client: 'b',
+    },
+    methods: {
+        async submit(){
+            if(this.$refs.form.validate()){
+                this.$apollo.mutate({
+                    mutation: LOGIN,
+                    variables: this.$data.data,
+                }).then(console.log).catch(error => console.log(error))
+            }
+        },
+    }
 })
 </script>
