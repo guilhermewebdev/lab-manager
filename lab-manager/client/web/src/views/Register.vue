@@ -25,6 +25,9 @@
                             <v-tab-item>
                                 <login></login>
                             </v-tab-item>
+                            <v-tab-item>
+                                <registration></registration>
+                            </v-tab-item>
                         </v-tabs>
                         </v-card-text>                        
                     </v-card>
@@ -36,9 +39,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import Login from '@/components/Login.vue'
+import Registration from '@/components/Registration.vue'
 export default Vue.extend({
     components: {
-        Login
+        Login,
+        Registration,
     }
 })
 </script>

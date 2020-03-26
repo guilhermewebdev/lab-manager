@@ -1,6 +1,7 @@
 <template>
     <v-form
         ref="form"
+        @keypress.enter.native="submit"
     >
         <v-container
             fluid
@@ -48,6 +49,7 @@
                         @click.stop="submit"
                         block
                         color="primary"
+                        :loading="loading"
                     >Entrar</v-btn>
                 </v-col>
             </v-row>
@@ -73,7 +75,8 @@ export default Vue.extend({
             data: {
                 username: null,
                 password: null,
-            }
+            },
+            loading: false,
         }
     },
     apollo: {
@@ -82,12 +85,17 @@ export default Vue.extend({
     },
     methods: {
         async submit(){
+            this.loading = true
             if(this.$refs.form.validate()){
                 this.$apollo.mutate({
                     mutation: LOGIN,
                     variables: this.$data.data,
-                }).then(console.log).catch(error => console.log(error))
+                })
+                    .then(console.log)
+                    .catch(error => console.log(error))
+                    .finally(() => this.loading = false)
             }
+            this.loading = false;
         },
     }
 })
