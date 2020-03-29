@@ -17,5 +17,8 @@ mutation Register(
             username
             email
         }
+        laboratory {
+            name
+        }
     }
 }

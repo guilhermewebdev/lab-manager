@@ -2,6 +2,7 @@
     <v-form
         ref="form"
         @keypress.enter.native="submit"
+        :value="validation"
     >
         <v-container
             fluid
@@ -138,6 +139,7 @@ export default Vue.extend({
             show2: false,
             loading: false,
             passwordVerify: null,
+            validation: Boolean(),
             data: {
                 fullName: null,
                 username: null,
@@ -171,8 +173,16 @@ export default Vue.extend({
                     mutation: REGISTRATION,
                     variables: this.$data.data
                 })
-                    .then(console.log)
-                    .catch(error => console.log(error))
+                    .then(response => {
+                        this.$refs.form.reset()
+                    })
+                    .catch(error => {
+                        this.$emit('inform', {
+                            message: error.message,
+                            color: "error"
+                        })
+                        this.validation = false
+                    })
                     .finally(() => this.loading = false)
             }
             this.$data.loading = false

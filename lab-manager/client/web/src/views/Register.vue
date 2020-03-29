@@ -23,10 +23,10 @@
                             <v-tab>Entrar</v-tab>
                             <v-tab>Cadastrar</v-tab>
                             <v-tab-item>
-                                <login></login>
+                                <login @inform="inform"></login>
                             </v-tab-item>
                             <v-tab-item>
-                                <registration></registration>
+                                <registration @inform="inform"></registration>
                             </v-tab-item>
                         </v-tabs>
                         </v-card-text>                        
@@ -34,6 +34,22 @@
                 </v-col>
             </v-row>
         </v-container>
+         <v-snackbar
+            v-model="snackbar.show"
+            vertical
+            multi-line
+            right
+            top
+        >
+            {{ snackbar.message }}
+            <v-btn
+                :color="snackbar.color"
+                text
+                @click="snackbar.show = false"
+            >
+                OK
+            </v-btn>
+         </v-snackbar>
     </div>
 </template>
 <script lang="ts">
@@ -44,6 +60,24 @@ export default Vue.extend({
     components: {
         Login,
         Registration,
-    }
+    },
+    methods: {
+        inform(info){
+            Object.assign(
+                this.snackbar,
+                {
+                    show: true,
+                    ...info
+                },
+            )
+        }
+    },
+    data: () => ({
+        snackbar: {
+            show: false,
+            message: null,
+            color: null,            
+        }
+    })
 })
 </script>
