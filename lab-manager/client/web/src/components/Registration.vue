@@ -10,6 +10,7 @@
                 <v-col>
                     <v-text-field
                         label="Nome Completo"
+                        prepend-icon="mdi-account"
                         clearable
                         v-model="data.fullName"
                         required
@@ -20,6 +21,7 @@
             <v-row>
                 <v-col>
                     <v-text-field
+                        prepend-icon="mdi-email"
                         label="E-mail"
                         clearable
                         :rules="[rules.email, rules.required]"
@@ -32,6 +34,7 @@
                 <v-col>
                     <v-text-field
                         label="Nome de Usuário"
+                        prepend-icon="mdi-badge-account"
                         clearable
                         v-model="data.username"
                         :rules="[rules.required, rules.username]"
@@ -46,6 +49,7 @@
                         clearable
                         v-model="data.password"
                         :rules="[rules.required]"
+                        prepend-icon="mdi-key-variant"
                         required
                         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="show1 ? 'text' : 'password'"
@@ -59,7 +63,8 @@
                         label="Confirme sua senha"
                         clearable
                         v-model="passwordVerify"
-                        required                        
+                        required
+                        prepend-icon="mdi-key-variant"
                         :rules="[rules.password, rules.required]"
                         :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="show2 ? 'text' : 'password'"
@@ -72,6 +77,7 @@
                     <v-text-field
                         label="Nome do laboratório"
                         :rules="[rules.required, rules.name]"
+                        prepend-icon="mdi-flask"
                         clearable
                         v-model="data.lab"
                         required

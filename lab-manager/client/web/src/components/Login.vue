@@ -12,6 +12,7 @@
                         label="Nome de Usuário"
                         :rules="rules.username"
                         clearable
+                        prepend-icon="mdi-badge-account"
                         v-model="data.username"
                         required
                     ></v-text-field>
@@ -25,6 +26,7 @@
                         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="show1 ? 'text' : 'password'"
                         @click:append="show1 = !show1"
+                        prepend-icon="mdi-key-variant"
                         counter
                         v-model="data.password"
                         required
