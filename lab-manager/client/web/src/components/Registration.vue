@@ -45,8 +45,11 @@
                         label="Senha"
                         clearable
                         v-model="data.password"
-                        :rules="[rules.required, rules.password]"
+                        :rules="[rules.required]"
                         required
+                        :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="show1 ? 'text' : 'password'"
+                        @click:append="show1 = !show1"
                     ></v-text-field>
                 </v-col>
             </v-row>
@@ -56,8 +59,11 @@
                         label="Confirme sua senha"
                         clearable
                         v-model="passwordVerify"
-                        required
+                        required                        
                         :rules="[rules.password, rules.required]"
+                        :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="show2 ? 'text' : 'password'"
+                        @click:append="show2 = !show2"
                     ></v-text-field>
                 </v-col>
             </v-row>
@@ -77,7 +83,7 @@
                     <v-checkbox
                         required
                         v-model="checkbox"
-                        :rules="[rules.required]"
+                        :rules="[rules.terms]"
                         class="mt-0"
                     >
                         <template v-slot:label>
@@ -121,6 +127,8 @@ export default Vue.extend({
     name: "registration",
     data(){
         return {
+            show1: false,
+            show2: false,
             loading: false,
             passwordVerify: null,
             data: {
@@ -136,6 +144,7 @@ export default Vue.extend({
         rules(){
             return {
                 required: v => !!v || "Este campo é obrigatório",
+                terms: v => !!v || "Você precisa concordar com os termos",
                 name: v => /((-?[A-z])+[A-Za-z]+[ ]?)$/igm.test(v) || "Digite um nome válido",
                 email: v => /^([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)$/igm.test(v) || 'Digite um email válido',
                 username: v => /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/igm.test(v) || "Nome de usuário inválido",

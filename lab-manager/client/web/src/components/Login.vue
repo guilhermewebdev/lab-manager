@@ -24,11 +24,11 @@
                         clearable
                         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="show1 ? 'text' : 'password'"
+                        @click:append="show1 = !show1"
                         counter
                         v-model="data.password"
                         required
                         :rules="rules.password"
-                        @click:append="show1 = !show1"
                     ></v-text-field>
                 </v-col>
             </v-row>
