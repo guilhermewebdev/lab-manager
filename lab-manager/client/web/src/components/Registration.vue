@@ -79,7 +79,7 @@
                         :rules="[rules.required, rules.name]"
                         prepend-icon="mdi-flask"
                         clearable
-                        v-model="data.lab"
+                        v-model="data.laboratory"
                         required
                     ></v-text-field>
                 </v-col>
@@ -129,6 +129,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import REGISTRATION from '@/graphql/Registration.gql'
 export default Vue.extend({
     name: "registration",
     data(){
@@ -142,7 +143,7 @@ export default Vue.extend({
                 username: null,
                 email: null,
                 password: null,
-                lab: null,                
+                laboratory: null,                
             },
         }
     },
@@ -158,11 +159,23 @@ export default Vue.extend({
             }
         }
     },
+    apollo: {
+        registration: REGISTRATION,
+        $client: 'b',
+    },
     methods: {
         submit(){
+            this.loading = true
             if(this.$refs.form.validate()){
-                alert()
+                this.$apollo.mutate({
+                    mutation: REGISTRATION,
+                    variables: this.$data.data
+                })
+                    .then(console.log)
+                    .catch(error => console.log(error))
+                    .finally(() => this.loading = false)
             }
+            this.$data.loading = false
         }
     }
 })

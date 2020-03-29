@@ -26,5 +26,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', csrf_exempt(PrivateGraphQLView.as_view(graphiql=True, schema=schema))),
     path('api/public/', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=public_schema))),
-    path('api/oauth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('api/oauth/', csrf_exempt(include('oauth2_provider.urls', namespace='oauth2_provider'))),
 ]

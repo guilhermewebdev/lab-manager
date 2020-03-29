@@ -1,17 +1,21 @@
-input RegisterMutationInput{
-    fullName: String!
-    username: String!
-    email: String!
-    password: String!
-    lab: String!
-    clientMutationId: String
-}
-
-mutation Register($input:RegisterMutationInput!){
-    register(input:$input){
-        fullName
-        username
-        email
-        laboratory
+mutation Register(
+    $fullName: String!,
+    $username: String!,
+    $email: String!,
+    $password: String!,
+    $laboratory: String!,
+){
+    register(input:{
+        fullName: $fullName,
+        username: $username,
+        email: $email,
+        password: $password,
+        laboratory: $laboratory,
+    }){
+        professional{
+            fullName
+            username
+            email
+        }
     }
 }
