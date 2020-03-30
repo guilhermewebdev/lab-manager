@@ -40,12 +40,12 @@
       </v-btn>
     </v-app-bar>
     <v-navigation-drawer
-      absolute
+      app
       v-model="drawer"
       bottom
       temporary
     >
-      Teste
+      <navigation></navigation>
     </v-navigation-drawer>
     <v-content>
       <router-view></router-view>
@@ -57,6 +57,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import gql from 'graphql-tag'
+import Navigation from '@/components/Navigation.vue';
 import VerifyAuth from '@/components/VerifyAuth';
 import { mapState } from "vuex";
 export default Vue.extend({
@@ -66,6 +67,7 @@ export default Vue.extend({
   }),
   components: {
     VerifyAuth,
+    Navigation,
   },
   beforeDestroy(){
     if(!localStorage.getItem('keep')){

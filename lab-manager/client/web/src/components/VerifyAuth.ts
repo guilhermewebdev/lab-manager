@@ -58,8 +58,8 @@ export default Vue.extend({
         delta(){
             setTimeout(() => {
                 this.refreshToken()
-                requestAnimationFrame(this.delta)
-            }, 4.5*60*1000)
+                this.delta()
+            }, 4*60*1000)
         }
     },
     mounted(){
