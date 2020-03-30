@@ -30,6 +30,7 @@ export default new Vuetify({
         warning: '#FFC107'
       }
     },
+    dark: Boolean(localStorage.getItem('dark'))
   },
     lang: {
       locales: { pt },
