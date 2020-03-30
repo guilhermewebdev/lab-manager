@@ -24,10 +24,11 @@ const apolloClient = new ApolloClient({
     cache,
 })
 
+const publicCache = new InMemoryCache()
 // Create the public client
 const publicClient = new ApolloClient({
     link: publicLink,
-    cache,
+    cache: publicCache,
 })
 
 export default new VueApollo({

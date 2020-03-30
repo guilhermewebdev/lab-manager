@@ -1,7 +1,6 @@
 import graphene
 from labs import schemas as labs
 from graphene_django.debug import DjangoDebug
-from .middlewares import auth_verify
 from crm import schemas as crm
 from jobs import schemas as jobs
 import graphql_jwt

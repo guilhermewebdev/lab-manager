@@ -44,8 +44,6 @@ class Mutation(graphene.ObjectType):
 
 class PublicMutation(graphene.ObjectType):
     register = registration.RegisterMutation.Field()
-    login = registration.LoginMutation.Field()
-    logout = registration.LogOutMutation.Field()
 
 class PublicQuery(graphene.ObjectType):
     is_authenticated = graphene.Boolean()

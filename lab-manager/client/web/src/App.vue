@@ -51,20 +51,23 @@
     <v-content>
       <router-view></router-view>
     </v-content>
+    <verify-auth></verify-auth>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-
+import VerifyAuth from '@/components/VerifyAuth';
 export default Vue.extend({
   name: 'App',
 
   components: {
+    VerifyAuth,
   },
-
-  data: () => ({
-    drawer:false,
-  }),
+  beforeDestroy(){
+    if(!localStorage.getItem('keep')){
+      document.cookie = 'FAS_CRI=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+  },  
 });
 </script>

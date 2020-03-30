@@ -36,6 +36,7 @@
         </v-container>
          <v-snackbar
             v-model="snackbar.show"
+            :color="snackbar.color"
             vertical
             multi-line
             right
@@ -43,7 +44,6 @@
         >
             {{ snackbar.message }}
             <v-btn
-                :color="snackbar.color"
                 text
                 @click="snackbar.show = false"
             >
@@ -63,13 +63,8 @@ export default Vue.extend({
     },
     methods: {
         inform(info){
-            Object.assign(
-                this.snackbar,
-                {
-                    show: true,
-                    ...info
-                },
-            )
+            Object.assign(this.snackbar, info)
+            this.snackbar.show = true
         }
     },
     data: () => ({

@@ -179,7 +179,7 @@ export default Vue.extend({
                     .catch(error => {
                         this.$emit('inform', {
                             message: error.message,
-                            color: "error"
+                            color: 'error'
                         })
                         this.validation = false
                     })
