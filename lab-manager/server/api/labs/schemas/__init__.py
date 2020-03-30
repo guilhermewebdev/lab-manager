@@ -5,6 +5,7 @@ from labs import models, forms, get_lab
 from django.contrib.auth import authenticate, login
 from django.utils.translation import gettext as _
 from . import registration, laboratory, role, professional
+from graphql_jwt.decorators import login_required
 
 class Query(object):
     laboratories = graphene.List(
@@ -16,6 +17,7 @@ class Query(object):
         lab=graphene.Int()
     )
 
+    @login_required
     def resolve_laboratories(self, info, **kwargs):
         if info.context.user.is_authenticated:
             if 'lab' in kwargs:
@@ -24,6 +26,7 @@ class Query(object):
         else:
             return models.Laboratory.objects.none()
 
+    @login_required
     def resolve_laboratory(self, info, **kwargs):
         if info.context.user.is_authenticated:
             lab = kwargs.pop('lab')

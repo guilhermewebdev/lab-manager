@@ -3,6 +3,7 @@ from graphene_django import types
 from graphene_django.forms import mutation
 from labs import models, forms, get_lab
 from django.utils.translation import gettext as _
+from graphql_jwt.decorators import login_required
 
 class ProfessionalType(types.DjangoObjectType):
 
@@ -21,6 +22,7 @@ class ProfessionalMutation(mutation.DjangoFormMutation):
     professional = graphene.Field(ProfessionalType)
 
     @classmethod
+    @login_required
     def perform_mutate(cls, form, info):
         lab = get_lab(info.context.user.labs, form.cleaned_data.pop('lab'))
         user = None

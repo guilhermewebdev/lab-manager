@@ -1,6 +1,7 @@
 from graphene_django import types
 import graphene
 from jobs import models
+from graphql_jwt.decorators import login_required
 
 class StageType(types.DjangoObjectType):
 
@@ -24,9 +25,11 @@ class StageQuery:
         process=graphene.ID(),
     )
 
+    @login_required
     def resolve_stages(parent, info, **kwargs):
         return parent.stages.filter(**kwargs).all().iterator()
 
+    @login_required
     def resolve_stage(parent, info, **kwargs):
         return parent.stages.get(**kwargs)
 
@@ -42,6 +45,7 @@ class StageMutation(graphene.Mutation):
     created = graphene.Boolean()
 
     @staticmethod
+    @login_required
     def mutate(root, info, input):
         data = dict(
             index=input['index'],
@@ -69,6 +73,7 @@ class StageDeletion(graphene.Mutation):
     ok = graphene.Boolean(required=True)
 
     @staticmethod
+    @login_required
     def mutate(root, info, input):
         return StageDeletion(
             ok=models.Stage.objects.filter(

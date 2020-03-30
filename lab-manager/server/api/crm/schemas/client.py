@@ -4,6 +4,7 @@ from graphene import relay
 from graphene_django.rest_framework import mutation
 from crm import models
 from . import patient
+from graphql_jwt.decorators import login_required
  
 class TelephoneType(types.DjangoObjectType):
 
@@ -21,7 +22,8 @@ class ClientType(
     types.DjangoObjectType
 ):
     telephones = graphene.List(TelephoneType)
-
+    
+    @login_required
     def resolve_telephones(parent, info, **kwargs):
         return parent.telephones.filter(**kwargs).all().iterator()
 
@@ -48,9 +50,11 @@ class ClientQuery(types.ObjectType):
         pk=graphene.ID(),
     )
     
+    @login_required
     def resolve_clients(parent, info, **kwargs):
         return parent.clients.filter(**kwargs).all().iterator()
 
+    @login_required
     def resolve_client(parent, info, **kwargs):
         return parent.clients.get(**kwargs)
 
@@ -71,6 +75,7 @@ class ClientMutation(graphene.Mutation):
     client = graphene.Field(ClientType)
 
     @staticmethod
+    @login_required
     def mutate(root, info, input):
         telephones = []
         client = None
@@ -122,6 +127,7 @@ class ClientDeletion(graphene.Mutation):
     ok = graphene.Boolean()
 
     @staticmethod
+    @login_required
     def mutate(root, info, input):
         deleted = models.Client.objects.filter(**input).delete()
         return ClientDeletion(ok=deleted)

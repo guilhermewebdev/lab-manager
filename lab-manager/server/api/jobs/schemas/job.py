@@ -2,6 +2,7 @@ from graphene_django import types
 import graphene
 from jobs import models
 from crm.models import Patient
+from graphql_jwt.decorators import login_required
 
 class JobType(types.DjangoObjectType):
 
@@ -31,9 +32,11 @@ class JobQuery:
         lab=graphene.Int(required=True),
     )
 
+    @login_required
     def resolve_jobs(parent, info, **kwargs):
         return parent.jobs.filter(**kwargs).all().iterator()
 
+    @login_required
     def resolve_job(parent, info, **kwargs):
         return parent.jobs.get(**kwargs)
 
@@ -57,6 +60,7 @@ class JobMutation(graphene.Mutation):
     created = graphene.Boolean()
 
     @staticmethod
+    @login_required
     def mutate(root, info, input):
         job = None
         created = False
@@ -99,6 +103,7 @@ class JobDeletion(graphene.Mutation):
     ok = graphene.Boolean(required=True)
 
     @staticmethod
+    @login_required
     def mutate(root, info, input):
         return JobDeletion(
             ok=models.Job.objects.filter(

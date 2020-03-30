@@ -2,6 +2,7 @@ from graphene_django import types
 import graphene
 from jobs import models
 from . import stage
+from graphql_jwt.decorators import login_required
 
 class ProcessType(
     types.DjangoObjectType,
@@ -26,9 +27,11 @@ class ProcessQuery:
     processes = graphene.List(ProcessType)
     process = graphene.Field(ProcessType)
 
+    @login_required
     def resolve_processes(parent, info, **kwargs):
         return parent.processes.filter(**kwargs).all().iterator()
 
+    @login_required
     def resolve_process(parent, info, **kwargs):
         return parent.processes.get(**kwargs)
 
@@ -50,6 +53,7 @@ class ProcessMutation(graphene.Mutation):
     created = graphene.Boolean()
 
     @staticmethod
+    @login_required
     def mutate(root, info, input):
         process:models.Process = None
         created:bool = False
@@ -107,6 +111,7 @@ class ProcessDeletion(graphene.Mutation):
     ok = graphene.Boolean()
 
     @staticmethod
+    @login_required
     def mutate(root, info, input):
         return ProcessDeletion(
             ok=bool(

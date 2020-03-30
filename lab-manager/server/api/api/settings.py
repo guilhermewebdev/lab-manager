@@ -143,6 +143,11 @@ AUTHENTICATION_BACKENDS = [
     'graphql_jwt.backends.JSONWebTokenBackend',
 ]
 
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_COOKIE_PATH': '/api/',
+    'JWT_COOKIE_NAME': 'FAS_CRI',
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

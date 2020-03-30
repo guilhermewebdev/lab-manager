@@ -39,6 +39,7 @@
                     <v-switch
                         label="Manter conectado"
                         class="mt-0"
+                        v-model="keep"
                     ></v-switch>
                 </v-col>
                 <v-col class="pt-4">
@@ -79,6 +80,7 @@ export default Vue.extend({
                 password: null,
             },
             loading: false,
+            keep: false,
         }
     },
     apollo: {
@@ -93,7 +95,14 @@ export default Vue.extend({
                     mutation: LOGIN,
                     variables: this.$data.data,
                 })
-                    .then(console.log)
+                    .then(response => {
+                        console.log(response)
+                        if(this.keep){
+                            localStorage.setItem('teste', response.data)
+                        }else{
+                            sessionStorage.setItem('teste', response.data)
+                        }
+                    })
                     .catch(error => console.log(error))
                     .finally(() => this.loading = false)
             }
