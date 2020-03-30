@@ -8,7 +8,7 @@ Vue.use(VueApollo)
 
 function getHeaders(){
     const headers = {};
-    const token = localStorage.getItem('FAS_CRI') || sessionStorage.getItem('FAS_CRI');
+    const token = sessionStorage.getItem('FAS_CRI') || localStorage.getItem('FAS_CRI');
     if(token) Object.assign(headers, {
         authorization: `JWT ${token}`
     })
