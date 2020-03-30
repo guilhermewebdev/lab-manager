@@ -63,11 +63,8 @@ export default Vue.extend({
         }
     },
     mounted(){
-        if(this.isAuthenticated) this.delta()
-        else{
-            this.refreshToken()
-            this.delta()
-        }
+        this.refreshToken()
+        this.delta()
     },
     watch: {
         isAuthenticated(newValue){

@@ -7,6 +7,7 @@
       dense
     >
       <v-app-bar-nav-icon
+        v-if="isAuthenticated"
         @click.stop="drawer = !drawer"
       ></v-app-bar-nav-icon>
       <div class="d-flex align-center">
@@ -42,6 +43,7 @@
     <v-navigation-drawer
       app
       v-model="drawer"
+      v-if="isAuthenticated"
       bottom
       temporary
     >
