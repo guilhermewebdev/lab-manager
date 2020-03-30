@@ -61,7 +61,9 @@ import VerifyAuth from '@/components/VerifyAuth';
 import { mapState } from "vuex";
 export default Vue.extend({
   name: 'App',
-
+  data: () => ({
+    drawer: false,
+  }),
   components: {
     VerifyAuth,
   },

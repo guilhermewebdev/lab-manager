@@ -25,6 +25,13 @@ export default Vue.extend({
                         token: sessionStorage.getItem('FAS_CRI') || localStorage.getItem('FAS_CRI')
                     }
                 })
+                    .then(response => {
+                        if(sessionStorage.getItem('FAS_CRI')){
+                            sessionStorage.setItem('FAS_CRI', response.data.tokenAuth.token)
+                        }else{
+                            localStorage.setItem('FAS_CRI', response.data.tokenAuth.token)
+                        }
+                    })
             }else{
                 this.$apollo.mutate({
                     mutation: gql`
@@ -39,6 +46,13 @@ export default Vue.extend({
                         token: sessionStorage.getItem('FAS_CRI') || localStorage.getItem('FAS_CRI')
                     }
                 })
+                    .then(response => {
+                        if(sessionStorage.getItem('FAS_CRI')){
+                            sessionStorage.setItem('FAS_CRI', response.data.tokenAuth.token)
+                        }else{
+                            localStorage.setItem('FAS_CRI', response.data.tokenAuth.token)
+                        }
+                    })
             }
         },
         delta(){
@@ -49,7 +63,11 @@ export default Vue.extend({
         }
     },
     mounted(){
-        this.delta()
+        if(this.isAuthenticated) this.delta()
+        else{
+            this.refreshToken()
+            this.delta()
+        }
     },
     watch: {
         isAuthenticated(newValue){
