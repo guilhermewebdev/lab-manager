@@ -25,7 +25,7 @@ from graphql_jwt.decorators import jwt_cookie
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', csrf_exempt(jwt_cookie(GraphQLView.as_view(graphiql=True, schema=schema)))),
-    path('api/public/', csrf_exempt(jwt_cookie(GraphQLView.as_view(graphiql=True, schema=public_schema)))),
+    path('api/', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
+    path('api/public/', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=public_schema))),
     path('api/oauth/', csrf_exempt(include('oauth2_provider.urls', namespace='oauth2_provider'))),
 ]

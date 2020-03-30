@@ -30,13 +30,12 @@
       </div>
 
       <v-spacer></v-spacer>
-
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
         text
+        @click="logout"
+        v-if="isAuthenticated"
       >
-        <span class="mr-2">Latest Release</span>
+        <span class="mr-2">Sair</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
@@ -51,13 +50,15 @@
     <v-content>
       <router-view></router-view>
     </v-content>
-    <verify-auth></verify-auth>
+    <verify-auth ref="verify"></verify-auth>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import gql from 'graphql-tag'
 import VerifyAuth from '@/components/VerifyAuth';
+import { mapState } from "vuex";
 export default Vue.extend({
   name: 'App',
 
@@ -68,6 +69,19 @@ export default Vue.extend({
     if(!localStorage.getItem('keep')){
       document.cookie = 'FAS_CRI=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
-  },  
+  },
+  methods: {
+    logout(){
+      sessionStorage.removeItem('FAS_CRI')
+      localStorage.removeItem('FAS_CRI')
+      this.$store.commit('setAuth', false)
+      this.$router.push('/')
+    },    
+  },
+  computed: {
+    ...mapState([
+      'isAuthenticated'
+    ])
+  }
 });
 </script>

@@ -35,5 +35,6 @@ class PublicMutation(
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
+    logout = graphql_jwt.Revoke.Field()
 
 public_schema = graphene.Schema(mutation=PublicMutation, query=PublicQuery)

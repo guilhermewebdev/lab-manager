@@ -10,6 +10,9 @@ export default new Vuex.Store({
   mutations: {
     setAuth(state, payload){
       state.isAuthenticated = payload
+    },
+    setToken(state, payload){
+      state.token = payload
     }
   },
   actions: {

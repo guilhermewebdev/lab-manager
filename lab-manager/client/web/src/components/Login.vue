@@ -62,6 +62,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import LOGIN from '@/graphql/Login.gql'
+import gql from 'graphql-tag'
 export default Vue.extend({
     data(){
         return {
@@ -96,7 +97,9 @@ export default Vue.extend({
                     variables: this.$data.data,
                 })
                     .then(response => {
-                        localStorage.setItem('keep', this.$data.keep)
+                        if(this.keep) localStorage.setItem('FAS_CRI', response.data.tokenAuth.token)
+                        else sessionStorage.setItem('FAS_CRI', response.data.tokenAuth.token)
+                        this.$store.commit('setAuth', !!response.data.tokenAuth.token)
                     })
                     .catch(error => {
                         this.$emit('inform', {

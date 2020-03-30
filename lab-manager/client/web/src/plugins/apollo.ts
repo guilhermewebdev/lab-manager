@@ -5,14 +5,26 @@ import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 
 Vue.use(VueApollo)
+
+function getHeaders(){
+    const headers = {};
+    const token = localStorage.getItem('FAS_CRI') || sessionStorage.getItem('FAS_CRI');
+    if(token) Object.assign(headers, {
+        authorization: `JWT ${token}`
+    })
+    return headers;
+}
 // HTTP connection to the API
 const httpLink = createHttpLink({
   // You should use an absolute URL here
   uri: 'http://localhost/api/',
+  headers: getHeaders(),
+  
 })
 
 const publicLink = createHttpLink({
     uri: 'http://localhost/api/public/',
+    headers: getHeaders(),
 })
 
 // Cache implementation
@@ -21,7 +33,7 @@ const cache = new InMemoryCache()
 // Create the apollo client
 const apolloClient = new ApolloClient({
     link: httpLink,
-    cache,
+    cache,    
 })
 
 const publicCache = new InMemoryCache()

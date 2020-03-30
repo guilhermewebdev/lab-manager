@@ -136,16 +136,14 @@ AUTHENTICATION_BACKENDS = [
     # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
     'axes.backends.AxesBackend',
     # GraphQL jwt athentication backend.
+    'graphql_jwt.backends.JSONWebTokenBackend',
     # Django ModelBackend is the default authentication backend.
     'django.contrib.auth.backends.ModelBackend',
     'oauth2_provider.backends.OAuth2Backend',
-    'graphql_jwt.backends.JSONWebTokenBackend',
 ]
 
 GRAPHQL_JWT = {
     'JWT_VERIFY_EXPIRATION': True,
-    'JWT_COOKIE_PATH': '/api/',
-    'JWT_COOKIE_NAME': 'FAS_CRI',
 }
 
 # Internationalization
