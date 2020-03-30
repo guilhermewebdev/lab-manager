@@ -96,14 +96,14 @@ export default Vue.extend({
                     variables: this.$data.data,
                 })
                     .then(response => {
-                        console.log(response)
-                        if(this.keep){
-                            localStorage.setItem('teste', response.data)
-                        }else{
-                            sessionStorage.setItem('teste', response.data)
-                        }
+                        localStorage.setItem('keep', this.$data.keep)
                     })
-                    .catch(error => console.log(error))
+                    .catch(error => {
+                        this.$emit('inform', {
+                            message: error.message,
+                            color: 'error',
+                        })
+                    })
                     .finally(() => this.loading = false)
             }
             this.loading = false;
