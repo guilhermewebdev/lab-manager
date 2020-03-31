@@ -42,10 +42,10 @@ class Mutation(graphene.ObjectType):
     create_laboratory = laboratory.LaboratoryMutation.Field()
     upsert_professional = professional.ProfessionalMutation.Field()
 
-class PublicMutation(graphene.ObjectType):
+class PublicMutation:
     register = registration.RegisterMutation.Field()
 
-class PublicQuery(graphene.ObjectType):
+class PublicQuery:
     is_authenticated = graphene.Boolean()
 
     def resolve_is_authenticated(self, info):

@@ -8,6 +8,7 @@ import graphql_jwt
 class Query(
     graphene.ObjectType,
     labs.Query,
+    labs.PublicQuery,
 ):
     debug = graphene.Field(DjangoDebug, name="_debug")
 
@@ -16,20 +17,7 @@ class Mutation(
     crm.Mutation,
     jobs.Mutation,
     graphene.ObjectType,
-):
-    debug = graphene.Field(DjangoDebug, name="_debug")
-
-schema = graphene.Schema(query=Query, mutation=Mutation)
-
-class PublicQuery(
-    labs.PublicQuery,
-    graphene.ObjectType
-):
-    debug = graphene.Field(DjangoDebug, name="_debug")
-
-class PublicMutation(
     labs.PublicMutation,
-    graphene.ObjectType,
 ):
     debug = graphene.Field(DjangoDebug, name="_debug")
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
@@ -37,4 +25,4 @@ class PublicMutation(
     refresh_token = graphql_jwt.Refresh.Field()
     logout = graphql_jwt.Revoke.Field()
 
-public_schema = graphene.Schema(mutation=PublicMutation, query=PublicQuery)
+schema = graphene.Schema(query=Query, mutation=Mutation)
