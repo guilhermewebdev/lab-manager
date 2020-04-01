@@ -13,8 +13,8 @@
                     xl="4"
                 >
                     <v-card
-                        shaped
-                        raised
+                        tile
+                        hover
                     >
                         <v-card-text>
                             <v-tabs

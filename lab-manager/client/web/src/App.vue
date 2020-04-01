@@ -5,6 +5,9 @@
       color="primary"
       dark
       dense
+      elevate-on-scroll
+      hover
+      tile
     >
       <v-app-bar-nav-icon
         v-if="isAuthenticated"
