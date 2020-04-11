@@ -15,6 +15,7 @@
                     <v-card
                         tile
                         hover
+                        :disabled="loading"
                     >
                         <v-card-text>
                             <v-tabs
@@ -23,10 +24,10 @@
                             <v-tab>Entrar</v-tab>
                             <v-tab>Cadastrar</v-tab>
                             <v-tab-item>
-                                <login @inform="inform"></login>
+                                <login v-model="loading" @inform="inform"></login>
                             </v-tab-item>
                             <v-tab-item>
-                                <registration @inform="inform"></registration>
+                                <registration v-model="loading" @inform="inform"></registration>
                             </v-tab-item>
                         </v-tabs>
                         </v-card-text>                        
@@ -71,8 +72,9 @@ export default Vue.extend({
         snackbar: {
             show: false,
             message: null,
-            color: null,            
-        }
+            color: null,
+        },
+        loading: false,
     })
 })
 </script>

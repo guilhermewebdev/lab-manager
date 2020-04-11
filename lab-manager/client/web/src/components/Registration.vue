@@ -130,7 +130,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import REGISTRATION from '@/graphql/Registration.gql'
+import REGISTRATION from '@/graphql/remote/Registration.gql'
 export default Vue.extend({
     name: "registration",
     data(){
@@ -163,7 +163,11 @@ export default Vue.extend({
     },
     apollo: {
         registration: REGISTRATION,
-        $client: 'b',
+    },
+    watch: {
+        async loading(newValue, oldValue){
+            this.$emit('input', newValue)
+        }
     },
     methods: {
         submit(){

@@ -9,13 +9,6 @@
           "user-agent": "JS GraphQL"
         },
         "introspect": false
-      },
-      "Public Endpoint": {
-        "url": "http://localhost/api/public/",
-        "headers": {
-          "user-agent": "JS GraphQL"
-        },
-        "introspect": false
       }
     }
   }

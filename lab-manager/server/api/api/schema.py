@@ -25,4 +25,8 @@ class Mutation(
     refresh_token = graphql_jwt.Refresh.Field()
     logout = graphql_jwt.Revoke.Field()
 
-schema = graphene.Schema(query=Query, mutation=Mutation)
+class Subscription(graphene.ObjectType):
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
+
+schema = graphene.Schema(query=Query, mutation=Mutation, subscription=Subscription)

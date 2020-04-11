@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 
 export default Vue.extend({
     apollo: {
-        $client: 'b',
+        $client: 'a',
         isAuthenticated: gql`
             query {
                 isAuthenticated

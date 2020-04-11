@@ -61,8 +61,9 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import LOGIN from '@/graphql/Login.gql'
+import LOGIN from '@/graphql/remote/Login.gql'
 import gql from 'graphql-tag'
+import { onLogin } from '@/plugins/apollo';
 export default Vue.extend({
     data(){
         return {
@@ -85,8 +86,12 @@ export default Vue.extend({
         }
     },
     apollo: {
-        login:LOGIN,
-        $client: 'b',
+        login: LOGIN,
+    },
+    watch: {
+        async loading(newValue, oldValue){
+            this.$emit('input', newValue)
+        }
     },
     methods: {
         async submit(){
@@ -97,9 +102,7 @@ export default Vue.extend({
                     variables: this.$data.data,
                 })
                     .then(response => {
-                        if(this.keep) localStorage.setItem('FAS_CRI', response.data.tokenAuth.token)
-                        else sessionStorage.setItem('FAS_CRI', response.data.tokenAuth.token)
-                        this.$store.commit('setAuth', !!response.data.tokenAuth.token)
+                        return onLogin(this.$apollo.getClient(), response.data.tokenAuth.token, this.keep)
                     })
                     .catch(error => {
                         this.$emit('inform', {
@@ -108,8 +111,9 @@ export default Vue.extend({
                         })
                     })
                     .finally(() => this.loading = false)
+            }else{
+                this.loading = false;
             }
-            this.loading = false;
         },
     }
 })
