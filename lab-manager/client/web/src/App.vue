@@ -65,6 +65,7 @@ import gql from 'graphql-tag'
 import Navigation from '@/components/Navigation.vue';
 import VerifyAuth from '@/components/VerifyAuth';
 import { mapState } from "vuex";
+import { onLogout } from '@/plugins/apollo'
 export default Vue.extend({
   name: 'App',
   data: () => ({
@@ -81,9 +82,7 @@ export default Vue.extend({
   },
   methods: {
     logout(){
-      sessionStorage.removeItem('FAS_CRI')
-      localStorage.removeItem('FAS_CRI')
-      this.$store.commit('setAuth', false)
+      onLogout(this.$apollo.getClient())
       this.$router.push('/')
     },    
   },

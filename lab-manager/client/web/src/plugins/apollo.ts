@@ -63,7 +63,41 @@ const defaultOptions = {
     // clientState: { resolvers: { ... }, defaults: { ... } }
 }
 
-export function verifyAuth(client: ApolloClient<any>){
+export async function toggleAuth(apolloClient: any, status: boolean, action?: string){
+    if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
+    try {
+        store.commit('setAuth', status)
+        await apolloClient.resetStore()
+    } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log(`%cError on cache reset (${action})', 'color: orange;`, e.message)
+    }
+}
+
+export async function refreshAuth(client: ApolloClient<any>): Promise<any>{
+    const keepToken: string|null = localStorage.getItem(AUTH_TOKEN)
+    const token: string|null = getToken()
+    const keep: boolean = keepToken === token
+    return client.mutate({
+        mutation: require('@/graphql/remote/RefreshToken.gql'),
+        variables: {
+            token
+        }
+    })
+        .then(response => {
+            const token = response.data.refreshToken.token
+            if (typeof (localStorage && sessionStorage) !== 'undefined' && token) {
+                keep? localStorage.setItem(AUTH_TOKEN, token) : sessionStorage.setItem(AUTH_TOKEN, token)
+            }
+            toggleAuth(client, !!response.data.refreshToken.payload.username, 'refresh')
+            return setInterval(() => {                
+                return refreshAuth(client)
+            }, 1000 * 60 * 4)
+        })
+        .catch(console.error)
+}
+
+export async function verifyAuth(client: ApolloClient<any>){
     const token: string|null = getToken()
     if(token){
         client.mutate({
@@ -73,7 +107,7 @@ export function verifyAuth(client: ApolloClient<any>){
             }
         })
             .then(response => {
-                store.commit('setAuth', !!response.data.verifyToken.payload.username)                
+                toggleAuth(client, !!response.data.verifyToken.payload.username, 'verify')
             })
     }
 }
@@ -109,28 +143,16 @@ export async function onLogin (apolloClient: any, token: string, keep: boolean) 
     if (typeof (localStorage && sessionStorage) !== 'undefined' && token) {
         keep? localStorage.setItem(AUTH_TOKEN, token) : sessionStorage.setItem(AUTH_TOKEN, token)
     }
-    if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
-    try {
-        await apolloClient.resetStore()
-        store.commit('setAuth', !!token)
-    } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log('%cError on cache reset (login)', 'color: orange;', e.message)
-    }
+    await toggleAuth(apolloClient, !!token, 'login')
 }
 
 // Manually call this when user log out
 export async function onLogout (apolloClient: any) {
+    const token = getToken()
     if (typeof localStorage !== 'undefined') {
-        localStorage.removeItem(AUTH_TOKEN)
         sessionStorage.removeItem(AUTH_TOKEN)
+        localStorage.removeItem(AUTH_TOKEN)
     }
-    if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
-    try {
-        await apolloClient.resetStore()
-        store.commit('setAuth', false)
-    } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log('%cError on cache reset (logout)', 'color: orange;', e.message)
-    }
+    toggleAuth(apolloClient, false, 'logout')
 }
+

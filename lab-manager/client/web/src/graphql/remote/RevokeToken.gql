@@ -1,0 +1,5 @@
+mutation RevokeToken($refreshToken: String!) {
+  logout(refreshToken: $refreshToken) {
+    revoked
+  }
+}
