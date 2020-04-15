@@ -101,11 +101,12 @@ export default Vue.extend({
                     mutation: LOGIN,
                     variables: this.$data.data,
                 })
-                    .then(response => {
-                        return onLogin(this.$apollo.getClient(), response.data.tokenAuth.token, this.keep)
+                    .then(async (response) => {
+                        await onLogin(this.$apollo.getClient(), response.data.tokenAuth.token, this.keep)
+                        this.$router.go(-1)
                     })
-                    .catch(error => {
-                        this.$emit('inform', {
+                    .catch(async error => {
+                        return this.$emit('inform', {
                             message: error.message,
                             color: 'error',
                         })

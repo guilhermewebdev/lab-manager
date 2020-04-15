@@ -1,5 +1,5 @@
 <template>
-    <div id="register">
+    <div id="register" v-if="!isAuthenticated">
         <v-container>
             <v-row>
                 <v-col
@@ -57,15 +57,27 @@
 import Vue from 'vue'
 import Login from '@/components/Login.vue'
 import Registration from '@/components/Registration.vue'
+import { Route } from 'vue-router'
+import store from '@/store';
+
 export default Vue.extend({
     components: {
         Login,
         Registration,
     },
     methods: {
-        inform(info){
+        inform(info: any){
             Object.assign(this.snackbar, info)
             this.snackbar.show = true
+        }
+    },
+    beforeRouteEnter(to: Route, from: Route, next: Function){
+        if(!store.state.isAuthenticated) next({ query: { next: from.fullPath } });
+        else next(false);
+    },
+    computed: {
+        isAuthenticated(){
+            return store.state.isAuthenticated
         }
     },
     data: () => ({

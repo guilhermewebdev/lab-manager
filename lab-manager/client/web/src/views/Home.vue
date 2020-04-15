@@ -1,17 +1,26 @@
 <template>
   <div class="home">
-    <register v-if="!isAuthenticated"></register>
+    <v-container
+      fluid
+    >
+      <v-row>
+        <v-col cols="4">
+          <clients></clients>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Register from '@/views/Register.vue'
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
+import Clients from '@/components/Clients.vue';
+
 export default {
   name: 'Home',
   components: {
-    Register
+    Clients
   },
   computed: mapState([
     'isAuthenticated'

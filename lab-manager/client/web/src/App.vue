@@ -42,6 +42,10 @@
         <span class="mr-2">Sair</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
+      <v-btn
+        v-else
+        to="/auth"
+      >Entrar</v-btn>
     </v-app-bar>
     <v-navigation-drawer
       app
@@ -74,16 +78,14 @@ export default Vue.extend({
   components: {
     VerifyAuth,
     Navigation,
-  },
-  beforeDestroy(){
-    if(!localStorage.getItem('keep')){
-      document.cookie = 'FAS_CRI=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    }
-  },
+  },  
   methods: {
-    logout(){
+    async logout(){
       onLogout(this.$apollo.getClient())
-      this.$router.push('/')
+      .then(() => {
+        this.$router.push('auth')
+      })
+      .catch(alert)
     },    
   },
   computed: {

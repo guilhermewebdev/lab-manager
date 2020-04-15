@@ -64,14 +64,18 @@ const defaultOptions = {
 }
 
 export async function toggleAuth(apolloClient: any, status: boolean, action?: string){
-    if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
-    try {
-        store.commit('setAuth', status)
-        await apolloClient.resetStore()
-    } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(`%cError on cache reset (${action})', 'color: orange;`, e.message)
-    }
+    return new Promise((accept, reject) => {
+        if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
+        try {
+            store.commit('setAuth', status)
+            sessionStorage.setItem('isAuth', String(status))
+            accept(apolloClient.resetStore())
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(`%cError on cache reset (${action})', 'color: orange;`, e.message)
+            reject(e)
+        }
+    })
 }
 
 export async function refreshAuth(client: ApolloClient<any>): Promise<any>{
@@ -140,19 +144,15 @@ export function createProvider (options = {}) {
 
 // Manually call this when user log in
 export async function onLogin (apolloClient: any, token: string, keep: boolean) {
-    if (typeof (localStorage && sessionStorage) !== 'undefined' && token) {
-        keep? localStorage.setItem(AUTH_TOKEN, token) : sessionStorage.setItem(AUTH_TOKEN, token)
-    }
-    await toggleAuth(apolloClient, !!token, 'login')
+    keep? localStorage.setItem(AUTH_TOKEN, token) : sessionStorage.setItem(AUTH_TOKEN, token)
+    return toggleAuth(apolloClient, !!token, 'login');
 }
 
 // Manually call this when user log out
 export async function onLogout (apolloClient: any) {
-    const token = getToken()
-    if (typeof localStorage !== 'undefined') {
-        sessionStorage.removeItem(AUTH_TOKEN)
-        localStorage.removeItem(AUTH_TOKEN)
-    }
+    sessionStorage.removeItem(AUTH_TOKEN)
+    localStorage.removeItem(AUTH_TOKEN)
     toggleAuth(apolloClient, false, 'logout')
 }
 
+export default createProvider();
