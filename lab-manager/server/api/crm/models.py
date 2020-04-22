@@ -162,7 +162,7 @@ class Client(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             queryset = Client.objects.filter(lab=self.lab).order_by('index').reverse()
-            if queryset: self.index = queryset[0].index + 1
+            if queryset.exists(): self.index = queryset[0].index + 1
             else: self.index = 0
         return super(Client, self).save(*args, **kwargs)
 

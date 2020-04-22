@@ -81,7 +81,7 @@ class ClientMutation(graphene.Mutation):
         client = None
         if 'telephones' in input:
             telephones = input.pop('telephones')
-        if 'index' in input:
+        if 'index' in input and input['index'] != None:
             client = models.Client.objects.get(
                 lab=input.pop('lab'),
                 index=input.pop('index'),
@@ -99,8 +99,6 @@ class ClientMutation(graphene.Mutation):
             ).update(**input)
             client = models.Client.objects.get(id=client.id)
         else:
-            print(input)
-            print(telephones)
             client = models.Client(**input)
             client.save()
             if telephones != []:

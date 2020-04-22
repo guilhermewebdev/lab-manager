@@ -82,10 +82,10 @@ export default Vue.extend({
   methods: {
     async logout(){
       onLogout(this.$apollo.getClient())
-      .then(() => {
-        this.$router.push('auth')
-      })
-      .catch(alert)
+        .then(() => {
+          this.$router.push('auth')
+        })
+        .catch(alert)
     },    
   },
   computed: {

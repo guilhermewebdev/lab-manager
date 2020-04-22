@@ -1,0 +1,25 @@
+mutation Upsert(
+    $index: Int,
+    $lab: ID!,
+    $name: String!,
+    $telephones: [TelephoneInput],
+    $address: String!,
+    $email: String!,
+    $discount: Float,
+) {
+    upsertClient(input: {
+        index: $index
+        lab: $lab
+        name: $name
+        telephones: $telephones
+        address: $address
+        email: $email
+        discount: $discount
+    }){
+        client {
+            name
+            id
+            index
+        }
+    }
+}
