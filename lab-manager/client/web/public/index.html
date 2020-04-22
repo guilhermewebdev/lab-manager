@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html style="overflow: hidden;" lang="pt">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,8 +8,20 @@
     <title><%= htmlWebpackPlugin.options.title %></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+    <style lang="scss">
+      ::-webkit-scrollbar-track {
+          background-color: var(--v-secondary);
+      }
+      ::-webkit-scrollbar {
+          width: 6px;
+          background: var(--v-secondary);
+      }
+      ::-webkit-scrollbar-thumb {
+          background: var(--v-primary-base);
+      }
+      </style>
   </head>
-  <body>
+  <body style="overflow: hidden;">
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>

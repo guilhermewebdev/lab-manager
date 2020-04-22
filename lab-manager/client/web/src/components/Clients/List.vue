@@ -13,7 +13,7 @@
                     <v-toolbar-title>Dentistas</v-toolbar-title>
 
                     <v-spacer></v-spacer>
-                    <CreateClient></CreateClient>                   
+                    <CreateClient @created="addClient"></CreateClient>                   
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <v-btn icon v-on="on">
@@ -26,6 +26,7 @@
                   <v-list
                     class="overflow-y-auto"
                     :height="height"
+                    v-if="data.laboratory.clients.length > 0"
                   >
                     <v-list-item
                       v-for="(client, index) in data.laboratory.clients"
@@ -34,6 +35,7 @@
                     >
                       <v-list-item-content>
                         <v-list-item-title v-text="client.name"></v-list-item-title>
+                        <v-list-item-subtitle>{{ client.telephones.map(tel => tel.telephone).join('; ') }}</v-list-item-subtitle>
                       </v-list-item-content>
                       <v-list-item-action>
                         <v-tooltip bottom>
@@ -47,6 +49,7 @@
                       </v-list-item-action>
                     </v-list-item>
                   </v-list>
+                  
               </v-card>
             </template>
         </ApolloQuery>
@@ -69,7 +72,8 @@ export default Vue.extend({
     methods: {
       updateHeight(){
         this.height = window.innerHeight - 96;
-      }
+      },
+      addClient(){alert()}
     },
     mounted(){
         this.updateHeight()

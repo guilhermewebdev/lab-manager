@@ -108,7 +108,6 @@ class ClientMutation(graphene.Mutation):
                         models.Telephone(
                             telephone=tel['telephone'],
                             client=client,
-                            index=0,
                         )
                     )
                 result = models.Telephone.objects.bulk_create(tels)

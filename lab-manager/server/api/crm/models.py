@@ -146,6 +146,7 @@ class Client(models.Model):
     index = models.IntegerField(
         verbose_name=_('índice'),
         blank=True,
+        null=True,
         editable=False,
     ) 
     discount = models.FloatField(
@@ -244,6 +245,7 @@ class Telephone(models.Model):
     index = models.IntegerField(
         verbose_name=_('Índice'),
         blank=True,
+        null=True,
         editable=False,
     )
 

@@ -2,7 +2,10 @@ query List($lab: Int!){
     laboratory(lab: $lab){
         clients {
             name
-            index            
+            index
+            telephones {
+                telephone
+            }
         }
     }
 }

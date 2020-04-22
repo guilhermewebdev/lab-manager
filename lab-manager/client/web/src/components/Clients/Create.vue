@@ -19,7 +19,10 @@
                 <span class="headline">Novo Cliente</span>
                 </v-card-title>
                 <v-card-text>
-                    <v-form ref="form">
+                    <v-form
+                        ref="form"
+                        :value="valid"
+                    >
                         <v-container>
                             <v-row align="center">
                                 <v-col cols="12" sm="6" md="6">
@@ -78,6 +81,7 @@
                                         @change="(tel.telephone != null)?addTel(index):removeTel(index)"
                                         @click:append-outer="form.telephones.splice(index, 1);"
                                         v-mask="['(##) ####-####', '(##) # ####-####']"
+                                        type="tel"
                                     ></v-text-field>
                                 </v-col>
                                 <v-col
@@ -105,7 +109,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="secondary" text @click="dialog = false">Fechar</v-btn>
+                    <v-btn color="" text @click="dialog = false">Fechar</v-btn>
                     <v-btn color="primary" text @click="submit">Salvar</v-btn>
                 </v-card-actions>
             </v-card>
@@ -120,12 +124,13 @@ export default Vue.extend({
     data: (vm: Vue) => ({
         dialog: false,
         loading: false,
+        valid: false,
         rules: {
-            required: v => !!v || 'Este campo é obrigatório',
-            discount: v => v >= 0 && v <= 100 || "Você não pode oferecer esse desconto",
-            name: v => /((-?[A-z])+[A-Za-z]+[ ]?)$/igm.test(v) || "Digite um nome válido",
-            email: v => /^([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)$/igm.test(v) || 'Digite um email válido',
-            telephone: v => (v.length === 16 || v.length === 15) || 'Está faltando algum número',
+            required: (v: string) => !!v || 'Este campo é obrigatório',
+            discount: (v: string) => Number(v) >= 0 && Number(v) <= 100 || "Você não pode oferecer esse desconto",
+            name: (v: string) => /((-?[A-z])+[A-Za-z]+[ ]?)$/igm.test(v) || "Digite um nome válido",
+            email: (v: string) => /^([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)$/igm.test(v) || 'Digite um email válido',
+            telephone: (v: string) => (v && (v.length === 16 || v.length === 15)) || 'Está faltando algum número',
         },
         form: {
             lab: Number(localStorage.getItem('lab')),
@@ -155,7 +160,8 @@ export default Vue.extend({
             }
         },
         async submit(){
-            this.loading = true;
+            this.$data.loading = true;
+            await this.removeTel(this.$data.form.telephones.length - 1)
             if(this.$refs.form.validate()){
                 alert()
                 this.$apollo.mutate({
@@ -170,9 +176,9 @@ export default Vue.extend({
                         alert(err)
                         this.$emit('error', err)
                     })
-                    .finally(() => this.loading = false)
+                    .finally(() => this.$data.loading = false)
             }else{
-                this.loading = false;
+                this.$data.loading = false;
             }
         }
     }
