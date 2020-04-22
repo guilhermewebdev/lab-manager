@@ -22,6 +22,7 @@
                     <v-form
                         ref="form"
                         :value="valid"
+                        lazy-validation
                     >
                         <v-container>
                             <v-row align="center">
@@ -163,7 +164,6 @@ export default Vue.extend({
             this.$data.loading = true;
             await this.removeTel(this.$data.form.telephones.length - 1)
             if(this.$refs.form.validate()){
-                alert()
                 this.$apollo.mutate({
                     mutation: UPSERT,
                     variables: this.$data.form
@@ -173,7 +173,6 @@ export default Vue.extend({
                         this.$refs.form.reset()
                     })
                     .catch(err => { 
-                        alert(err)
                         this.$emit('error', err)
                     })
                     .finally(() => this.$data.loading = false)

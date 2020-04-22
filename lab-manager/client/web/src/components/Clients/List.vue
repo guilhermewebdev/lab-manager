@@ -1,28 +1,28 @@
 <template>
     <div id="clients">
         <ApolloQuery class="mx-0 h-100" :query="query" :variables="{ lab }" >
-            <template v-slot="{ result: { loading, data } }">
+            <template v-slot="{ result: { loading, data }, query }">
                 <v-skeleton-loader :loading="loading" ></v-skeleton-loader>
                 <v-card
                   tile
                   class="h-100"
                 >
-                  <v-app-bar
+                  <v-toolbar
                     dense
                   >
                     <v-toolbar-title>Dentistas</v-toolbar-title>
 
                     <v-spacer></v-spacer>
-                    <CreateClient @created="addClient"></CreateClient>                   
+                    <CreateClient @created="query.refetch()"></CreateClient>                   
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
+                        <v-btn icon v-on="on"  @click="refresh(query)">
                           <v-icon>mdi-magnify</v-icon>
                         </v-btn>
                       </template>
                       <span>Buscar cliente</span>
                     </v-tooltip>
-                  </v-app-bar>
+                  </v-toolbar>
                   <v-list
                     class="overflow-y-auto"
                     :height="height"
@@ -73,7 +73,21 @@ export default Vue.extend({
       updateHeight(){
         this.height = window.innerHeight - 96;
       },
-      addClient(){alert()}
+      async refresh(query){
+         await query.fetchMore({
+        variables: {
+          offset: 0
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult || fetchMoreResult.product.length === 0) {
+            return prev
+          }
+          return Object.assign({}, prev, {
+            product: [...prev.product, ...fetchMoreResult.product]
+          })
+        }
+      })
+      }
     },
     mounted(){
         this.updateHeight()
