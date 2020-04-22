@@ -155,9 +155,9 @@ export default Vue.extend({
             }
         },
         async submit(){
-            alert()
             this.loading = true;
             if(this.$refs.form.validate()){
+                alert()
                 this.$apollo.mutate({
                     mutation: UPSERT,
                     variables: this.$data.form
@@ -171,6 +171,8 @@ export default Vue.extend({
                         this.$emit('error', err)
                     })
                     .finally(() => this.loading = false)
+            }else{
+                this.loading = false;
             }
         }
     }

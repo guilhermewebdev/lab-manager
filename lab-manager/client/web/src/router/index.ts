@@ -11,6 +11,11 @@ const routes: RouteConfig[] = [
     component: Home
   },
   {
+    path: '/client/:client',
+    name: 'Client',
+    component: Home
+  },
+  {
     path: '/auth',
     name: 'Auth',
     component: () => import(/* webpackChunkName: "about" */ '../views/Register.vue'),

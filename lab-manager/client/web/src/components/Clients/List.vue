@@ -27,8 +27,26 @@
                     class="overflow-y-auto"
                     :height="height"
                   >
-                    {{ data }}
-                  </v-list>   
+                    <v-list-item
+                      v-for="(client, index) in data.laboratory.clients"
+                      :key="index"
+                      :to="`/client/${client.index}/`"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title v-text="client.name"></v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-action>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on: tooltip }">
+                              <v-btn @click="alert()" icon v-on="tooltip">
+                                <v-icon color="">mdi-information</v-icon>
+                              </v-btn>
+                          </template>
+                          <span>Informações</span>
+                      </v-tooltip>                        
+                      </v-list-item-action>
+                    </v-list-item>
+                  </v-list>
               </v-card>
             </template>
         </ApolloQuery>

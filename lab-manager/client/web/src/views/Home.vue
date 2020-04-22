@@ -7,11 +7,8 @@
       class="h-100"
     >
       <v-row px-0 py-0 class="h-100">
-        <v-col cols="3" class="px-0 py-0 h-100">
+        <v-col cols="3" class="pr-0 py-0 h-100">
           <Clients class="h-100"></Clients>
-        </v-col>
-        <v-col cols="3" class="px-0 py-0">
-          <Clients></Clients>
         </v-col>
       </v-row>
     </v-container>
