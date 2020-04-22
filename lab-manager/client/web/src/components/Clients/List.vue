@@ -1,5 +1,5 @@
 <template>
-    <div id="clients">
+    <div id="clients-list">
         <ApolloQuery class="mx-0 h-100" :query="query" :variables="{ lab }" >
             <template v-slot="{ result: { loading, data }, query }">
                 <v-skeleton-loader :loading="loading" ></v-skeleton-loader>

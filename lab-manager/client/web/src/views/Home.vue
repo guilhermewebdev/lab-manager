@@ -10,6 +10,9 @@
         <v-col cols="3" class="pr-0 py-0 h-100">
           <Clients class="h-100"></Clients>
         </v-col>
+        <v-col cols="3" class="pr-0 py-0 h-100">
+          <Patients class="h-100"></Patients>
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -19,11 +22,13 @@
 // @ is an alias to /src
 import { mapState } from 'vuex';
 import Clients from '@/components/Clients/List.vue';
+import Patients from '@/components/Patients/List.vue';
 
 export default {
   name: 'Home',
   components: {
-    Clients
+    Clients,
+    Patients,
   },
   computed: mapState([
     'isAuthenticated'

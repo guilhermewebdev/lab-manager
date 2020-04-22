@@ -3,7 +3,6 @@
     <v-app-bar
       app
       color="primary"
-      dark
       dense
       elevate-on-scroll
       hover
