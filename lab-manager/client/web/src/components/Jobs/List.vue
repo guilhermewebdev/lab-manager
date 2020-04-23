@@ -8,7 +8,7 @@
                   class="h-100"
                 >
                   <v-toolbar
-                    dense
+                    dense                                        
                   >
                     <v-toolbar-title>Trabalhos</v-toolbar-title>
                     <v-spacer></v-spacer>

@@ -1,5 +1,5 @@
 <template>
-    <div id="create-process">
+    <div id="create-procedure">
         <v-dialog v-model="dialog" persistent max-width="600px">
             <template v-slot:activator="{ on: dialog }">
                 <v-tooltip bottom>
@@ -8,7 +8,7 @@
                             <v-icon>mdi-plus</v-icon>
                         </v-btn>
                     </template>
-                    <span>Novo Tipo</span>
+                    <span>Novo Procedimento</span>
                 </v-tooltip>
             </template>
             <v-card
@@ -16,7 +16,7 @@
                 :disabled="loading"
             >
                 <v-card-title>
-                <span class="headline">Novo Tipo</span>
+                <span class="headline">Novo Procedimento</span>
                 </v-card-title>
                 <v-card-text>
                     <v-form
@@ -27,7 +27,7 @@
                             <v-row align="center" justify="center">
                                 <v-col cols="12" sm="6" md="6">
                                     <v-text-field
-                                        label="Nome do processo *"
+                                        label="Nome do procedimento *"
                                         autofocus
                                         required
                                         :rules="[rules.required]"
@@ -44,32 +44,7 @@
                                         prefix="R$"
                                         v-model="form.price"
                                     ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="6" md="6">
-                                    <ApolloQuery
-                                        :query="procedures"
-                                        :variables="{ lab }"
-                                    >
-                                        <template
-                                            v-slot="{ result: { loading, data, error }, query }"
-                                        >
-                                            <v-autocomplete
-                                                label="Procedimento *"
-                                                autofocus
-                                                required
-                                                :loading="loading"
-                                                :error="error"
-                                                :items="data.laboratory.procedures"
-                                                :rules="[rules.required]"
-                                                v-model="form.kind"
-                                            >
-                                                <template v-slot:append-outer>
-                                                    <CreateProcedure @created="query.refetch()"></CreateProcedure>
-                                                </template>
-                                            </v-autocomplete>
-                                        </template>
-                                    </ApolloQuery>    
-                                </v-col>                                      
+                                </v-col>                                                               
                                 <v-col cols="12" sm="12" md="12">
                                     <v-textarea
                                         label="Descrição (Opcional)"
@@ -95,16 +70,20 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import CREATE from '@/graphql/remote/Processes/Create.gql';
+import CREATE from '@/graphql/remote/Procedures/Create.gql';
 import gql from 'graphql-tag';
-import CreateProcedure from '@/components/Procedures/Create.vue';
 export default Vue.extend({
-    name: 'create-process',
+    name: 'create-procedure',
     data: (vm: Vue) => ({
         loading: false,
         valid: false,
         dialog: false,
-        form: {},
+        form: {
+            name: '',
+            description: '',
+            price: null,
+            lab: Number(localStorage.getItem('lab'))
+        },
         lab: Number(localStorage.getItem('lab')),
         rules: [],
         procedures: gql`
@@ -120,8 +99,24 @@ export default Vue.extend({
             }
         `,
     }),
-    components: {
-        CreateProcedure
+    methods: {
+        async submit(){
+             this.loading = true;
+            if(this.$refs.form.validate()){
+                this.$apollo.mutate({
+                    mutation: CREATE,
+                    variables: this.form,
+                })
+                    .then(response => {
+                        this.$emit('created', response.data)
+                        this.$refs.form.reset()
+                    })
+                    .catch(error => {
+                        this.$emit('error', error)
+                    })
+                    .finally(() => this.loading = false)
+            }else this.loading = false;
+        }
     }
 })
 </script>

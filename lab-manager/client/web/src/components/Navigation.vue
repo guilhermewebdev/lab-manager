@@ -93,7 +93,7 @@ export default Vue.extend({
         drawer: Boolean,
     },
     data: (vm: Vue) => ({
-        dark: Boolean(localStorage.getItem('dark')),
+        dark: Boolean(localStorage.getItem('dark') == 'true'),
         query: gql`
             query Navigation($lab:Int){
                 laboratories {
