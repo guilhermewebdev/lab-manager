@@ -4,11 +4,7 @@ from crm.models import Client, Patient, validate_discount
 from django.contrib.auth.models import Group
 
 class BaseJob(models.Model):
-    objects = models.Manager()
-    name = models.CharField(
-        verbose_name=_('Trabalho'),
-        max_length=200
-    )
+    objects = models.Manager()    
     description = models.TextField(
         verbose_name=_("Descrição"),
         max_length=300,
@@ -30,6 +26,10 @@ class BaseJob(models.Model):
         required_db_vendor = 'postgresql'
 
 class Procedure(BaseJob):
+    name = models.CharField(
+        verbose_name=_('Trabalho'),
+        max_length=200
+    )
     index = models.IntegerField(
         verbose_name=_('índice'),
         blank=True,
@@ -96,6 +96,10 @@ class Stage(models.Model):
         ordering = ['index', 'process']
 
 class Process(BaseJob):
+    name = models.CharField(
+        verbose_name=_('Trabalho'),
+        max_length=200
+    )
     is_custom = models.BooleanField(
         verbose_name=_('É customizado?'),
         default=False
@@ -134,7 +138,7 @@ class Process(BaseJob):
         verbose_name_plural = _('Processos')
         ordering = ('-registration_date', 'lab')
 
-class Job(BaseJob): 
+class Job(BaseJob):    
     kind = models.ForeignKey(
         Process,
         verbose_name=_('Tipo'),

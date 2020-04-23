@@ -12,7 +12,7 @@
                   >
                     <v-toolbar-title>Trabahos</v-toolbar-title>
                     <v-spacer></v-spacer>
-                    <!-- <CreatePatient @created="query.refetch()"></CreatePatient> -->
+                    <CreateJob @created="query.refetch()"></CreateJob>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <v-btn icon v-on="on" @click="refresh(query)">
@@ -54,7 +54,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import JOBS from '@/graphql/remote/Jobs/List.gql'
-// import CreatePatient from './Create.vue';
+import CreateJob from './Create.vue';
 
 export default Vue.extend({
     data: () => ({
@@ -83,7 +83,7 @@ export default Vue.extend({
         window.removeEventListener('resize', this.updateHeight)
     },
     components: {
-        // CreatePatient
+        CreateJob
     }
 })
 </script>
