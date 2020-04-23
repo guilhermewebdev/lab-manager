@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="h-100" style="overflow-auto">
     <v-app-bar
       app
       color="primary"
@@ -82,7 +82,7 @@ export default Vue.extend({
     async logout(){
       onLogout(this.$apollo.getClient())
         .then(() => {
-          this.$router.push('auth')
+          this.$router.push('/auth')
         })
         .catch(alert)
     },    

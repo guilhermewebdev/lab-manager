@@ -1,0 +1,22 @@
+query PatientList(
+    $lab: Int!,
+    $client: Int!,
+    $all: Boolean!
+){
+    laboratory(lab: $lab){
+        client(index: $client) @skip(if: $all) {
+            index
+            patients {
+                name
+                index
+            }
+        }
+        clients @include(if: $all) {
+            index
+            patients {
+                name
+                index
+            }
+        }
+    }
+}

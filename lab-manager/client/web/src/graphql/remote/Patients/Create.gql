@@ -1,0 +1,21 @@
+mutation CreatePatient(
+    $lab: Int!,
+    $client: ID!
+    $name: String!,
+    $gender: String!,
+    $toothColor: String!
+){
+    upsertPatient(input: {
+        lab: $lab
+        client: $client
+        name: $name
+        gender: $gender
+        toothColor: $toothColor
+    }){
+        patient {
+            index
+            name
+        }
+        created
+    }
+}

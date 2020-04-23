@@ -72,22 +72,7 @@ export default Vue.extend({
     methods: {
       updateHeight(){
         this.height = window.innerHeight - 96;
-      },
-      async refresh(query){
-         await query.fetchMore({
-        variables: {
-          offset: 0
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult || fetchMoreResult.product.length === 0) {
-            return prev
-          }
-          return Object.assign({}, prev, {
-            product: [...prev.product, ...fetchMoreResult.product]
-          })
-        }
-      })
-      }
+      },     
     },
     mounted(){
         this.updateHeight()
