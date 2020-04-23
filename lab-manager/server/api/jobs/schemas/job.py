@@ -11,7 +11,6 @@ class JobType(types.DjangoObjectType):
         fields = (
             'index',
             'id',
-            'name',
             'description',
             'price',
             'registration_date',
@@ -29,7 +28,6 @@ class JobQuery:
     job = graphene.Field(
         JobType,
         index=graphene.Int(required=True),
-        lab=graphene.Int(required=True),
     )
 
     @login_required
@@ -42,7 +40,6 @@ class JobQuery:
 
 class JobInput(graphene.InputObjectType):
     index = graphene.Int()
-    name = graphene.String(required=True)
     description = graphene.String()
     price = graphene.Float()
     kind = graphene.Int(required=True)

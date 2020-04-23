@@ -10,7 +10,7 @@
                   <v-toolbar
                     dense
                   >
-                    <v-toolbar-title>Trabahos</v-toolbar-title>
+                    <v-toolbar-title>Trabalhos</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <CreateJob @created="query.refetch()"></CreateJob>
                     <v-tooltip bottom>
