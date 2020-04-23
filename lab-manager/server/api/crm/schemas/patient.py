@@ -24,7 +24,10 @@ class PatientType(
 
 class PatientQuery(types.ObjectType):
     patients = graphene.List(PatientType)
-    patient = graphene.Field(PatientType)
+    patient = graphene.Field(
+        PatientType,
+        index=graphene.Int(required=True),
+    )
 
     @login_required
     def resolve_patients(parent, info, **kwargs):

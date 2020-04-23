@@ -1,0 +1,23 @@
+query JobsList(
+    $lab: Int!,
+    $client: Int!,
+    $patient: Int!
+){
+    laboratory(lab: $lab){
+        client(index: $client) {
+            index
+            patient(index: $patient) {
+                index
+                jobs {
+                    index
+                    name
+                    description
+                    deadline
+                    finished
+                    started
+                    delivered
+                }
+            }
+        }    
+    }
+}

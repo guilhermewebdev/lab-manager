@@ -72,7 +72,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="" text @click="dialog = false">Fechar</v-btn>
-                    <v-btn color="primary" text @click="submit()">Salvar</v-btn>
+                    <v-btn color="primary" text @click="submit">Salvar</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -107,7 +107,7 @@ export default Vue.extend({
                     variables: this.$data.form
                 })
                     .then(response => {
-                        this.$emit('created', response.data.upsertPatient)
+                        this.$emit('created', response.data)
                         this.$refs.form.reset()
                     })
                     .catch(error => {
