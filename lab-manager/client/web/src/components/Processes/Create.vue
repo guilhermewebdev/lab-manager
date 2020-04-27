@@ -123,6 +123,18 @@
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
+                                    <v-row
+                                        v-if="addButton"
+                                    >
+                                        <v-col>
+                                            <v-btn
+                                                @click="addStage(form.stages.length-1)"
+                                            >
+                                                <span>Adicionar estágio</span>
+                                                <v-icon>mdi-plus</v-icon>
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
                                     <v-row align="center" justify="center">
                                         <v-col cols="12" sm="12" md="12">
                                             <v-textarea
