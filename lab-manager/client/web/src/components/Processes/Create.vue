@@ -76,6 +76,8 @@
                                                 suffix="º"
                                                 min="1"
                                                 :max="form.stages.length"
+                                                @input.native="setStage(index)"
+                                                @change.native="setStage(index)"
                                                 v-model="stage.index"
                                             ></v-text-field>
                                         </v-col>
@@ -237,11 +239,20 @@ export default Vue.extend({
             this.form.price = this.priceList
         },
         async distributePrice(){
-            const length = this.form.stages.map(item => ((item.price && item.procedure)?item:undefined)).length;
+            const price = (this.form.price||0)/this.form.stages.filter(item => (item.price && item.procedure)).length;
             this.form.stages = this.form.stages.map((item: any) => {
-                item.price = (this.form.price||0)/length;
+                item.price = price;
                 return item;
             })
+        },
+        async setStage(position: number){
+            const myIndex = this.form.stages[position].index;
+            this.form.stages = this.form.stages.map((value: any, index: number) => {
+                if(index == position) value.index = myIndex;
+                else if(index + 1 == myIndex) value.index = position + 1
+                else value.index = index + 1;                
+                return value;
+            }).sort((a: any, b: any) => (a.index - 1) - (b.index - 1));
         }
     },
     components: {
