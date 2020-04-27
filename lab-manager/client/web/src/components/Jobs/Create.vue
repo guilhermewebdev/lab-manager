@@ -39,7 +39,8 @@
                                                 required
                                                 :loading="loading"
                                                 :error="error"
-                                                :items="data.laboratory.processes"
+                                                @change="form.price = form.kind.price"
+                                                :items="data.laboratory.processes.map(i => ({ text: i.name, value: i }))"
                                                 :rules="[rules.required]"
                                                 v-model="form.kind"
                                             >
@@ -57,6 +58,11 @@
                                         required
                                         type="number"
                                         min="0"
+                                        :messages="
+                                            (form.price&&form.kind)?
+                                                ``
+                                            :''
+                                        "
                                         prefix="R$"
                                         v-model="form.price"
                                     ></v-text-field>
@@ -199,7 +205,7 @@ export default Vue.extend({
             return {
                 description: this.form.description,
                 price: this.form.price,
-                kind: this.form.kind,
+                kind: this.form.kind.index,
                 deadline: new Date(
                     `${(this.form.deadline.date || '')} ${(this.form.deadline.time || '')}`
                 ),

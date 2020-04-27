@@ -32,7 +32,7 @@
                       :key="index"
                     >
                       <v-list-item-content>
-                        <v-list-item-title v-text="job.name"></v-list-item-title>
+                        <v-list-item-title v-text="job.kind.name"></v-list-item-title>
                       </v-list-item-content>
                       <v-list-item-action>
                         <v-tooltip bottom>
@@ -55,7 +55,6 @@
 import Vue from 'vue'
 import JOBS from '@/graphql/remote/Jobs/List.gql'
 import CreateJob from './Create.vue';
-
 export default Vue.extend({
     data: () => ({
         query: JOBS,
