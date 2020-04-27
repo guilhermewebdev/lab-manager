@@ -1,6 +1,6 @@
 <template>
     <div id="patient-list">
-        <ApolloQuery class="mx-0 h-100" :query="query" :variables="client" >
+        <ApolloQuery class="mx-0 h-100 pr-3" :query="query" :variables="client" >
             <template v-slot="{ result: { loading, data, error }, query }">
                 <v-skeleton-loader :loading="loading" ></v-skeleton-loader>
                 <v-card

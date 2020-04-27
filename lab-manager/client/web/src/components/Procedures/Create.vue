@@ -25,10 +25,11 @@
                     >
                         <v-container>
                             <v-row align="center" justify="center">
-                                <v-col cols="12" sm="6" md="6">
+                                <v-col cols="12" sm="6" md="6">                                   
                                     <v-text-field
                                         label="Nome do procedimento *"
                                         autofocus
+                                        :error="errors"
                                         required
                                         :rules="[rules.required]"
                                         v-model="form.name"
@@ -86,7 +87,9 @@ export default Vue.extend({
             lab: Number(localStorage.getItem('lab'))
         },
         lab: Number(localStorage.getItem('lab')),
-        rules: [],
+        rules: {
+            required: v => !!v || 'Este campo é obrigatório'
+        },
         procedures: gql`
             query Procedures($lab: Int){
                 laboratory(lab: $lab){
@@ -118,6 +121,6 @@ export default Vue.extend({
                     .finally(() => this.loading = false)
             }else this.loading = false;
         }
-    }
+    },   
 })
 </script>

@@ -39,7 +39,7 @@
         v-if="isAuthenticated"
       >
         <span class="mr-2">Sair</span>
-        <v-icon>mdi-open-in-new</v-icon>
+        <v-icon>mdi-logout</v-icon>
       </v-btn>
       <v-btn
         v-else
