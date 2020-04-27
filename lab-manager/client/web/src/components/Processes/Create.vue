@@ -257,6 +257,33 @@ export default Vue.extend({
                 else value.index = index + 1;                
                 return value;
             }).sort((a: any, b: any) => (a.index - 1) - (b.index - 1));
+        },
+        async getForm(){
+            const form = this.form
+            form.stages = await this.form.stages.map((value: any) => {
+                return {
+                    procedure: value.procedure.index,
+                    price: value.price,
+                    index: value.index,
+                }
+            });
+            return form;
+
+        },
+        async submit(){
+            this.loading = true;
+            if(this.$refs.form.validate()){
+                this.$apollo.mutate({
+                    mutation: CREATE,
+                    variables: await this.getForm()
+                })
+                    .then((response: any) => {
+                        this.$emit('created', response.data)
+                        this.$refs.form.reset()
+                    })
+                    .catch((error: any) => this.$emit('error', error))
+                    .finally(() => this.loading = false)
+            }else this.loading = false;
         }
     },
     components: {
