@@ -70,6 +70,7 @@
                     <small>* Representa campos obrigatórios</small>
                 </v-card-text>
                 <v-card-actions>
+                    <v-btn color="error" text @click="$refs.form.reset()">Limpar</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn color="" text @click="dialog = false">Fechar</v-btn>
                     <v-btn color="primary" text @click="submit">Salvar</v-btn>

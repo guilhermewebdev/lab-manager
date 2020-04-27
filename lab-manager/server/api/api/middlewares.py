@@ -1,8 +1,7 @@
 def remove_server_header(get_response):
     def middleware(request):
         response = get_response(request)
-        print(response.has_header('Server'))
-        del response['Server']
+        response['Server'] = 'DENY'
         return response
     return middleware
 

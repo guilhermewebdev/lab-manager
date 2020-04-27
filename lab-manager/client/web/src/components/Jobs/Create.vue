@@ -84,8 +84,10 @@
                                         <v-date-picker
                                             v-model="form.deadline.date"
                                             reactive
-                                            @input="menu = false"
+                                            :allowed-dates="d => Date.parse(d) >= (Date.now() - (1000 * 60 * 60 * 24))"
+                                            @input="menu = false"                                            
                                         >
+                                            <v-btn text color="error" @click="form.deadline.date = null; menu = false">Limpar</v-btn>
                                             <v-spacer></v-spacer>
                                             <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
                                             <v-btn text color="primary" @click="$refs.menu.save(form.deadline.date)">OK</v-btn>
@@ -103,7 +105,7 @@
                                         <template v-slot:activator="{ on }">
                                             <v-text-field
                                                 v-model="form.deadline.time"
-                                                label="Hora da Entrega"
+                                                label="Hora da Entrega (Opcional)"
                                                 hint="MM/DD/YYYY format"
                                                 persistent-hint
                                                 type="time"
@@ -118,8 +120,9 @@
                                             allowed-hours
                                             allowed-minutes
                                             format="24hr"
-                                            @input="menu = false"
+                                            @input="menu2 = false"
                                         >
+                                            <v-btn text color="error" @click="form.deadline.time = null; menu2 = false;">Limpar</v-btn>
                                             <v-spacer></v-spacer>
                                             <v-btn text color="primary" @click="menu2 = false">Cancel</v-btn>
                                             <v-btn text color="primary" @click="$refs.menu2.save(form.deadline.time)">OK</v-btn>
@@ -163,6 +166,8 @@ export default Vue.extend({
         today: new Date(),
         lab: Number(localStorage.getItem('lab')),
         loading: false,
+        menu: false,
+        menu2: false,
         kinds: gql`
             query Processes(
                 $lab: Int!
