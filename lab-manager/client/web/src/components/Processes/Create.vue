@@ -247,6 +247,10 @@ export default Vue.extend({
         },
         async setStage(position: number){
             const myIndex = this.form.stages[position].index;
+            if(myIndex > this.form.stages.length) {
+                this.form.stages[position].index = position + 1
+                return;
+            }
             this.form.stages = this.form.stages.map((value: any, index: number) => {
                 if(index == position) value.index = myIndex;
                 else if(index + 1 == myIndex) value.index = position + 1
