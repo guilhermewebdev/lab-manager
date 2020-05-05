@@ -20,11 +20,11 @@ services:
     client:
         build: 
             context: ./client/web
-            dockerfile: Dockerfile.dev
+            dockerfile: Dockerfile
         restart: always
         volumes: 
             - ./client/web:/app
-        command: npm run serve
+        command: npx ng serve --port 80 --host 0.0.0.0
         depends_on: 
             - api
             - proxy
