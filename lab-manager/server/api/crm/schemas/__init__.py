@@ -6,7 +6,10 @@ class Query(
 ):
     pass
 
-class Mutation(graphene.ObjectType):
+class Mutation(
+    graphene.ObjectType,
+    client.Mutation,
+):
     upsert_client = client.ClientMutation.Field()
     delete_client = client.ClientDeletion.Field()
     upsert_patient = patient.PatientMutation.Field()

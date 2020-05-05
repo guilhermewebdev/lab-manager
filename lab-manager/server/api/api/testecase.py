@@ -1,13 +1,16 @@
 from graphene.test import format_execution_result, default_format_error
-from graphql_jwt.testcases import JSONWebTokenTestCase, JSONWebTokenClient
+from graphql_jwt.testcases import JSONWebTokenTestCase, JSONWebTokenClient, JSONWebTokenMiddleware
 from promise import Promise, is_thenable
 from json import loads, dumps
+from api.middlewares import set_laboratory
 
 class MyClient(JSONWebTokenClient):
 
     def __init__(self, format_error=None, **defaults):
         self.format_error = format_error or default_format_error
         super().__init__(**defaults)
+        middleware = lambda: set_laboratory
+        self.middleware([middleware, JSONWebTokenMiddleware])
 
     def format_result(self, result):
         return format_execution_result(result, self.format_error)
