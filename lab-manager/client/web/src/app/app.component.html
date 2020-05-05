@@ -287,6 +287,9 @@
       visibility: hidden;
     }
   }
+  .spacer {
+    flex: 1 1 auto;
+  }
 </style>
 
 <!-- Toolbar -->
@@ -294,6 +297,9 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
     <span>Lab Manager</span>
+    <span class="spacer"></span>
+    <button mat-button [routerLink]="['/home/auth']">Entrar</button>
+    <button mat-button [routerLink]="['/home/auth']">Cadastrar</button>
   </mat-toolbar-row>
 </mat-toolbar>
 
