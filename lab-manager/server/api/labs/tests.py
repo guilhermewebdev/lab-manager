@@ -2,12 +2,23 @@ from django.test import TestCase
 
 # Create your tests here.
 import json
-from graphene_django.utils.testing import GraphQLTestCase
-from api.schema import schema, public_schema
-from .schema import auth_schema
+from . import models
 
-class PublicTestCase(GraphQLTestCase):
-    GRAPHQL_SCHEMA = public_schema
+class RegistrationTestCase(TestCase):
 
-class ApiTestCase(GraphQLTestCase):
-    GRAPHQL_SCHEMA = schema
+    def test_registration(self):
+        lab = models.Laboratory.objects.create(
+            name='Teste'
+        )
+        lab.save()
+        self.assertIsNotNone(lab.id)
+
+        professional = models.Professional.objects.create_user(
+            username='teste',
+            email='teste@teste.com',
+            password='senha54546',
+        )
+        professional.labs.add(lab)
+        professional.save()
+
+        self.assertIsNotNone(professional.id)

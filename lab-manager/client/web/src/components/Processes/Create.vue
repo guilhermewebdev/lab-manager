@@ -118,7 +118,7 @@
                                                         :''
                                                 "
                                                 :append-outer-icon="(index > 0)?'mdi-close':''"
-                                                @click:append-outer="form.stages.splice(index, 1); setPrice()"
+                                                @click:append-outer="form.stages.splice(index, 1); setPrice(); setStage(index)"
                                                 prefix="R$"
                                                 @change="setPrice"
                                                 v-model="stage.price"
@@ -130,7 +130,7 @@
                                     >
                                         <v-col>
                                             <v-btn
-                                                @click="addStage(form.stages.length-1)"
+                                                @click="addStage(form.stages.length-1);"
                                             >
                                                 <span>Adicionar estágio</span>
                                                 <v-icon>mdi-plus</v-icon>
@@ -155,7 +155,7 @@
                     <small>* Representa campos obrigatórios</small>
                 </v-card-text>
                 <v-card-actions>
-                    <v-btn color="error" text @click="form.stages.length = 1; $refs.form.reset();">Limpar</v-btn>
+                    <v-btn color="error" text @click="reset">Limpar</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn color="" text @click="dialog = false">Fechar</v-btn>
                     <v-btn color="primary" text @click="submit">Salvar</v-btn>
@@ -284,6 +284,14 @@ export default Vue.extend({
                     .catch((error: any) => this.$emit('error', error))
                     .finally(() => this.loading = false)
             }else this.loading = false;
+        },
+        async reset(){
+            this.$refs.form.reset();
+            this.form.stages = [{
+                    procedure: null,
+                    price: NaN,
+                    index: 1,
+                }]
         }
     },
     components: {
