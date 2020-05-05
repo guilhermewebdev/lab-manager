@@ -6,24 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    title: {
-      flexGrow: 1,
-    },
-  }),
-);
-
-
 import {
     AfterViewInit,
     Component,
@@ -42,16 +24,34 @@ import {
   import * as ReactDOM from 'react-dom';
 //   import { App } from './app.react';
   import { Router } from '@angular/router';
+
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
+    },
+  }),
+);
+
+
   
-  const containerElementName = 'myReactComponentContainer';
+  const containerElementName = 'app';
   
   @Component({
     selector: 'app-root',
     styleUrls: ['./app.component.scss'],
-    template: `
-    <div #${containerElementName}></div>
-    <router-outlet></router-outlet>  
-    `,
+    // template: `
+    // <div #${containerElementName}></div>
+    // <router-outlet></router-outlet>  
+    // `,
+    templateUrl: 'app.component.html',
     encapsulation: ViewEncapsulation.None,
   })
   

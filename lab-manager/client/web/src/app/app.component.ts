@@ -14,7 +14,7 @@ import {
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { App } from './app.react';
+// import { App } from './app.react';
 import { Router } from '@angular/router';
 
 const containerElementName = 'myReactComponentContainer';
@@ -22,10 +22,7 @@ const containerElementName = 'myReactComponentContainer';
 @Component({
   selector: 'app-root',
   styleUrls: ['./app.component.scss'],
-  template: `
-  <div #${containerElementName}></div>
-  <router-outlet></router-outlet>  
-  `,
+  template: `<div #${containerElementName}></div>`,
   encapsulation: ViewEncapsulation.None,
 })
 
