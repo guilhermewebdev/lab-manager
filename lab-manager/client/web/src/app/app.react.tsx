@@ -12,15 +12,25 @@ import {
     ViewEncapsulation
   } from '@angular/core';
 
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+  import * as React from 'react';
+  import * as ReactDOM from 'react-dom';
+  import Button from '@material-ui/core/Button'
 
 const containerElementName = 'myReactComponentContainer';
+
+function App() {
+    return (
+      <Button variant="contained" color="primary">
+        Olá Mundo
+      </Button>
+    );
+  }
+  
 
 @Component({
   selector: 'app-root',
   styleUrls: ['./app.component.scss'],
-  template: `<span #${containerElementName}></span>`,
+  template: `<div #${containerElementName}></div>`,
   encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements OnChanges, OnDestroy, AfterViewInit {
@@ -52,11 +62,11 @@ export class AppComponent implements OnChanges, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     ReactDOM.unmountComponentAtNode(this.containerRef.nativeElement);
   }
-  private render() {
 
-    ReactDOM.render(<div>
-        Olá mundo novo
-    </div>, this.containerRef.nativeElement);
+  
+
+  private render() {
+    ReactDOM.render(<App />, this.containerRef.nativeElement);
   }
 
 }
