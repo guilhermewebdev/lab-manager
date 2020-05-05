@@ -1,6 +1,7 @@
-FROM node
+FROM node:lts-buster
 WORKDIR /app
-COPY package.json /app/
-RUN npm i npm@latest @angular/cli -g
-RUN npm install
+RUN npm i npm@latest
+RUN npm i @angular/cli -g
+ADD package.json /app
+RUN npm install; npm audit; npm audit fix
 COPY ./ /app/
