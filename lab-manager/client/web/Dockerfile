@@ -1,4 +1,4 @@
-FROM node:12.16
+FROM node:lts
 
 RUN mkdir /app
 
@@ -13,3 +13,4 @@ ADD yarn.lock /app
 RUN yarn install
 
 COPY . .
+CMD ["yarn", "start"]

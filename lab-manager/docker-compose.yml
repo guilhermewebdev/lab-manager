@@ -25,6 +25,7 @@ services:
         environment: 
             PORT: 80
         command: yarn start
+        stdin_open: true
         depends_on: 
             - api
             - proxy
