@@ -22,12 +22,12 @@ services:
         restart: always
         volumes: 
             - ./client/web:/app
-        # environment: 
-        #     PORT: 8000
-        command: npm start
-        # depends_on: 
-            # - api
-            # - proxy
+        environment: 
+            PORT: 80
+        command: yarn start
+        depends_on: 
+            - api
+            - proxy
         networks: 
             backend:
                 ipv4_address: 172.35.10.30
