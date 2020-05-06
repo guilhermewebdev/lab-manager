@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
