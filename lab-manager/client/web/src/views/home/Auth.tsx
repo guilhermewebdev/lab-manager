@@ -2,8 +2,6 @@ import React from 'react';
 
 import { useForm } from 'react-hook-form';
 
-import clsx from 'clsx'
-
 import {
     createStyles,
     makeStyles,
@@ -74,40 +72,10 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: any;
-    value: any;
-    dir?: string;
-}
-
 type Login = {
     showPassword: boolean,
     username: string,
     password: string,
-}
-
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`scrollable-force-tabpanel-${index}`}
-            aria-labelledby={`scrollable-force-tab-${index}`}
-            {...other}
-        >
-            {value === index && children}
-        </div>
-    );
-}
-
-function a11yProps(index: any) {
-    return {
-        id: `full-width-tab-${index}`,
-        'aria-controls': `full-width-tabpanel-${index}`,
-    };
 }
 
 function LoginForm() {
@@ -389,6 +357,36 @@ function RegistrationForm() {
     )
 }
 
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+    dir?: string;
+}
+
+function a11yProps(index: any) {
+    return {
+        id: `tab-${index}`,
+        'aria-controls': `tabpanel-${index}`,
+    };
+}
+
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`tabpanel-${index}`}
+            aria-labelledby={`tab-${index}`}
+            {...other}
+        >
+            {children}
+        </div>
+    );
+}
+
 export default function () {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
@@ -417,14 +415,12 @@ export default function () {
                             indicatorColor="primary"
                             textColor="primary"
                             variant="fullWidth"
-                            aria-label="full width tabs example"
                         >
                             <Tab label="Entrar" {...a11yProps(0)} />
                             <Tab label="Cadastrar" {...a11yProps(1)} />
                         </Tabs>
                     </AppBar>
                     <SwipeableViews
-                        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                         index={value}
                         onChangeIndex={handleChangeIndex}
                     >
