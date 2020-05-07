@@ -17,6 +17,7 @@ import {
     Switch,
     Button,
     FormControlLabel,
+    Checkbox,
 } from '@material-ui/core'
 
 import SwipeableViews from 'react-swipeable-views';
@@ -38,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         container: {
             height: "100%",
-            marginTop: 30,
+            marginTop: 15,
         },
         input: {
             paddingTop: 10,
@@ -107,6 +108,36 @@ function LoginForm() {
     )
 }
 
+function RegisterForm(){
+    const classes = useStyles();
+    return (
+        <form autoComplete="off" className={classes.form}>
+            <Grid
+                container
+                justify="center"
+                alignItems="center"
+            >
+                <Grid item md={11}>
+                    <FormGroup>
+                        <TextField className={classes.input} label="Nome completo"></TextField>
+                        <TextField className={classes.input} label="Email"></TextField>
+                        <TextField className={classes.input} label="Nome de usuário"></TextField>
+                        <TextField className={classes.input} label="Senha"></TextField>
+                        <TextField className={classes.input} label="Confirme sua senha"></TextField>
+                        <TextField className={classes.input} label="Nome do laboratório"></TextField>
+                        <FormControlLabel className={classes.input} control={<Checkbox color="primary" />} label="Concordo com os termos de uso" />
+                    </FormGroup>
+                </Grid>
+                <Grid item md={11}>
+                    <Button className={classes.button} variant="contained" color="primary">
+                        Cadastrar
+                    </Button>
+                </Grid>
+            </Grid>
+        </form>
+    )
+}
+
 export default function () {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
@@ -150,7 +181,7 @@ export default function () {
                             <LoginForm />
                         </TabPanel>
                         <TabPanel value={value} index={1} dir={theme.direction}>
-                            Item Two
+                            <RegisterForm />
                         </TabPanel>
                     </SwipeableViews>
                 </Card>
