@@ -3,7 +3,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 
 import {
     createStyles,
@@ -72,6 +72,7 @@ type Login = {
     showPassword: boolean,
     username: string,
     password: string,
+    keep: boolean,
 }
 
 const LOGIN = gql`
@@ -90,18 +91,27 @@ const LOGIN = gql`
 export default function LoginForm() {
     const classes = useStyles();
     const { register, handleSubmit, errors, reset } = useForm();
-    const [tokenAuth, {error, loading, client}] = useMutation(LOGIN);
-    const initialValues = {
+    const [tokenAuth, {error, loading}] = useMutation(LOGIN);
+    const { writeData, query } = useApolloClient()
+    const initialValues:Login = {
         username: '',
         password: '',
         showPassword: false,
+        keep: false,
     }
     const [values, setValues] = React.useState<Login>(initialValues);
     const onSubmit = async (form: any) => {
         const { username, password } = form;
         tokenAuth({ variables: { username, password } }).then(data => {
-            form.keep? localStorage.setItem('bat', data.data.tokenAuth.token) : sessionStorage.setItem('bat', data.data.tokenAuth.token) 
-            client?.writeData({ data: { isAuthenticated: true }})
+            values.keep? localStorage.setItem('bat', data.data.tokenAuth.token) : sessionStorage.setItem('bat', data.data.tokenAuth.token) 
+            query({
+                query: gql`
+                  query {
+                    isAuthenticated
+                  }
+                `
+              }).then(data => writeData({ data: { isAuthenticated: data.data.isAuthenticated } }))
+              
             reset();
             setValues(initialValues);
         })
@@ -128,7 +138,7 @@ export default function LoginForm() {
             </Backdrop>
             <Snackbar open={!!error} autoHideDuration={6000}>
                 <Alert severity="error">
-                    {!!error && error?.message}
+                    {!!error && error?.message.toString().split(':')[1]}
                 </Alert>
             </Snackbar>
             <Grid
@@ -187,15 +197,17 @@ export default function LoginForm() {
                     direction="row"
                     justify="space-between"
                     md={11}
+                    item
                 >
                     <Grid item md={7}>
                         <FormControlLabel
                             className={classes.input}
                             control={
                                 <Switch
-                                    name="keep"
                                     size="small"
-                                    color="primary" 
+                                    color="primary"
+                                    value={values.keep}
+                                    onChange={handleChange('keep')}
                                 />}
                             label="Manter Conectado"
                         />

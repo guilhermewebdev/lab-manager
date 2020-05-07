@@ -15,7 +15,7 @@ const client = new ApolloClient({
     const token = sessionStorage.getItem('bat') || localStorage.getItem('bat');
     operation.setContext({
       headers: {
-        authorization: token ? `Bearer ${token}` : ''
+        authorization: token ? `JWT ${token}` : ''
       }
     })
   },
@@ -23,7 +23,8 @@ const client = new ApolloClient({
     extend type Query {
       isAuthenticated: Boolean!
     }
-  `
+  `,
+  resolvers: {}
 });
 
 client.query({
@@ -32,7 +33,9 @@ client.query({
       isAuthenticated
     }
   `
-}).then(data => client.writeData({ data: { isAuthenticated: data.data.isAuthenticated } }))
+}).then(data => {
+  client.writeData({ data: { isAuthenticated: data.data.isAuthenticated } })
+})
 
 render(
   <React.StrictMode>
