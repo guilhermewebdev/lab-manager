@@ -6,17 +6,11 @@ import {
     createStyles,
     makeStyles,
     Theme,
-    useTheme
 } from '@material-ui/core/styles';
 import {
-    AppBar,
     Grid,
-    Card,
-    Tab,
-    Tabs,
     FormGroup,
     TextField,
-    Switch,
     Button,
     FormControlLabel,
     FormControl,
@@ -33,7 +27,6 @@ import {
     VisibilityOff,
 } from '@material-ui/icons'
 
-import SwipeableViews from 'react-swipeable-views';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -72,105 +65,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-type Login = {
-    showPassword: boolean,
-    username: string,
-    password: string,
-}
-
-function LoginForm() {
-    const classes = useStyles();
-    const { register, handleSubmit, watch, errors, reset } = useForm();
-    const onSubmit = (data: any) => console.log(data, reset());
-    const [values, setValues] = React.useState<Login>({
-        username: '',
-        password: '',
-        showPassword: false,
-    });
-    const handleClickShowPassword = () => {
-        setValues({ ...values, showPassword: !values.showPassword });
-    };
-    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-    };
-    const handleChange = (prop: keyof Login) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValues({ ...values, [prop]: event.target.value });
-    };
-
-
-    return (
-        <form
-            autoComplete="off"
-            onSubmit={handleSubmit(onSubmit)}
-            className={classes.form}
-        >
-            <Grid
-                container
-                justify="center"
-                alignItems="center"
-            >
-                <Grid item md={11}>
-                    <FormGroup>
-                        <TextField
-                            error={errors.username}
-                            name="username"
-                            className={classes.input}
-                            label="Nome de usuário *"
-                            helperText={errors.username && "Informe um nome de usuário válido"}
-                            inputRef={register({
-                                required: true,
-                                pattern: /^[a-z0-9_-]{2,}$/
-                            })}
-                            autoFocus
-                        />
-                        <FormControl className={classes.input} fullWidth>
-                            <InputLabel error={errors.password} htmlFor="standard-adornment-password">Senha *</InputLabel>
-                            <Input
-                                name="password"
-                                error={errors.password}
-                                id="standard-adornment-password"
-                                type={values.showPassword ? 'text' : 'password'}
-                                value={values.password}
-                                onChange={handleChange('password')}
-                                inputRef={register({
-                                    required: true,
-                                    minLength: 8,
-                                })}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="Mudar visibilidade da senha"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                        >
-                                            {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
-                            {errors.password &&
-                                <FormHelperText error={errors.password}>Informe uma senha válida, com pelo menos 8 dígitos</FormHelperText>
-                            }
-                        </FormControl>
-                        <FormControlLabel className={classes.input} control={<Switch color="primary" />} label="Manter Conectado" />
-                    </FormGroup>
-                </Grid>
-                <Grid item md={11}>
-                    <Button
-                        className={classes.button}
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                    >
-                        Entrar
-                    </Button>
-                </Grid>
-            </Grid>
-        </form>
-    )
-}
-
 type Registration = {
     username: string,
     password: string,
@@ -182,7 +76,7 @@ type Registration = {
     showPassword2: boolean,
 }
 
-function RegistrationForm() {
+export default function RegistrationForm() {
     const classes = useStyles();
     const { register, handleSubmit, errors, reset } = useForm();
     const onSubmit = (data: any) => console.log(data, reset());
@@ -354,85 +248,5 @@ function RegistrationForm() {
                 </Grid>
             </Grid>
         </form>
-    )
-}
-
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: any;
-    value: any;
-    dir?: string;
-}
-
-function a11yProps(index: any) {
-    return {
-        id: `tab-${index}`,
-        'aria-controls': `tabpanel-${index}`,
-    };
-}
-
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`tabpanel-${index}`}
-            aria-labelledby={`tab-${index}`}
-            {...other}
-        >
-            {children}
-        </div>
-    );
-}
-
-export default function () {
-    const classes = useStyles();
-    const [value, setValue] = React.useState(0);
-    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-        setValue(newValue);
-    };
-    const theme = useTheme();
-    const handleChangeIndex = (index: number) => {
-        setValue(index);
-    };
-
-    return (
-        <Grid
-            container
-            justify="center"
-            alignItems="center"
-            spacing={10}
-            className={classes.container}
-        >
-            <Grid item md={4}>
-                <Card className={classes.root}>
-                    <AppBar position="static" color="default">
-                        <Tabs
-                            value={value}
-                            onChange={handleChange}
-                            indicatorColor="primary"
-                            textColor="primary"
-                            variant="fullWidth"
-                        >
-                            <Tab label="Entrar" {...a11yProps(0)} />
-                            <Tab label="Cadastrar" {...a11yProps(1)} />
-                        </Tabs>
-                    </AppBar>
-                    <SwipeableViews
-                        index={value}
-                        onChangeIndex={handleChangeIndex}
-                    >
-                        <TabPanel value={value} index={0} dir={theme.direction}>
-                            <LoginForm />
-                        </TabPanel>
-                        <TabPanel value={value} index={1} dir={theme.direction}>
-                            <RegistrationForm />
-                        </TabPanel>
-                    </SwipeableViews>
-                </Card>
-            </Grid>
-        </Grid>
     )
 }

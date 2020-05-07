@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Auth from './Auth'
+import Auth from './auth/index'
 
 
 export default function(){
