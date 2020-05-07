@@ -2,6 +2,9 @@ import React from 'react';
 
 import { useForm } from 'react-hook-form';
 
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/react-hooks';
+
 import {
     createStyles,
     makeStyles,
@@ -21,7 +24,14 @@ import {
     IconButton,
     Link,
     FormHelperText,
+    Snackbar,
+    CircularProgress,
+    Backdrop,
 } from '@material-ui/core'
+
+import {
+    Alert
+} from '@material-ui/lab';
 
 import {
     Visibility,
@@ -51,6 +61,10 @@ const useStyles = makeStyles((theme: Theme) =>
         button: {
             width: "100%"
         },
+        backdrop: {
+            zIndex: theme.zIndex.drawer + 1,
+            color: '#fff',
+        },
     }),
 );
 
@@ -60,15 +74,38 @@ type Login = {
     password: string,
 }
 
+const LOGIN = gql`
+    mutation Login($username: String!, $password: String!){
+        tokenAuth(
+            username: $username
+            password: $password
+        ){
+            token
+            payload
+            refreshExpiresIn
+        }
+    }
+`
+
 export default function LoginForm() {
     const classes = useStyles();
     const { register, handleSubmit, errors, reset } = useForm();
-    const onSubmit = (data: any) => console.log(data, reset());
-    const [values, setValues] = React.useState<Login>({
+    const [tokenAuth, {error, loading, client}] = useMutation(LOGIN);
+    const initialValues = {
         username: '',
         password: '',
         showPassword: false,
-    });
+    }
+    const [values, setValues] = React.useState<Login>(initialValues);
+    const onSubmit = async (form: any) => {
+        const { username, password } = form;
+        tokenAuth({ variables: { username, password } }).then(data => {
+            form.keep? localStorage.setItem('bat', data.data.tokenAuth.token) : sessionStorage.setItem('bat', data.data.tokenAuth.token) 
+            client?.writeData({ data: { isAuthenticated: true }})
+            reset();
+            setValues(initialValues);
+        })
+    };
     const handleClickShowPassword = () => {
         setValues({ ...values, showPassword: !values.showPassword });
     };
@@ -86,6 +123,14 @@ export default function LoginForm() {
             onSubmit={handleSubmit(onSubmit)}
             className={classes.form}
         >
+            <Backdrop className={classes.backdrop} open={loading}>
+                <CircularProgress color="primary" />
+            </Backdrop>
+            <Snackbar open={!!error} autoHideDuration={6000}>
+                <Alert severity="error">
+                    {!!error && error?.message}
+                </Alert>
+            </Snackbar>
             <Grid
                 container
                 justify="center"

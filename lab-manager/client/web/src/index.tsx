@@ -6,11 +6,33 @@ import * as serviceWorker from './serviceWorker';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import gql from 'graphql-tag';
 
 const client = new ApolloClient({
   uri: 'http://localhost/api/',
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  request: (operation) => {
+    const token = sessionStorage.getItem('bat') || localStorage.getItem('bat');
+    operation.setContext({
+      headers: {
+        authorization: token ? `Bearer ${token}` : ''
+      }
+    })
+  },
+  typeDefs: gql`
+    extend type Query {
+      isAuthenticated: Boolean!
+    }
+  `
 });
+
+client.query({
+  query: gql`
+    query {
+      isAuthenticated
+    }
+  `
+}).then(data => client.writeData({ data: { isAuthenticated: data.data.isAuthenticated } }))
 
 render(
   <React.StrictMode>
