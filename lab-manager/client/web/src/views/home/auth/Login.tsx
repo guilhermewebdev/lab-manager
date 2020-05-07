@@ -19,6 +19,7 @@ import {
     Input,
     InputAdornment,
     IconButton,
+    Link,
     FormHelperText,
 } from '@material-ui/core'
 
@@ -73,7 +74,7 @@ type Login = {
 
 export default function LoginForm() {
     const classes = useStyles();
-    const { register, handleSubmit, watch, errors, reset } = useForm();
+    const { register, handleSubmit, errors, reset } = useForm();
     const onSubmit = (data: any) => console.log(data, reset());
     const [values, setValues] = React.useState<Login>({
         username: '',
@@ -146,8 +147,13 @@ export default function LoginForm() {
                                 <FormHelperText error={errors.password}>Informe uma senha válida, com pelo menos 8 dígitos</FormHelperText>
                             }
                         </FormControl>
-                        <FormControlLabel className={classes.input} control={<Switch color="primary" />} label="Manter Conectado" />
                     </FormGroup>
+                </Grid>
+                <Grid item md={6}>
+                    <FormControlLabel className={classes.input} control={<Switch name="keep" size="small" color="primary" />} label="Manter Conectado" />
+                </Grid>
+                <Grid item md={5}>
+                    <Link href="#">Esqueceu a senha?</Link>
                 </Grid>
                 <Grid item md={11}>
                     <Button

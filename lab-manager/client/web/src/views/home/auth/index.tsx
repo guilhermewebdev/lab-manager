@@ -12,9 +12,8 @@ import {
     Card,
     Tab,
     Tabs,
+    Slide,
 } from '@material-ui/core'
-
-import SwipeableViews from 'react-swipeable-views';
 
 import LoginForm from './Login'
 import RegistrationForm from './Registration'
@@ -74,15 +73,17 @@ function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
 
     return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`tabpanel-${index}`}
-            aria-labelledby={`tab-${index}`}
-            {...other}
-        >
-            {children}
-        </div>
+        <Slide direction={value === 1? 'left':'right'} in={value === index}>
+            <div
+                role="tabpanel"
+                hidden={value !== index}
+                id={`tabpanel-${index}`}
+                aria-labelledby={`tab-${index}`}
+                {...other}
+            >
+                {children}
+            </div>
+        </Slide>
     );
 }
 
@@ -93,9 +94,6 @@ export default function () {
         setValue(newValue);
     };
     const theme = useTheme();
-    const handleChangeIndex = (index: number) => {
-        setValue(index);
-    };
 
     return (
         <Grid
@@ -119,17 +117,12 @@ export default function () {
                             <Tab label="Cadastrar" {...a11yProps(1)} />
                         </Tabs>
                     </AppBar>
-                    <SwipeableViews
-                        index={value}
-                        onChangeIndex={handleChangeIndex}
-                    >
-                        <TabPanel value={value} index={0} dir={theme.direction}>
-                            <LoginForm />
-                        </TabPanel>
-                        <TabPanel value={value} index={1} dir={theme.direction}>
-                            <RegistrationForm />
-                        </TabPanel>
-                    </SwipeableViews>
+                    <TabPanel value={value} index={0} dir={theme.direction}>
+                        <LoginForm />
+                    </TabPanel>
+                    <TabPanel value={value} index={1} dir={theme.direction}>
+                        <RegistrationForm />
+                    </TabPanel>
                 </Card>
             </Grid>
         </Grid>

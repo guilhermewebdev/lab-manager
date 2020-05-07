@@ -72,24 +72,27 @@ type Registration = {
     email: string,
     fullName: string,
     laboratory: string,
+    terms: boolean,
     showPassword: boolean,
     showPassword2: boolean,
 }
 
 export default function RegistrationForm() {
-    const classes = useStyles();
-    const { register, handleSubmit, errors, reset } = useForm();
-    const onSubmit = (data: any) => console.log(data, reset());
-    const [values, setValues] = React.useState<Registration>({
+    const initalState: Registration = {
         username: '',
         password: '',
         password2: '',
         email: '',
         fullName: '',
         laboratory: '',
+        terms: false,
         showPassword: false,
         showPassword2: false,
-    });
+    }
+    const classes = useStyles();
+    const { register, handleSubmit, errors, reset } = useForm();
+    const [values, setValues] = React.useState<Registration>(initalState); 
+    const onSubmit = (data: any) => console.log(data, setValues(initalState), reset());
     const handleClickShowPassword = () => setValues({ ...values, showPassword: !values.showPassword });
     const handleClickShowPassword2 = () => setValues({ ...values, showPassword2: !values.showPassword2 });
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
