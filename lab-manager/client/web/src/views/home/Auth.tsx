@@ -184,7 +184,7 @@ type Registration = {
 
 function RegistrationForm() {
     const classes = useStyles();
-    const { register, handleSubmit, watch, errors, reset } = useForm();
+    const { register, handleSubmit, errors, reset } = useForm();
     const onSubmit = (data: any) => console.log(data, reset());
     const [values, setValues] = React.useState<Registration>({
         username: '',
