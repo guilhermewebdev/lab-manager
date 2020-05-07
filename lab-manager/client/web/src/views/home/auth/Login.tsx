@@ -149,11 +149,27 @@ export default function LoginForm() {
                         </FormControl>
                     </FormGroup>
                 </Grid>
-                <Grid item md={6}>
-                    <FormControlLabel className={classes.input} control={<Switch name="keep" size="small" color="primary" />} label="Manter Conectado" />
-                </Grid>
-                <Grid item md={5}>
-                    <Link href="#">Esqueceu a senha?</Link>
+                <Grid
+                    container
+                    direction="row"
+                    justify="space-between"
+                    md={11}
+                >
+                    <Grid item md={7}>
+                        <FormControlLabel
+                            className={classes.input}
+                            control={
+                                <Switch
+                                    name="keep"
+                                    size="small"
+                                    color="primary" 
+                                />}
+                            label="Manter Conectado"
+                        />
+                    </Grid>
+                    <Grid item md={5}>
+                        <Link href="#">Esqueceu a senha?</Link>
+                    </Grid>
                 </Grid>
                 <Grid item md={11}>
                     <Button
