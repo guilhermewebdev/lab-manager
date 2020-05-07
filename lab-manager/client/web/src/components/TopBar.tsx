@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Link as RouterLink } from 'react-router-dom';
 
+import { logout } from '../services/auth';
+
 import {
 	AppBar,
 	Toolbar,
@@ -10,7 +12,7 @@ import {
 
 import Drawer from './Drawer';
 
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
 export default function () {
@@ -19,7 +21,10 @@ export default function () {
             isAuthenticated @client
         }
 	`);
-	
+	const client = useApolloClient()
+	const logOut = () => {
+		logout(client)
+	}
 
 	return (
 		<div>
@@ -29,13 +34,12 @@ export default function () {
 						<Drawer />
 					}
 					<div className="spacer"></div>
-					{data?.isAuthenticated?
-						<Button component={RouterLink} color="inherit" to="/auth">Sair</Button>:
+					{data?.isAuthenticated ?
+						<Button color="inherit" onClick={logOut}>Sair</Button> :
 						<Button component={RouterLink} color="inherit" to="/auth">Entre ou Cadastre</Button>
 					}
 				</Toolbar>
 			</AppBar>
-			<Toolbar variant="dense" />
 		</div>
 	)
 }

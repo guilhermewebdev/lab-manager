@@ -4,9 +4,11 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider as ApolloHooksProvider } from '@apollo/react-hooks';
+import { ApolloProvider } from 'react-apollo'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
+import { verifyAuth } from './services/auth'
 
 const client = new ApolloClient({
   uri: 'http://localhost/api/',
@@ -27,20 +29,14 @@ const client = new ApolloClient({
   resolvers: {}
 });
 
-client.query({
-  query: gql`
-    query {
-      isAuthenticated
-    }
-  `
-}).then(data => {
-  client.writeData({ data: { isAuthenticated: data.data.isAuthenticated } })
-})
+verifyAuth(client)
 
 render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <ApolloHooksProvider client={client}>
+        <App />
+      </ApolloHooksProvider>
     </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')

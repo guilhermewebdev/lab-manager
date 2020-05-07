@@ -3,7 +3,9 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import gql from 'graphql-tag';
-import { useMutation, useApolloClient } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
+
+import { verifyAuth } from '../../../services/auth';
 
 import {
     createStyles,
@@ -91,8 +93,7 @@ const LOGIN = gql`
 export default function LoginForm() {
     const classes = useStyles();
     const { register, handleSubmit, errors, reset } = useForm();
-    const [tokenAuth, {error, loading}] = useMutation(LOGIN);
-    const { writeData, query } = useApolloClient()
+    const [tokenAuth, {error, loading, client}] = useMutation(LOGIN);
     const initialValues:Login = {
         username: '',
         password: '',
@@ -104,14 +105,7 @@ export default function LoginForm() {
         const { username, password } = form;
         tokenAuth({ variables: { username, password } }).then(data => {
             values.keep? localStorage.setItem('bat', data.data.tokenAuth.token) : sessionStorage.setItem('bat', data.data.tokenAuth.token) 
-            query({
-                query: gql`
-                  query {
-                    isAuthenticated
-                  }
-                `
-              }).then(data => writeData({ data: { isAuthenticated: data.data.isAuthenticated } }))
-              
+            if(client) verifyAuth(client);
             reset();
             setValues(initialValues);
         })
