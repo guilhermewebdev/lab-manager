@@ -3,10 +3,13 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
 	AppBar,
 	Toolbar,
-	IconButton,
 	Button,
 } from '@material-ui/core'
-import MenuIcon from '@material-ui/icons/Menu';
+
+import Drawer from './Drawer';
+
+import { useQuery } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -23,17 +26,24 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function () {
-	const classes = useStyles();
+	const { data } = useQuery(gql`
+        {
+            isAuthenticated @client
+        }
+	`);
+	
 
 	return (
 		<div>
 			<AppBar position="fixed">
 				<Toolbar variant="dense">
-					<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-						<MenuIcon />
-					</IconButton>
+					{data?.isAuthenticated &&
+						<Drawer />
+					}
 					<div className="spacer"></div>
-					<Button color="inherit">Login</Button>
+					{!data?.isAuthenticated &&
+						<Button color="inherit">Login</Button>
+					}
 				</Toolbar>
 			</AppBar>
 			<Toolbar variant="dense" />

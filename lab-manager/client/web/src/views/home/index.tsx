@@ -6,9 +6,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
-  useRouteMatch,
-  useParams
 } from "react-router-dom";
 
 export default function(){
@@ -18,6 +15,9 @@ export default function(){
         <Switch>
           <Route path="/auth">
             <Auth />
+          </Route>
+          <Route path="/">
+            Tela inicial
           </Route>
         </Switch>
       </Router>
