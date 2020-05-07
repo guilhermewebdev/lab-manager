@@ -3,7 +3,6 @@ import React from 'react';
 import Auth from './auth/index'
 
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
@@ -11,7 +10,6 @@ import {
 export default function(){
 
     return (
-      <Router>
         <Switch>
           <Route path="/auth">
             <Auth />
@@ -20,6 +18,5 @@ export default function(){
             Tela inicial
           </Route>
         </Switch>
-      </Router>
     )
 }

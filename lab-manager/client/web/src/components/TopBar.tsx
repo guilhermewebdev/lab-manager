@@ -1,5 +1,7 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+
+import { Link as RouterLink } from 'react-router-dom';
+
 import {
 	AppBar,
 	Toolbar,
@@ -10,20 +12,6 @@ import Drawer from './Drawer';
 
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
-			flexGrow: 1,
-		},
-		menuButton: {
-			marginRight: theme.spacing(2),
-		},
-		title: {
-			flexGrow: 1,
-		},
-	}),
-);
 
 export default function () {
 	const { data } = useQuery(gql`
@@ -41,8 +29,9 @@ export default function () {
 						<Drawer />
 					}
 					<div className="spacer"></div>
-					{!data?.isAuthenticated &&
-						<Button color="inherit">Login</Button>
+					{data?.isAuthenticated?
+						<Button component={RouterLink} color="inherit" to="/auth">Sair</Button>:
+						<Button component={RouterLink} color="inherit" to="/auth">Entre ou Cadastre</Button>
 					}
 				</Toolbar>
 			</AppBar>
