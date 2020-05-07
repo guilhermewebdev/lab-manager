@@ -2,6 +2,9 @@ import React from 'react';
 
 import { useForm } from 'react-hook-form';
 
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/react-hooks';
+
 import {
     createStyles,
     makeStyles,
@@ -19,8 +22,15 @@ import {
     Checkbox,
     InputAdornment,
     IconButton,
+    CircularProgress,
+    Backdrop,
     FormHelperText,
+    Snackbar,
 } from '@material-ui/core'
+
+import {
+    Alert
+} from '@material-ui/lab';
 
 import {
     Visibility,
@@ -62,6 +72,10 @@ const useStyles = makeStyles((theme: Theme) =>
         textField: {
             width: '25ch',
         },
+        backdrop: {
+            zIndex: theme.zIndex.drawer + 1,
+            color: '#fff',
+        },
     }),
 );
 
@@ -77,6 +91,31 @@ type Registration = {
     showPassword2: boolean,
 }
 
+const REGISTRATION = gql`
+    mutation Regitration(
+        $fullName: String!
+        $username: String!
+        $email: String!
+        $password: String!
+        $laboratory: String!
+    ){
+        register(input: {
+            fullName: $fullName
+            username: $username
+            email: $email
+            password: $password
+            laboratory: $laboratory
+        }) {
+            professional {
+                id
+            }
+            laboratory {
+                id
+            }
+        }
+    }
+`
+
 export default function RegistrationForm() {
     const initalState: Registration = {
         username: '',
@@ -90,9 +129,15 @@ export default function RegistrationForm() {
         showPassword2: false,
     }
     const classes = useStyles();
+    const [rg, { error, loading }] = useMutation(REGISTRATION);
     const { register, handleSubmit, errors, reset } = useForm();
-    const [values, setValues] = React.useState<Registration>(initalState); 
-    const onSubmit = (data: any) => console.log(data, setValues(initalState), reset());
+    const [values, setValues] = React.useState<Registration>(initalState);
+    const onSubmit = (form: any) => {
+        rg({ variables: form }).then(() => {
+            setValues(initalState);
+            reset();
+        });
+    }
     const handleClickShowPassword = () => setValues({ ...values, showPassword: !values.showPassword });
     const handleClickShowPassword2 = () => setValues({ ...values, showPassword2: !values.showPassword2 });
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -108,6 +153,14 @@ export default function RegistrationForm() {
             className={classes.form}
             onSubmit={handleSubmit(onSubmit)}
         >
+            <Backdrop className={classes.backdrop} open={loading}>
+                <CircularProgress color="primary" />
+            </Backdrop>
+            <Snackbar open={!!error} autoHideDuration={6000}>
+                <Alert severity="error">
+                    {!!error && error?.message}
+                </Alert>
+            </Snackbar>
             <Grid
                 container
                 justify="center"

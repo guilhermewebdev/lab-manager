@@ -37,9 +37,6 @@ const useStyles = makeStyles((theme: Theme) =>
         menuButton: {
             marginRight: theme.spacing(2),
         },
-        title: {
-            flexGrow: 1,
-        },
         form: {
             paddingTop: 15,
             paddingBottom: 25,
@@ -49,19 +46,10 @@ const useStyles = makeStyles((theme: Theme) =>
             marginTop: 15,
         },
         input: {
-            marginBottom: 10,
+            marginBottom: 15,
         },
         button: {
             width: "100%"
-        },
-        margin: {
-            margin: theme.spacing(1),
-        },
-        withoutLabel: {
-            marginTop: theme.spacing(3),
-        },
-        textField: {
-            width: '25ch',
         },
     }),
 );
@@ -168,7 +156,7 @@ export default function LoginForm() {
                         />
                     </Grid>
                     <Grid item md={5}>
-                        <Link href="#">Esqueceu a senha?</Link>
+                        <Link color="primary" href="#">Esqueceu a senha?</Link>
                     </Grid>
                 </Grid>
                 <Grid item md={11}>
