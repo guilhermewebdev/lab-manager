@@ -115,7 +115,7 @@ function LoginForm() {
                             error={errors.username}
                             name="username"
                             className={classes.input}
-                            label="Nome de usuário"
+                            label="Nome de usuário *"
                             helperText={errors.username && "Informe um nome de usuário válido"}
                             inputRef={register({
                                 required: true,
@@ -124,7 +124,7 @@ function LoginForm() {
                             autoFocus
                         />
                         <FormControl className={classes.input} fullWidth>
-                            <InputLabel error={errors.password} htmlFor="standard-adornment-password">Senha</InputLabel>
+                            <InputLabel error={errors.password} htmlFor="standard-adornment-password">Senha *</InputLabel>
                             <Input
                                 name="password"
                                 error={errors.password}
@@ -223,7 +223,7 @@ function RegistrationForm() {
                             name="fullName"
                             error={errors.fullName}
                             helperText={errors.fullName && "Digite um nome válido"}
-                            label="Nome completo"
+                            label="Nome completo *"
                             inputRef={register({
                                 required: true,
                                 pattern: /(-?([A-Z].\s)?([A-Z][a-z]+)\s?)+([A-Z]'([A-Z][a-z]+))?$/
@@ -234,7 +234,7 @@ function RegistrationForm() {
                             className={classes.input}
                             name="email"
                             error={errors.email}
-                            label="Email"
+                            label="Email *"
                             helperText={errors.email && "Digite um email válido"}
                             inputRef={register({
                                 required: true,
@@ -246,14 +246,14 @@ function RegistrationForm() {
                             name="username"
                             error={errors.username}
                             helperText={errors.email && "Digite um nome de usuário válido"}
-                            label="Nome de usuário"
+                            label="Nome de usuário *"
                             inputRef={register({
                                 required: true,
                                 pattern: /^[a-z0-9_-]{2,}$/
                             })}
                         ></TextField>
                         <FormControl className={classes.input} fullWidth>
-                            <InputLabel error={errors.password} htmlFor="standard-adornment-password1">Senha</InputLabel>
+                            <InputLabel error={errors.password} htmlFor="standard-adornment-password1">Senha *</InputLabel>
                             <Input
                                 name="password"
                                 error={errors.password}
@@ -283,10 +283,10 @@ function RegistrationForm() {
                             }
                         </FormControl>
                         <FormControl className={classes.input} fullWidth>
-                            <InputLabel error={errors.password2} htmlFor="standard-adornment-password2">Confirme sua senha</InputLabel>
+                            <InputLabel error={errors.password2} htmlFor="standard-adornment-password2">Confirme sua senha *</InputLabel>
                             <Input
                                 name="password2"
-                                error={errors.password2 || (values.password2 !== values.password)}
+                                error={(errors.password2 || (values.password2 !== values.password)) && values.password2 !== ''}
                                 id="standard-adornment-password2"
                                 type={values.showPassword2 ? 'text' : 'password'}
                                 value={values.password2}
@@ -309,16 +309,16 @@ function RegistrationForm() {
                                     </InputAdornment>
                                 }
                             />
-                            {(errors.password2 && (values.password2 === values.password)) &&
+                            {(errors.password2) &&
                                 <FormHelperText error={errors.password2}>Confirme sua senha</FormHelperText>
                             }
-                            {(values.password2 !== values.password) &&
+                            {((values.password2 !== values.password) && values.password2 !== '') &&
                                 <FormHelperText error={(values.password2 !== values.password)}>As senhas não coincidem</FormHelperText>
                             }
                         </FormControl>
                         <TextField
                             className={classes.input}
-                            label="Nome do laboratório"
+                            label="Nome do laboratório *"
                             name="laboratory"
                             error={errors.laboratory}
                             helperText={errors.laboratory && "Digite um nome válido para o laboratório"}
@@ -330,7 +330,7 @@ function RegistrationForm() {
                             <FormControlLabel
                                 className={classes.input}
                                 control={<Checkbox color="primary" />}
-                                label="Concordo com os termos de uso"
+                                label="Concordo com os termos de uso *"
                                 name="terms"
                                 inputRef={register({
                                     required: true,
