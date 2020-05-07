@@ -57,8 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
             marginTop: 15,
         },
         input: {
-            paddingTop: 10,
-            paddingBottom: 10,
+            marginBottom: 10,
         },
         button: {
             width: "100%"
@@ -154,9 +153,10 @@ function LoginForm() {
                                 required: true,
                                 pattern: /^[a-z0-9_-]{2,}$/
                             })}
+                            autoFocus
                         />
-                        <FormControl fullWidth>
-                            <InputLabel htmlFor="standard-adornment-password">Senha</InputLabel>
+                        <FormControl className={classes.input} fullWidth>
+                            <InputLabel error={errors.password} htmlFor="standard-adornment-password">Senha</InputLabel>
                             <Input
                                 name="password"
                                 error={errors.password}
@@ -181,7 +181,7 @@ function LoginForm() {
                                     </InputAdornment>
                                 }
                             />
-                            {errors.password && 
+                            {errors.password &&
                                 <FormHelperText error={errors.password}>Informe uma senha válida, com pelo menos 8 dígitos</FormHelperText>
                             }
                         </FormControl>
@@ -189,7 +189,12 @@ function LoginForm() {
                     </FormGroup>
                 </Grid>
                 <Grid item md={11}>
-                    <Button className={classes.button} type="submit" variant="contained" color="primary">
+                    <Button
+                        className={classes.button}
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                    >
                         Entrar
                     </Button>
                 </Grid>
@@ -198,10 +203,46 @@ function LoginForm() {
     )
 }
 
-function RegisterForm() {
+type Registration = {
+    username: string,
+    password: string,
+    password2: string,
+    email: string,
+    fullName: string,
+    laboratory: string,
+    showPassword: boolean,
+    showPassword2: boolean,
+}
+
+function RegistrationForm() {
     const classes = useStyles();
+    const { register, handleSubmit, watch, errors, reset } = useForm();
+    const onSubmit = (data: any) => console.log(data, reset());
+    const [values, setValues] = React.useState<Registration>({
+        username: '',
+        password: '',
+        password2: '',
+        email: '',
+        fullName: '',
+        laboratory: '',
+        showPassword: false,
+        showPassword2: false,
+    });
+    const handleClickShowPassword = () => setValues({ ...values, showPassword: !values.showPassword });
+    const handleClickShowPassword2 = () => setValues({ ...values, showPassword2: !values.showPassword2 });
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+    const handleChange = (prop: keyof Registration) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({ ...values, [prop]: event.target.value });
+    };
+
     return (
-        <form autoComplete="off" className={classes.form}>
+        <form
+            autoComplete="off"
+            className={classes.form}
+            onSubmit={handleSubmit(onSubmit)}
+        >
             <Grid
                 container
                 justify="center"
@@ -211,33 +252,135 @@ function RegisterForm() {
                     <FormGroup>
                         <TextField
                             className={classes.input}
+                            name="fullName"
+                            error={errors.fullName}
+                            helperText={errors.fullName && "Digite um nome válido"}
                             label="Nome completo"
+                            inputRef={register({
+                                required: true,
+                                pattern: /(-?([A-Z].\s)?([A-Z][a-z]+)\s?)+([A-Z]'([A-Z][a-z]+))?$/
+                            })}
+                            autoFocus
                         ></TextField>
                         <TextField
                             className={classes.input}
+                            name="email"
+                            error={errors.email}
                             label="Email"
+                            helperText={errors.email && "Digite um email válido"}
+                            inputRef={register({
+                                required: true,
+                                pattern: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+                            })}
                         ></TextField>
                         <TextField
                             className={classes.input}
+                            name="username"
+                            error={errors.username}
+                            helperText={errors.email && "Digite um nome de usuário válido"}
                             label="Nome de usuário"
+                            inputRef={register({
+                                required: true,
+                                pattern: /^[a-z0-9_-]{2,}$/
+                            })}
                         ></TextField>
-                        <TextField
-                            className={classes.input}
-                            label="Senha"
-                        ></TextField>
-                        <TextField
-                            className={classes.input}
-                            label="Confirme sua senha"
-                        ></TextField>
+                        <FormControl className={classes.input} fullWidth>
+                            <InputLabel error={errors.password} htmlFor="standard-adornment-password1">Senha</InputLabel>
+                            <Input
+                                name="password"
+                                error={errors.password}
+                                id="standard-adornment-password1"
+                                type={values.showPassword ? 'text' : 'password'}
+                                value={values.password}
+                                onChange={handleChange('password')}
+                                inputRef={register({
+                                    required: true,
+                                    minLength: 8,
+                                })}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="Mudar visibilidade da senha"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                            edge="end"
+                                        >
+                                            {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                            {errors.password &&
+                                <FormHelperText error={errors.password}>Informe uma senha válida, com pelo menos 8 dígitos</FormHelperText>
+                            }
+                        </FormControl>
+                        <FormControl className={classes.input} fullWidth>
+                            <InputLabel error={errors.password2} htmlFor="standard-adornment-password2">Confirme sua senha</InputLabel>
+                            <Input
+                                name="password2"
+                                error={errors.password2 || (values.password2 !== values.password)}
+                                id="standard-adornment-password2"
+                                type={values.showPassword2 ? 'text' : 'password'}
+                                value={values.password2}
+                                onChange={handleChange('password2')}
+                                inputRef={register({
+                                    required: true,
+                                    minLength: 8,
+                                    validate: val => val === values.password
+                                })}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="Mudar visibilidade da senha"
+                                            onClick={handleClickShowPassword2}
+                                            onMouseDown={handleMouseDownPassword}
+                                            edge="end"
+                                        >
+                                            {values.showPassword2 ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                            {(errors.password2 && (values.password2 === values.password)) &&
+                                <FormHelperText error={errors.password2}>Confirme sua senha</FormHelperText>
+                            }
+                            {(values.password2 !== values.password) &&
+                                <FormHelperText error={(values.password2 !== values.password)}>As senhas não coincidem</FormHelperText>
+                            }
+                        </FormControl>
                         <TextField
                             className={classes.input}
                             label="Nome do laboratório"
+                            name="laboratory"
+                            error={errors.laboratory}
+                            helperText={errors.laboratory && "Digite um nome válido para o laboratório"}
+                            inputRef={register({
+                                required: true,
+                            })}
                         ></TextField>
-                        <FormControlLabel className={classes.input} control={<Checkbox color="primary" />} label="Concordo com os termos de uso" />
+                        <FormControl required error={errors.terms} component="fieldset">
+                            <FormControlLabel
+                                className={classes.input}
+                                control={<Checkbox color="primary" />}
+                                label="Concordo com os termos de uso"
+                                name="terms"
+                                inputRef={register({
+                                    required: true,
+                                })}
+                            />
+                            {errors.terms &&
+                                <FormHelperText error={errors.terms}>Você precisa concordar com os termos</FormHelperText>
+                            }
+                        </FormControl>
                     </FormGroup>
                 </Grid>
                 <Grid item md={11}>
-                    <Button className={classes.button} variant="contained" color="primary">
+                    <Button
+                        className={classes.button}
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                    >
                         Cadastrar
                     </Button>
                 </Grid>
@@ -265,7 +408,7 @@ export default function () {
             spacing={10}
             className={classes.container}
         >
-            <Grid item md={5}>
+            <Grid item md={4}>
                 <Card className={classes.root}>
                     <AppBar position="static" color="default">
                         <Tabs
@@ -289,7 +432,7 @@ export default function () {
                             <LoginForm />
                         </TabPanel>
                         <TabPanel value={value} index={1} dir={theme.direction}>
-                            <RegisterForm />
+                            <RegistrationForm />
                         </TabPanel>
                     </SwipeableViews>
                 </Card>
