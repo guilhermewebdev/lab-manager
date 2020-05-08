@@ -4,11 +4,8 @@ import {
     Theme,
     Grid,
     Card,
-    Paper,
     makeStyles,
     createStyles,
-    AppBar,
-    Toolbar
 } from '@material-ui/core'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -19,9 +16,6 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         list: {
             overflowY: 'auto',
-        },
-        maxHeight: {
-            height: "100%"
         },
         card: {
             height: "100%"
@@ -39,8 +33,8 @@ export default function Clients() {
             alignItems="stretch"
             container
         >
-            <Grid className={classes.maxHeight} item md={4}>
-                <Card className={classes.card}>
+            <Grid item md={4}>
+                <Card variant="outlined" className={classes.card}>
                     teste
                 </Card>
             </Grid>

@@ -29,7 +29,7 @@ export default function () {
 	return (
 			<AppBar position="fixed">
 				<Toolbar variant="dense">
-					{data?.isAuthenticated &&
+					{!!data?.isAuthenticated &&
 						<Drawer />
 					}
 					<div className="spacer"></div>

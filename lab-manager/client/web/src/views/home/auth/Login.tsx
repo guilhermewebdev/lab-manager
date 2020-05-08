@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import gql from 'graphql-tag';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
 
-import { verifyAuth } from '../../../services/auth';
+import { login } from '../../../services/auth';
 
 import {
     createStyles,
@@ -105,9 +105,8 @@ export default function LoginForm() {
     const onSubmit = async (form: any) => {
         const { username, password } = form;
         tokenAuth({ variables: { username, password } }).then(data => {
-            values.keep? localStorage.setItem('bat', data.data.tokenAuth.token) : sessionStorage.setItem('bat', data.data.tokenAuth.token)
+            if(client) login(client, data.data.tokenAuth.token, values.keep);
         }).then(() => {
-            if(client) verifyAuth(client);
             reset();
             setValues(initialValues);
         })
