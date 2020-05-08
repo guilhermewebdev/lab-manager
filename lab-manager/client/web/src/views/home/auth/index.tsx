@@ -35,7 +35,6 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         container: {
             height: "100%",
-            marginTop: 15,
         },
         input: {
             marginBottom: 10,
@@ -100,11 +99,10 @@ export default function () {
             container
             justify="center"
             alignItems="center"
-            spacing={10}
             className={classes.container}
         >
             <Grid item md={4}>
-                <Card className={classes.root}>
+                <Card>
                     <AppBar position="static" color="default">
                         <Tabs
                             value={value}

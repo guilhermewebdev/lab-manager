@@ -27,7 +27,6 @@ export default function () {
 	}
 
 	return (
-		<div>
 			<AppBar position="fixed">
 				<Toolbar variant="dense">
 					{data?.isAuthenticated &&
@@ -40,7 +39,5 @@ export default function () {
 					}
 				</Toolbar>
 			</AppBar>
-			<Toolbar variant="dense" />
-		</div>
 	)
 }

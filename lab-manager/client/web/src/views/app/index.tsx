@@ -1,8 +1,9 @@
 import * as React from 'react';
 
+import Home from './home'
 
 export default function App(){
     return (
-        <div>Cuidado</div>
+        <Home></Home>
     )
 }
