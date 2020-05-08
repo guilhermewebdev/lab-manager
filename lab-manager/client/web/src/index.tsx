@@ -8,16 +8,16 @@ import { ApolloProvider as ApolloHooksProvider } from '@apollo/react-hooks';
 import { ApolloProvider } from 'react-apollo'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
-import { verifyAuth } from './services/auth'
+import { verifyAuth, getToken } from './services/auth'
 
 const client = new ApolloClient({
   uri: 'http://localhost/api/',
   cache: new InMemoryCache(),
   request: (operation) => {
-    const token = sessionStorage.getItem('bat') || localStorage.getItem('bat');
+    const token = getToken();
     operation.setContext({
       headers: {
-        authorization: token ? `JWT ${token}` : ''
+        authorization: `JWT ${token}` 
       }
     })
   },

@@ -117,8 +117,8 @@ export default function LoginForm() {
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
-    const handleChange = (prop: keyof Login) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValues({ ...values, [prop]: event.target.value });
+    const handleChange = (prop: keyof Login, value: keyof HTMLInputElement = 'value') => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({ ...values, [prop]: event.target[value] });
     };
 
 
@@ -201,8 +201,9 @@ export default function LoginForm() {
                                 <Switch
                                     size="small"
                                     color="primary"
-                                    value={values.keep}
-                                    onChange={handleChange('keep')}
+                                    checked={values.keep}
+                                    name="keep"
+                                    onChange={handleChange('keep', 'checked')}
                                 />}
                             label="Manter Conectado"
                         />
