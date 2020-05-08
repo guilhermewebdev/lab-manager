@@ -7,6 +7,8 @@ import { Redirect, Switch, Route } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
+import App from './app'
+
 export default function Content() {
     const { data } = useQuery(gql`
         {
@@ -22,7 +24,7 @@ export default function Content() {
                     <Redirect to="/" />
                 </Route>
                 <Route path="/">
-                    <div>você está logado</div>
+                    <App />
                 </Route>
             </Switch>
         )

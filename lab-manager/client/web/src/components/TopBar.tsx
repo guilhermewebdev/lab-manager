@@ -40,6 +40,7 @@ export default function () {
 					}
 				</Toolbar>
 			</AppBar>
+			<Toolbar variant="dense" />
 		</div>
 	)
 }
