@@ -22,10 +22,14 @@ import {
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import MenuIcon from '@material-ui/icons/Menu';
 import { gql } from 'apollo-boost';
-import { useQuery } from 'react-apollo';
+import { useQuery, useApolloClient } from 'react-apollo';
 
 
-import { mdiFlask, mdiCheck } from '@mdi/js';
+import {
+    mdiFlask,
+    mdiCheck,
+    mdiSubdirectoryArrowRight,
+} from '@mdi/js';
 import { ExpandLess } from '@material-ui/icons';
 
 function getRandomColor(i: number = 0, color: string = '#', size: number = 6): string {
@@ -50,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
             flexGrow: 1,
         },
         card: {
-            width: 300,
+            width: 250,
             height: "100%",
         },
         avatar: {
@@ -84,11 +88,12 @@ export default function () {
 
         setState({ ...state, drawer: open });
     };
-    const lab = useQuery(gql`
+    const LAB_QUERY = gql`
         {
             laboratory @client
         }
-    `)
+    `
+    const lab = useQuery(LAB_QUERY)
     const { data, loading, error } = useQuery(gql`
         query Drawer($lab: Int!) {
             laboratories {
@@ -106,10 +111,13 @@ export default function () {
             }
         }
     `, { variables: { lab: lab.data?.laboratory || 0 } })
-    const toggleState = (key: keyof DrawerType, value: any) => () => {
-        setState({ ...state, [key]: value })
+    const toggleState = (prop: keyof DrawerType, value: any) => () => {
+        setState({ ...state, [prop]: value })
     }
-
+    const client = useApolloClient()
+    const selectLab = (index: number) => () => {
+        client.writeQuery({ query: LAB_QUERY, data: { laboratory: index } })
+    }
 
 
     return (
@@ -134,6 +142,7 @@ export default function () {
                             className={classes.root}
                             aria-labelledby="nested-list-subheader"
                             component="nav"
+                            disablePadding
                         >
                             <ListItem button onClick={toggleState('labsCollapse', !state.labsCollapse)}>
                                 <ListItemIcon>
@@ -144,10 +153,14 @@ export default function () {
                             </ListItem>
                             <Collapse in={state.labsCollapse} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                    {data?.laboratories.map((item: any, index: number) => (
-                                        <ListItem button>
+                                    {data?.laboratories.map((item: any) => (
+                                        <ListItem button onClick={selectLab(item.index)}>
                                             <span className="spacer"></span>
+                                            <ListItemIcon>
+                                                <Icon component={MDI} path={mdiSubdirectoryArrowRight} color="inherit"></Icon>
+                                            </ListItemIcon>
                                             <ListItemText primary={item.name} />
+                                            <span className="spacer"></span>
                                             {item.index === data?.laboratory.index &&
                                                 <ListItemIcon>
                                                     <Icon component={MDI} path={mdiCheck} color="inherit"></Icon>
