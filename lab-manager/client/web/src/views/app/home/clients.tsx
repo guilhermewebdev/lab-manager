@@ -6,19 +6,33 @@ import {
     Card,
     makeStyles,
     createStyles,
+    CardHeader,
+    Divider,
+    Button,
+    Toolbar,
+    Typography,
+    AppBar,
+    List,
+    CardContent,
+    ListItem,
+    ListItemText,
 } from '@material-ui/core'
+
+import Works from '../../../components/Works';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         container: {
             height: "100%",
             flexGrow: 1,
+            position: 'relative',
         },
         list: {
-            overflowY: 'auto',
+            paddingTop: 0,
         },
         card: {
-            height: "100%"
+            overflow: 'auto',
+            height: "100%",
         }
 
     }),
@@ -26,18 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Clients() {
     const classes = useStyles()
-
+    let list = ['teste', 'nada', 'nois']
+   
     return (
-        <Grid
-            className={classes.container}
-            alignItems="stretch"
-            container
-        >
-            <Grid item md={4}>
-                <Card variant="outlined" className={classes.card}>
-                    teste
-                </Card>
-            </Grid>
-        </Grid>
+        <Works list={list}>Teste</Works>
     )
 }

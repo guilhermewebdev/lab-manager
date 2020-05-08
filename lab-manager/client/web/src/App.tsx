@@ -30,10 +30,10 @@ function App() {
 			<Box width="100%" height={distance} />
       <Box
         width="100%"
-        display="flex"
         top={0} bottom={0}
         left={0} right={0}
-        overflow="auto"
+        overflow="hidden"
+        position="relative"
         height={state.height}
       >
         <Content />
