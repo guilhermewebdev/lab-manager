@@ -107,7 +107,7 @@ export default function LoginForm() {
         tokenAuth({ variables: { username, password } }).then(data => {
             values.keep? localStorage.setItem('bat', data.data.tokenAuth.token) : sessionStorage.setItem('bat', data.data.tokenAuth.token)
         }).then(() => {
-            if(client) verifyAuth(client).then(alert);
+            if(client) verifyAuth(client);
             reset();
             setValues(initialValues);
         })
