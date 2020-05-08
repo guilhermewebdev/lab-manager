@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
+import { Icon as MDI } from '@mdi/react'
+
 import {
     IconButton,
     Drawer,
@@ -12,10 +14,19 @@ import {
     Avatar,
     CardContent,
     Divider,
+    Collapse,
+    ListItem,
+    Icon,
+    ListItemText,
 } from '@material-ui/core'
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import MenuIcon from '@material-ui/icons/Menu';
 import { gql } from 'apollo-boost';
 import { useQuery } from 'react-apollo';
+
+
+import { mdiFlask, mdiCheck } from '@mdi/js';
+import { ExpandLess } from '@material-ui/icons';
 
 function getRandomColor(i: number = 0, color: string = '#', size: number = 6): string {
     let letters = '0123456789ABCDEF';
@@ -48,13 +59,18 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
+type DrawerType = {
+    drawer: boolean,
+    labsCollapse: boolean,
+}
 
 export default function () {
     const classes = useStyles();
-    const defaultState = {
+    const defaultState: DrawerType = {
         drawer: false,
+        labsCollapse: false,
     }
-    const [state, setState] = React.useState(defaultState)
+    const [state, setState] = React.useState<DrawerType>(defaultState)
     const toggleDrawer = (open: boolean) => (
         event: React.KeyboardEvent | React.MouseEvent,
     ) => {
@@ -90,6 +106,9 @@ export default function () {
             }
         }
     `, { variables: { lab: lab.data?.laboratory || 0 } })
+    const toggleState = (key: keyof DrawerType, value: any) => () => {
+        setState({ ...state, [key]: value })
+    }
 
 
 
@@ -111,8 +130,33 @@ export default function () {
                     />
                     <Divider />
                     <CardContent>
-                        <List>
-
+                        <List
+                            className={classes.root}
+                            aria-labelledby="nested-list-subheader"
+                            component="nav"
+                        >
+                            <ListItem button onClick={toggleState('labsCollapse', !state.labsCollapse)}>
+                                <ListItemIcon>
+                                    <Icon component={MDI} path={mdiFlask} color="inherit"></Icon>
+                                </ListItemIcon>
+                                <ListItemText primary="Laboratórios" />
+                                {state.labsCollapse ? <ExpandLess /> : <ExpandMore />}
+                            </ListItem>
+                            <Collapse in={state.labsCollapse} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                    {data?.laboratories.map((item: any, index: number) => (
+                                        <ListItem button>
+                                            <span className="spacer"></span>
+                                            <ListItemText primary={item.name} />
+                                            {item.index === data?.laboratory.index &&
+                                                <ListItemIcon>
+                                                    <Icon component={MDI} path={mdiCheck} color="inherit"></Icon>
+                                                </ListItemIcon>
+                                            }
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Collapse>
                         </List>
                     </CardContent>
                 </Card>
