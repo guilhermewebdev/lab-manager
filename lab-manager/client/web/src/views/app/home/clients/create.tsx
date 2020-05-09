@@ -12,11 +12,18 @@ import {
     InputAdornment,
     FormControl,
     Input,
+    Tooltip,
+    IconButton,
+    Icon,
     InputLabel,
     FormHelperText,
-    Button
+    Button,
+    Modal,
 } from "@material-ui/core";
 import { useForm } from 'react-hook-form';
+
+import { Icon as MDI } from '@mdi/react'
+import { mdiPlus } from '@mdi/js';
 
 const useStiles = makeStyles((theme: Theme) =>
     createStyles({
@@ -26,7 +33,12 @@ const useStiles = makeStyles((theme: Theme) =>
         },
         form: {
             padding: 20,
-        }
+        },
+        modal: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
     }
     ))
 
@@ -36,7 +48,10 @@ type Telephone = {
 
 type State = {
     telephones: Array<Telephone>,
+    grow: boolean,
+    modal: boolean,
 }
+
 
 export default function CreateClients() {
     const classes = useStiles()
@@ -45,131 +60,156 @@ export default function CreateClients() {
         triggerValidation(e.target.name);
     }
     const initialState: State = {
-        telephones: [{ telephone: '' }]
+        telephones: [{ telephone: '' }],
+        modal: false,
+        grow: true,
     }
     const [state, setState] = React.useState(initialState)
+    const handleClose = () => {
+        setState({ ...state, grow: false })
+    }
+    const changeState = (prop: keyof State, value: any) => () => {
+        setState({ ...state, [prop]: value })
+    }
+    const open = () => {
+        setState({ ...state, grow: true, modal: true, })
+
+    }
 
     return (
-        <form autoComplete="off">
-            <Grow in={true}>
-                <Paper className={classes.root} elevation={3}>
-                    <Grid
-                        container
-                        direction="row"
-                        justify="center"
-                        alignItems="center"
-                    >
-                        <Grid item md={6}>
-                            <Typography variant="h5">Novo Dentista</Typography>
-                        </Grid>
-                        <Grid item md={6} />
-                        <Grid item md={12}>
+        <div>
+            <Tooltip arrow title="Cadastrar Dentista">
+                <IconButton onClick={open}>
+                    <Icon component={MDI} path={mdiPlus} color="inherit" />
+                </IconButton>
+            </Tooltip>
+            <Modal
+                open={state.modal}
+                onClose={changeState('modal', false)}
+                className={classes.modal}
+            >
+                <form autoComplete="off">
+                    <Grow in={state.grow} onExited={changeState('modal', false)} mountOnEnter unmountOnExit>
+                        <Paper className={classes.root} elevation={3}>
                             <Grid
                                 container
                                 direction="row"
-                                justify="flex-start"
+                                justify="center"
                                 alignItems="center"
-                                spacing={4}
-                                className={classes.form}
                             >
                                 <Grid item md={6}>
-                                    <TextField
-                                        fullWidth
-                                        label="Nome *"
-                                        onInput={handleChange}
-                                        name="name"
-                                        helperText={!!errors.name && "Digite um nome válido"}
-                                        error={!!errors.name}
-                                        inputRef={register({
-                                            required: true,
-                                            pattern: /(-?([A-Z].\s)?([A-Z][a-z]+)\s?)+([A-Z]'([A-Z][a-z]+))?$/
-                                        })}
-                                    />
+                                    <Typography variant="h5">Novo Dentista</Typography>
                                 </Grid>
-                                <Grid item md={6}>
-                                    <TextField
-                                        fullWidth
-                                        label="E-mail *"
-                                        onInput={handleChange}
-                                        name="email"
-                                        helperText={!!errors.email && "Digite um e-mail válido"}
-                                        error={!!errors.email}
-                                        inputRef={register({
-                                            required: true,
-                                            pattern: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
-                                        })}
-                                    />
+                                <Grid item md={6} />
+                                <Grid item md={12}>
+                                    <Grid
+                                        container
+                                        direction="row"
+                                        justify="flex-start"
+                                        alignItems="center"
+                                        spacing={4}
+                                        className={classes.form}
+                                    >
+                                        <Grid item md={6}>
+                                            <TextField
+                                                fullWidth
+                                                label="Nome *"
+                                                onInput={handleChange}
+                                                name="name"
+                                                helperText={!!errors.name && "Digite um nome válido"}
+                                                error={!!errors.name}
+                                                inputRef={register({
+                                                    required: true,
+                                                    pattern: /(-?([A-Z].\s)?([A-Z][a-z]+)\s?)+([A-Z]'([A-Z][a-z]+))?$/
+                                                })}
+                                            />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TextField
+                                                fullWidth
+                                                label="E-mail *"
+                                                onInput={handleChange}
+                                                name="email"
+                                                helperText={!!errors.email && "Digite um e-mail válido"}
+                                                error={!!errors.email}
+                                                inputRef={register({
+                                                    required: true,
+                                                    pattern: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+                                                })}
+                                            />
+                                        </Grid>
+                                        <Grid item md={12}>
+                                            <TextField
+                                                fullWidth
+                                                label="Endereço *"
+                                            />
+                                        </Grid>
+                                        <Grid item md={3}>
+                                            <FormControl>
+                                                <InputLabel
+                                                    error={!!errors.discount}
+                                                    htmlFor="standard-adornment-weight"
+                                                >Desconto</InputLabel>
+                                                <Input
+                                                    id="standard-adornment-weight"
+                                                    type="number"
+                                                    error={!!errors.discount}
+                                                    name="discount"
+                                                    endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                                                    aria-describedby="standard-weight-helper-text"
+                                                    inputProps={{
+                                                        'aria-label': 'weight',
+                                                    }}
+                                                    onInput={handleChange}
+                                                    inputRef={register({
+                                                        min: 0,
+                                                        max: 100,
+                                                    })}
+                                                />
+                                                {(getValues('discount') > 100) &&
+                                                    <FormHelperText
+                                                        error={errors.discount}
+                                                    >Não é possível dar desconto com mais de 100%</FormHelperText>
+                                                }
+                                                {(getValues('discount') < 0) &&
+                                                    <FormHelperText
+                                                        error={errors.discount}
+                                                    >Não é possível dar desconto negativo</FormHelperText>
+                                                }
+                                            </FormControl>
+                                        </Grid>
+                                        {state.telephones.map((tel: Telephone, index: number) => (
+                                            <Grid item md={4}>
+                                                <TextField
+                                                    fullWidth
+                                                    label="Telefone *"
+                                                />
+                                            </Grid>
+                                        ))}
+                                    </Grid>
                                 </Grid>
                                 <Grid item md={12}>
-                                    <TextField
-                                        fullWidth
-                                        label="Endereço *"
-                                    />
-                                </Grid>
-                                <Grid item md={3}>
-                                    <FormControl>
-                                        <InputLabel
-                                            error={!!errors.discount}
-                                            htmlFor="standard-adornment-weight"
-                                        >Desconto</InputLabel>
-                                        <Input
-                                            id="standard-adornment-weight"
-                                            type="number"
-                                            error={!!errors.discount}
-                                            name="discount"
-                                            endAdornment={<InputAdornment position="end">%</InputAdornment>}
-                                            aria-describedby="standard-weight-helper-text"
-                                            inputProps={{
-                                                'aria-label': 'weight',
-                                            }}
-                                            onInput={handleChange}
-                                            inputRef={register({
-                                                min: 0,
-                                                max: 100,
-                                            })}
-                                        />
-                                        {(getValues('discount') > 100) &&
-                                            <FormHelperText
-                                                error={errors.discount}
-                                            >Não é possível dar desconto com mais de 100%</FormHelperText>
-                                        }
-                                        {(getValues('discount') < 0) &&
-                                            <FormHelperText
-                                                error={errors.discount}
-                                            >Não é possível dar desconto negativo</FormHelperText>
-                                        }
-                                    </FormControl>
-                                </Grid>
-                                {state.telephones.map((tel: Telephone, index: number) => (
-                                    <Grid item md={4}>
-                                        <TextField
-                                            fullWidth
-                                            label="Telefone *"
-                                        />
+                                    <Grid
+                                        container
+                                        direction="row"
+                                        justify="flex-end"
+                                        alignItems="flex-end"
+                                        spacing={5}
+                                    >
+                                        <Grid item>
+                                            <Button onClick={handleClose} color="inherit">Cancelar</Button>
+                                        </Grid>
+                                        <Grid item>
+                                            <Button variant="contained" color="primary">Salvar</Button>
+                                        </Grid>
                                     </Grid>
-                                ))}
-                            </Grid>
-                        </Grid>
-                        <Grid item md={12}>
-                            <Grid
-                                container
-                                direction="row"
-                                justify="flex-end"
-                                alignItems="flex-end"
-                                spacing={5}
-                            >
-                                <Grid item>
-                                    <Button color="inherit">Cancelar</Button>
-                                </Grid>
-                                <Grid item>
-                                    <Button variant="contained" color="primary">Salvar</Button>
                                 </Grid>
                             </Grid>
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Grow>
-        </form>
+                        </Paper>
+                    </Grow>
+                </form>
+            </Modal >
+        </div>
     )
 
 }
