@@ -35,11 +35,13 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
     list: Array<any>,
     children: React.ReactNode,
+    actions?: React.ReactNode,
+    title: string,
 }
 
 export default function Clients(props: Props) {
     const classes = useStyles()
-    const { children, list } = props;
+    const { children, list, actions, title } = props;
 
     return (
         <Slide direction="left" in={true} mountOnEnter unmountOnExit>
@@ -51,7 +53,9 @@ export default function Clients(props: Props) {
                     <Card variant="outlined" className={classes.card}>
                         <AppBar color="inherit" position="absolute">
                             <Toolbar variant="dense">
-                                <Typography variant="h6">Dentistas</Typography>
+                                <Typography variant="h6">{title}</Typography>
+                                <span className="spacer"></span>
+                                {actions}
                             </Toolbar>
                         </AppBar>
                         <Toolbar variant="dense" />

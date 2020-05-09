@@ -68,7 +68,37 @@ type DrawerType = {
     labsCollapse: boolean,
 }
 
+const LAB_QUERY = gql`
+        {
+            laboratory @client
+        }
+    `
+const DRAWER_QUERY = gql`
+    query Drawer($lab: Int!) {
+        laboratories {
+            name
+            index
+        }
+        laboratory(lab:$lab) {
+            index
+            name
+            me {
+                username
+                email
+                fullName
+            }
+        }
+    }
+`
+const AUTH_QUERY = gql`
+    {
+        isAuthenticated @client
+    }
+`
+
 export default function () {
+    const auth = useQuery(AUTH_QUERY)
+    if(!auth.data.isAuthenticated) return null;
     const classes = useStyles();
     const defaultState: DrawerType = {
         drawer: false,
@@ -88,29 +118,10 @@ export default function () {
 
         setState({ ...state, drawer: open });
     };
-    const LAB_QUERY = gql`
-        {
-            laboratory @client
-        }
-    `
+
+
     const lab = useQuery(LAB_QUERY)
-    const { data, loading, error } = useQuery(gql`
-        query Drawer($lab: Int!) {
-            laboratories {
-                name
-                index
-            }
-            laboratory(lab:$lab) {
-                index
-                name
-                me {
-                    username
-                    email
-                    fullName
-                }
-            }
-        }
-    `, { variables: { lab: lab.data?.laboratory || 0 } })
+    const { data } = useQuery(DRAWER_QUERY, { variables: { lab: lab.data?.laboratory || 0 } })
     const toggleState = (prop: keyof DrawerType, value: any) => () => {
         setState({ ...state, [prop]: value })
     }
