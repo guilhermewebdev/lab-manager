@@ -39,13 +39,14 @@ const useStiles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             padding: 20,
-            width: '50vw'
+            width: '50vw',
         },
         form: {
             padding: 20,
         },
         modal: {
             display: 'flex',
+            overflow: 'auto',
             alignItems: 'center',
             justifyContent: 'center',
         },
@@ -122,7 +123,11 @@ const CLIENT_MUTATION = gql`
     }
 `
 
-export default function CreateClients() {
+type Props = {
+    onCreate?: Function
+}
+
+export default function CreateClients(props: Props) {
     const classes = useStiles()
     const { register, errors, handleSubmit, getValues, reset, triggerValidation } = useForm()
     const [create, { data, error, loading }] = useMutation(CLIENT_MUTATION)
@@ -155,12 +160,13 @@ export default function CreateClients() {
     }
     const open = () => setState({ ...state, grow: true, modal: true, })
 
-    const sumbit = () => {
+    const submit = () => {
         create({
             variables: form
         }).then(() => {
             reset()
             setState(initialState)
+            if(props?.onCreate) props.onCreate()
         })
     }
 
@@ -179,7 +185,7 @@ export default function CreateClients() {
                 onClose={changeState('modal', false)}
                 className={classes.modal}
             >
-                <form autoComplete="off">
+                <form autoComplete="off" onSubmit={handleSubmit(submit)}>
                     <Grow in={state.grow} onExited={changeState('modal', false)} mountOnEnter unmountOnExit>
                         <Paper className={classes.root} elevation={3}>
                             <Grid
@@ -207,12 +213,13 @@ export default function CreateClients() {
                                                 label="Nome *"
                                                 onInput={changeForm}
                                                 name="name"
+                                                autoFocus
                                                 value={form.name}
                                                 helperText={!!errors.name && "Digite um nome válido"}
                                                 error={!!errors.name}
                                                 inputRef={register({
                                                     required: true,
-                                                    pattern: /(-?([A-Z].\s)?([A-Z][a-z]+)\s?)+([A-Z]'([A-Z][a-z]+))?$/
+                                                    pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/
                                                 })}
                                             />
                                         </Grid>
@@ -322,7 +329,7 @@ export default function CreateClients() {
                                             <Button onClick={handleClose} color="inherit">Cancelar</Button>
                                         </Grid>
                                         <Grid item>
-                                            <Button variant="contained" onClick={handleSubmit(sumbit)} color="primary">Salvar</Button>
+                                            <Button variant="contained" onClick={handleSubmit(submit)} color="primary">Salvar</Button>
                                             <Backdrop className={classes.backdrop} open={loading}>
                                                 <CircularProgress color='primary' />
                                             </Backdrop>

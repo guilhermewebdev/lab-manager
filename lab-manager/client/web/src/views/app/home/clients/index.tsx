@@ -6,6 +6,8 @@ import {
     createStyles,
     ListItem,
     Modal,
+    ListItemText,
+    Box,
 } from '@material-ui/core'
 
 import Works from '../../../../components/Works';
@@ -29,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
             overflow: 'auto',
             height: "100%",
         },
-        
+
     }),
 );
 
@@ -42,6 +44,7 @@ const LAB_QUERY = gql`
 const CLIENTS_QUERY = gql`
     query clients($lab: Int!){
         laboratory(lab: $lab){
+            name
             clients {
                 name
                 index
@@ -53,33 +56,38 @@ const CLIENTS_QUERY = gql`
     }
 `
 
-type ClientsState = {
-}
-
 export default function Clients() {
     const classes = useStyles();
     const lab = useQuery(LAB_QUERY)
-    const { data } = useQuery(CLIENTS_QUERY, {
+    const { data, refetch } = useQuery(CLIENTS_QUERY, {
         variables: { lab: (lab.data?.laboratory || 0) }
     })
-    const initalState: ClientsState = {
-    }
-    const [state, setState] = React.useState<ClientsState>(initalState)
-    const changeState = (prop: keyof ClientsState, value: any) => () => {
-        setState({ ...state, [prop]: value })
-    }
 
     return (
         <Works
             title="Dentistas"
-            list={data?.data?.laboratory.client.map((item: any) => (
-                <ListItem button>{item.name}</ListItem>
+            list={data?.laboratory.clients.map((item: any) => (
+                <ListItem
+                    button
+                >
+                    <ListItemText
+                        primary={item.name}
+                        secondaryTypographyProps={{
+                            paragraph: false,
+                            noWrap: true,
+                        }}
+                        secondary={item.telephones
+                            .map((tel: any) => `${tel.telephone}; `)
+                            .reduce(((accum: string, tel: string) => (accum + tel)))
+                        }
+                    />
+                </ListItem>
             ))}
             actions={
-                <CreateClient />
+                <CreateClient onCreate={refetch} />
             }
         >
-            teste
+            {data?.laboratory.name}
         </Works>
     )
 }

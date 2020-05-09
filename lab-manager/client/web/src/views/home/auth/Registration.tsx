@@ -176,7 +176,7 @@ export default function RegistrationForm() {
                             label="Nome completo *"
                             inputRef={register({
                                 required: true,
-                                pattern: /(-?([A-Z].\s)?([A-Z][a-z]+)\s?)+([A-Z]'([A-Z][a-z]+))?$/
+                                pattern: /^[A-ZÀ-Ÿ][A-zÀ-ÿ']+\s([A-zÀ-ÿ']\s?)*[A-ZÀ-Ÿ][A-zÀ-ÿ']+$/
                             })}
                             autoFocus
                         ></TextField>
