@@ -19,6 +19,9 @@ import {
     FormHelperText,
     Button,
     Modal,
+    Backdrop,
+    CircularProgress,
+    Snackbar,
 } from "@material-ui/core";
 import { useForm } from 'react-hook-form';
 
@@ -27,10 +30,10 @@ import MaskedInput from 'react-text-mask';
 import { Icon as MDI } from '@mdi/react'
 import { mdiPlus } from '@mdi/js';
 
-import { useQuery } from 'react-apollo';
+import { useQuery, useMutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete, Alert } from '@material-ui/lab';
 
 const useStiles = makeStyles((theme: Theme) =>
     createStyles({
@@ -45,6 +48,10 @@ const useStiles = makeStyles((theme: Theme) =>
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+        },
+        backdrop: {
+            zIndex: theme.zIndex.drawer + 1,
+            color: '#fff',
         },
     }
     ))
@@ -90,9 +97,35 @@ function TelephoneInput(props: any) {
     );
 }
 
+const CLIENT_MUTATION = gql`
+    mutation createClient(
+        $lab: ID!
+        $name: String!
+        $telephones: [TelephoneInput]
+        $address: String
+        $email: String
+        $discount: Float
+    ){
+        upsertClient(input: {
+            lab: $lab
+            name: $name
+            telephones: $telephones
+            address: $address
+            email: $email
+            discount: $discount
+        }){
+            client {
+                name
+                index
+            }
+        }
+    }
+`
+
 export default function CreateClients() {
     const classes = useStiles()
-    const { register, errors, handleSubmit, getValues, triggerValidation } = useForm()
+    const { register, errors, handleSubmit, getValues, reset, triggerValidation } = useForm()
+    const [create, { data, error, loading }] = useMutation(CLIENT_MUTATION)
     const lab = useQuery(LAB_QUERY)
     const initialState: State = {
         modal: false,
@@ -120,10 +153,17 @@ export default function CreateClients() {
         if (event.target.name === 'discount' && Number(event.target.value) > 100 || Number(event.target.value) < 0) return;
         setState({ ...state, form: { ...form, [event.target.name]: event.target.value } })
     }
-    const open = () => {
-        setState({ ...state, grow: true, modal: true, })
+    const open = () => setState({ ...state, grow: true, modal: true, })
 
+    const sumbit = () => {
+        create({
+            variables: form
+        }).then(() => {
+            reset()
+            setState(initialState)
+        })
     }
+
     return (
         <div>
             <Tooltip arrow title="Cadastrar Dentista">
@@ -131,6 +171,9 @@ export default function CreateClients() {
                     <Icon component={MDI} path={mdiPlus} color="inherit" />
                 </IconButton>
             </Tooltip>
+            <Snackbar open={!!error} autoHideDuration={6000}>
+                <Alert severity="error">{error?.message}</Alert>
+            </Snackbar>
             <Modal
                 open={state.modal}
                 onClose={changeState('modal', false)}
@@ -251,17 +294,17 @@ export default function CreateClients() {
                                                 autoComplete={false}
                                                 autoSelect={false}
                                                 renderInput={(params) => (
-                                                        <TextField
-                                                            {...params}
-                                                            label="Telefones *"
-                                                            error={errors.telephone}
-                                                            name="telephone"
-                                                            InputProps={{
-                                                                inputComponent: TelephoneInput,
-                                                                ...params.InputProps,
-                                                            }}
-                                                        />
-                                                    )
+                                                    <TextField
+                                                        {...params}
+                                                        label="Telefones *"
+                                                        error={errors.telephone}
+                                                        name="telephone"
+                                                        InputProps={{
+                                                            inputComponent: TelephoneInput,
+                                                            ...params.InputProps,
+                                                        }}
+                                                    />
+                                                )
                                                 }
                                             />
                                         </Grid>
@@ -279,7 +322,10 @@ export default function CreateClients() {
                                             <Button onClick={handleClose} color="inherit">Cancelar</Button>
                                         </Grid>
                                         <Grid item>
-                                            <Button variant="contained" color="primary">Salvar</Button>
+                                            <Button variant="contained" onClick={handleSubmit(sumbit)} color="primary">Salvar</Button>
+                                            <Backdrop className={classes.backdrop} open={loading}>
+                                                <CircularProgress color='primary' />
+                                            </Backdrop>
                                         </Grid>
                                     </Grid>
                                 </Grid>
