@@ -22,8 +22,15 @@ import {
 } from "@material-ui/core";
 import { useForm } from 'react-hook-form';
 
+import MaskedInput from 'react-text-mask';
+
 import { Icon as MDI } from '@mdi/react'
 import { mdiPlus } from '@mdi/js';
+
+import { useQuery } from 'react-apollo';
+import { gql } from 'apollo-boost';
+
+import { Autocomplete } from '@material-ui/lab';
 
 const useStiles = makeStyles((theme: Theme) =>
     createStyles({
@@ -42,40 +49,81 @@ const useStiles = makeStyles((theme: Theme) =>
     }
     ))
 
+const LAB_QUERY = gql`
+    {
+        laboratory @client
+    }
+`
+
 type Telephone = {
     telephone: string,
 }
 
-type State = {
+type Form = {
+    lab: number,
+    name: string,
     telephones: Array<Telephone>,
-    grow: boolean,
-    modal: boolean,
+    address: string,
+    email: string,
+    discount: number,
 }
 
+type State = {
+    grow: boolean,
+    modal: boolean,
+    form: Form,
+    options: Array<any>,
+}
+
+function TelephoneInput(props: any) {
+    const { inputRef, ...other } = props;
+
+    return (
+        <MaskedInput
+            {...other}
+            ref={(ref: any) => {
+                inputRef(ref ? ref.inputElement : null);
+            }}
+            mask={['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+            placeholderChar={'\u2000'}
+        />
+    );
+}
 
 export default function CreateClients() {
     const classes = useStiles()
     const { register, errors, handleSubmit, getValues, triggerValidation } = useForm()
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        triggerValidation(e.target.name);
-    }
+    const lab = useQuery(LAB_QUERY)
     const initialState: State = {
-        telephones: [{ telephone: '' }],
         modal: false,
         grow: true,
+        options: [],
+        form: {
+            lab: lab.data?.laboratory || 0,
+            name: '',
+            telephones: [],
+            address: '',
+            email: '',
+            discount: 0,
+        }
     }
     const [state, setState] = React.useState(initialState)
+    const { form } = state;
     const handleClose = () => {
         setState({ ...state, grow: false })
     }
     const changeState = (prop: keyof State, value: any) => () => {
         setState({ ...state, [prop]: value })
     }
+    const changeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+        triggerValidation(event.target.name);
+        if (event.target.name === 'discount' && Number(event.target.value) > 100 || Number(event.target.value) < 0) return;
+        setState({ ...state, form: { ...form, [event.target.name]: event.target.value } })
+    }
     const open = () => {
         setState({ ...state, grow: true, modal: true, })
 
     }
-
     return (
         <div>
             <Tooltip arrow title="Cadastrar Dentista">
@@ -114,8 +162,9 @@ export default function CreateClients() {
                                             <TextField
                                                 fullWidth
                                                 label="Nome *"
-                                                onInput={handleChange}
+                                                onInput={changeForm}
                                                 name="name"
+                                                value={form.name}
                                                 helperText={!!errors.name && "Digite um nome válido"}
                                                 error={!!errors.name}
                                                 inputRef={register({
@@ -128,8 +177,9 @@ export default function CreateClients() {
                                             <TextField
                                                 fullWidth
                                                 label="E-mail *"
-                                                onInput={handleChange}
+                                                onInput={changeForm}
                                                 name="email"
+                                                value={form.email}
                                                 helperText={!!errors.email && "Digite um e-mail válido"}
                                                 error={!!errors.email}
                                                 inputRef={register({
@@ -155,12 +205,13 @@ export default function CreateClients() {
                                                     type="number"
                                                     error={!!errors.discount}
                                                     name="discount"
+                                                    value={form.discount}
                                                     endAdornment={<InputAdornment position="end">%</InputAdornment>}
                                                     aria-describedby="standard-weight-helper-text"
                                                     inputProps={{
                                                         'aria-label': 'weight',
                                                     }}
-                                                    onInput={handleChange}
+                                                    onInput={changeForm}
                                                     inputRef={register({
                                                         min: 0,
                                                         max: 100,
@@ -178,14 +229,42 @@ export default function CreateClients() {
                                                 }
                                             </FormControl>
                                         </Grid>
-                                        {state.telephones.map((tel: Telephone, index: number) => (
-                                            <Grid item md={4}>
-                                                <TextField
-                                                    fullWidth
-                                                    label="Telefone *"
-                                                />
-                                            </Grid>
-                                        ))}
+                                        <Grid item md={9}>
+
+                                            <Autocomplete
+                                                multiple
+                                                fullWidth
+                                                id="tags-filled"
+                                                options={state.options}
+                                                value={form.telephones.map((value) => value.telephone)}
+                                                freeSolo
+                                                onChange={(event: any, newValue: any | null) => {
+                                                    const telephones: Array<Telephone> = []
+                                                    if (newValue) {
+                                                        for (let tel in newValue) {
+                                                            telephones.push({ telephone: newValue[tel] })
+                                                        }
+                                                        setState({ ...state, form: { ...form, telephones } })
+                                                    }
+
+                                                }}
+                                                autoComplete={false}
+                                                autoSelect={false}
+                                                renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            label="Telefones *"
+                                                            error={errors.telephone}
+                                                            name="telephone"
+                                                            InputProps={{
+                                                                inputComponent: TelephoneInput,
+                                                                ...params.InputProps,
+                                                            }}
+                                                        />
+                                                    )
+                                                }
+                                            />
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                                 <Grid item md={12}>
