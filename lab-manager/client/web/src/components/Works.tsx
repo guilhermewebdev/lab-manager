@@ -48,6 +48,8 @@ export default function Clients(props: Props) {
             <Grid
                 className={classes.container}
                 container
+                direction="row"
+                alignItems="stretch"
             >
                 <Grid item md={4} className={classes.container}>
                     <Card variant="outlined" className={classes.card}>

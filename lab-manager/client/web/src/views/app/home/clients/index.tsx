@@ -8,14 +8,19 @@ import {
     Modal,
     ListItemText,
     Box,
+    Slide,
+    Grow,
 } from '@material-ui/core'
 
 import Works from '../../../../components/Works';
 import { useQuery } from 'react-apollo';
 import { gql } from 'apollo-boost';
 
+import Details from './details';
 
 import CreateClient from './create';
+import { Route, useParams } from 'react-router';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -62,6 +67,7 @@ export default function Clients() {
     const { data, refetch } = useQuery(CLIENTS_QUERY, {
         variables: { lab: (lab.data?.laboratory || 0) }
     })
+    const { client } = useParams()
 
     return (
         <Works
@@ -69,11 +75,13 @@ export default function Clients() {
             list={data?.laboratory.clients.map((item: any) => (
                 <ListItem
                     button
+                    component={Link}
+                    to={`/client/${item.index}/`}
+                    selected={client == item.index}
                 >
                     <ListItemText
                         primary={item.name}
                         secondaryTypographyProps={{
-                            paragraph: false,
                             noWrap: true,
                         }}
                         secondary={item.telephones
@@ -87,7 +95,9 @@ export default function Clients() {
                 <CreateClient onCreate={refetch} />
             }
         >
-            {data?.laboratory.name}
+            <Route path="/client/:client/">
+                <Details />
+            </Route>
         </Works>
     )
 }
