@@ -16,9 +16,9 @@ import Works from '../../../../components/Works';
 import { useQuery } from 'react-apollo';
 import { gql } from 'apollo-boost';
 
-import Details from './details';
+// import Details from './details';
 
-import CreatePatient from './create';
+// import CreatePatient from './create';
 import { Route, useParams, Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 
@@ -47,7 +47,7 @@ const LAB_QUERY = gql`
     `
 
 const PATIENTS_QUERY = gql`
-    query clients($lab: Int!, $client: Int!){
+    query patienta($lab: Int!, $client: Int!){
         laboratory(lab: $lab){
             client(index: $client){
                 name
@@ -60,7 +60,7 @@ const PATIENTS_QUERY = gql`
     }
 `
 
-export default function Patients() {
+export default function Jobs() {
     const classes = useStyles();
     const lab = useQuery(LAB_QUERY)
     const { client, patient } = useParams()
@@ -91,15 +91,15 @@ export default function Patients() {
                     />
                 </ListItem>
             ))}
-            actions={
-                <CreatePatient onCreate={created} />
-            }
+            // actions={
+                // <CreatePatient onCreate={created} />
+            // }
         >
             {!!state.patient.index &&
-                <Redirect to={`/client/${state.client.index}/`} />
+                <Redirect to={`/client/${client}/patient/${state.patient.index}`} />
             }
             <Route path="/client/:client/patient/:patient/">
-                <Details />
+                {/* <Details /> */}
             </Route>
         </Works>
     )

@@ -2,12 +2,19 @@ import * as React from 'react'
 
 import Clients from './clients/index'
 import Patients from './patients/index'
+import Jobs from './jobs/index';
 
 import { Route, Switch } from 'react-router'
 
 export default function Home() {
     return (
         <Switch>
+            <Route path="/client/:client/patient/:patient/job/:job/">
+                <Jobs />
+            </Route>
+            <Route path="/client/:client/patient/:patient/job/">
+                <Jobs />
+            </Route>
             <Route path="/client/:client/patient/:patient/">
                 <Patients></Patients>
             </Route>

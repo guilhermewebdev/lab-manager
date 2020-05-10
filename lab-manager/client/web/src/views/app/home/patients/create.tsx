@@ -148,7 +148,7 @@ export default function CreateClients(props: Props) {
         }).then((data) => {
             reset()
             setState(initialState)
-            if (props?.onCreate) props.onCreate(data.data.upsertPatient.patient)
+            if (props?.onCreate) props.onCreate(data?.data?.upsertPatient?.patient)
         })
     }
 
