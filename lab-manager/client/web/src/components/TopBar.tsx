@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core'
 
 import Drawer from './Drawer';
+import Breadcrumbs from './Breadcrumbs';
 
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
@@ -32,6 +33,7 @@ export default function () {
 					{!!data?.isAuthenticated &&
 						<Drawer />
 					}
+					<Breadcrumbs />
 					<div className="spacer"></div>
 					{data?.isAuthenticated ?
 						<Button color="inherit" onClick={logOut}>Sair</Button> :
