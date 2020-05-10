@@ -19,7 +19,7 @@ import { gql } from 'apollo-boost';
 import Details from './details';
 
 import CreateClient from './create';
-import { Route, useParams } from 'react-router';
+import { Route, useParams, Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -67,7 +67,15 @@ export default function Clients() {
     const { data, refetch } = useQuery(CLIENTS_QUERY, {
         variables: { lab: (lab.data?.laboratory || 0) }
     })
+    const [state, setState] = React.useState<any>({
+        client: {}
+    })
     const { client } = useParams()
+    const created = (newClient: any) => {
+        refetch().then(() =>
+            setState({ client: newClient })
+        )
+    }
 
     return (
         <Works
@@ -92,9 +100,12 @@ export default function Clients() {
                 </ListItem>
             ))}
             actions={
-                <CreateClient onCreate={refetch} />
+                <CreateClient onCreate={created} />
             }
         >
+            {!!state.client.index &&
+                <Redirect to={`/client/${state.client.index}/`} />
+            }
             <Route path="/client/:client/">
                 <Details />
             </Route>

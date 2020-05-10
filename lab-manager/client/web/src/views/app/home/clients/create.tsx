@@ -163,10 +163,10 @@ export default function CreateClients(props: Props) {
     const submit = () => {
         create({
             variables: form
-        }).then(() => {
+        }).then((data) => {
             reset()
             setState(initialState)
-            if(props?.onCreate) props.onCreate()
+            if(props?.onCreate) props.onCreate(data.data.upsertClient.client)
         })
     }
 
