@@ -1,8 +1,32 @@
 import * as React from 'react';
-import { Grow, Card, Grid, CardContent, CardHeader, Divider, makeStyles, Theme, createStyles, Typography, Chip, CardActionArea, CardActions, Button, Dialog, DialogTitle, DialogActions, DialogContent, Tooltip, Snackbar, CircularProgress } from '@material-ui/core';
+
+import { 
+    Card, 
+    Grid, 
+    CardContent, 
+    CardHeader, 
+    Divider, 
+    makeStyles, 
+    Theme, 
+    createStyles, 
+    Typography, 
+    Chip, 
+    CardActions,
+    Button,
+    Dialog,
+    DialogTitle, 
+    DialogActions, 
+    DialogContent, 
+    Snackbar, 
+    CircularProgress, 
+} from '@material-ui/core';
+
 import { useParams, Redirect } from 'react-router';
+import { Link } from 'react-router-dom'
+
 import { gql } from 'apollo-boost';
 import { useQuery, useMutation } from 'react-apollo';
+
 import { Alert } from '@material-ui/lab';
 
 const createTheme = makeStyles((theme: Theme) =>
@@ -154,6 +178,7 @@ export default function Details() {
                     {!!data?.laboratory &&
                         <CardActions>
                             <Button onClick={handleChange('dialogDelete', true)} color="secondary">Deletar</Button>
+                            <Button component={Link} to={`/client/${data?.laboratory.client.index}/patient/`} variant="contained" color="primary">Ver pacientes</Button>
                         </CardActions>
                     }
                     {!!error &&

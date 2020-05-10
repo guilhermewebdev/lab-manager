@@ -19,8 +19,10 @@ import {
     Icon,
     ListItemText,
 } from '@material-ui/core'
+
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import MenuIcon from '@material-ui/icons/Menu';
+
 import { gql } from 'apollo-boost';
 import { useQuery, useApolloClient } from 'react-apollo';
 
