@@ -31,7 +31,23 @@ const client = new ApolloClient({
 });
 
 const theme = responsiveFontSizes(createMuiTheme({
-
+  palette: {
+    primary: {
+      main: '#37474f',
+      light: '#62727b',
+      dark: '#102027',
+    },
+    secondary: {
+      main: '#90a4ae',
+      light: '#c1d5e0',
+      dark: '#62757f',
+    },
+    error: {
+      main: '#f44336',
+      light: '#ff7961',
+      dark: '#ba000d',
+    },
+  }
 }))
 
 verifyAuth(client)
