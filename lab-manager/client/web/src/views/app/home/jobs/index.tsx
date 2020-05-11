@@ -18,7 +18,7 @@ import { gql } from 'apollo-boost';
 
 // import Details from './details';
 
-// import CreatePatient from './create';
+import CreateJob from './create';
 import { Route, useParams, Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 
@@ -47,13 +47,19 @@ const LAB_QUERY = gql`
     `
 
 const PATIENTS_QUERY = gql`
-    query patienta($lab: Int!, $client: Int!){
+    query patienta($patient: Int!, $lab: Int!, $client: Int!){
         laboratory(lab: $lab){
             client(index: $client){
-                name
-                patients {
-                    index
+                patient(index: $patient){
                     name
+                    jobs{
+                        price
+                        kind{
+                            name
+                        }
+                        deadline
+                        index
+                    }
                 }
             }
         }
@@ -63,9 +69,9 @@ const PATIENTS_QUERY = gql`
 export default function Jobs() {
     const classes = useStyles();
     const lab = useQuery(LAB_QUERY)
-    const { client, patient } = useParams()
+    const { client, patient, job } = useParams()
     const { data, refetch } = useQuery(PATIENTS_QUERY, {
-        variables: { lab: (lab.data?.laboratory || 0), client }
+        variables: { lab: (lab.data?.laboratory || 0), client, patient }
     })
     const [state, setState] = React.useState<any>({
         patient: {}
@@ -78,22 +84,22 @@ export default function Jobs() {
 
     return (
         <Works
-            title={`Pacitentes de ${data?.laboratory.client.name}`}
-            list={data?.laboratory.client.patients.map((item: any) => (
+            title={`Trabalhos de ${data?.laboratory.client.patient.name}`}
+            list={data?.laboratory.client.patient.jobs.map((item: any) => (
                 <ListItem
                     button
                     component={Link}
-                    to={`/client/${client}/patient/${item.index}/`}
-                    selected={patient == item.index}
+                    to={`/client/${client}/patient/${patient}/job/${item.index}/`}
+                    selected={job == item.index}
                 >
                     <ListItemText
                         primary={item.name}
                     />
                 </ListItem>
             ))}
-            // actions={
-                // <CreatePatient onCreate={created} />
-            // }
+            actions={
+                <CreateJob onCreate={created} />
+            }
         >
             {!!state.patient.index &&
                 <Redirect to={`/client/${client}/patient/${state.patient.index}`} />
