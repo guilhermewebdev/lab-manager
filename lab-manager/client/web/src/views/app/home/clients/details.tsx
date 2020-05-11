@@ -198,11 +198,11 @@ export default function Details() {
                             <CircularProgress />
                         }
                         <DialogActions>
-                            <Button disabled={deletion.loading} onClick={handleChange('dialogDelete', false)} color="inherit">Cancelar</Button>
                             <Button disabled={deletion.loading} onClick={() => {
                                 deleteClient({ variables: { lab: lab.data?.laboratory || 0, client } })
-                                    .then(() => handleChange('dialogDelete', false))
+                                .then(() => handleChange('dialogDelete', false))
                             }} color="secondary">Deletar</Button>
+                            <Button variant="contained" disabled={deletion.loading} onClick={handleChange('dialogDelete', false)} color="primary">Cancelar</Button>
                         </DialogActions>
                     </Dialog>
                     <Snackbar
