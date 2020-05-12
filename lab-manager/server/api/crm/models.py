@@ -197,6 +197,8 @@ class Patient(models.Model):
     tooth_color = models.CharField(
         verbose_name=_('Cor dos dentes'),
         max_length=100,
+        null=True,
+        blank=True,
     )
     registration_date = models.DateField(
         auto_now=True,

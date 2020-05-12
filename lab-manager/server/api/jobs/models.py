@@ -2,9 +2,11 @@ from django.utils.translation import gettext as _
 from django.db import models
 from crm.models import Client, Patient, validate_discount
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
+
 
 class BaseJob(models.Model):
-    objects = models.Manager()    
+    objects = models.Manager()
     description = models.TextField(
         verbose_name=_("Descrição"),
         max_length=300,
@@ -25,6 +27,7 @@ class BaseJob(models.Model):
     class Meta:
         required_db_vendor = 'postgresql'
 
+
 class Procedure(BaseJob):
     name = models.CharField(
         verbose_name=_('Trabalho'),
@@ -43,9 +46,12 @@ class Procedure(BaseJob):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            queryset = Procedure.objects.filter(lab=self.lab).order_by('index').reverse()
-            if queryset: self.index = queryset[0].index + 1
-            else: self.index = 0
+            queryset = Procedure.objects.filter(
+                lab=self.lab).order_by('index').reverse()
+            if queryset:
+                self.index = queryset[0].index + 1
+            else:
+                self.index = 0
         return super(Procedure, self).save(*args, **kwargs)
 
     class Meta:
@@ -53,6 +59,7 @@ class Procedure(BaseJob):
         verbose_name = _('Procedimento')
         verbose_name_plural = _('Procedimentos')
         ordering = ('-registration_date', 'lab')
+
 
 class Stage(models.Model):
     objects = models.Manager()
@@ -95,6 +102,7 @@ class Stage(models.Model):
         )
         ordering = ['index', 'process']
 
+
 class Process(BaseJob):
     name = models.CharField(
         verbose_name=_('Trabalho'),
@@ -103,6 +111,9 @@ class Process(BaseJob):
     is_custom = models.BooleanField(
         verbose_name=_('É customizado?'),
         default=False
+    )
+    need_color = models.BooleanField(
+        verbose_name=_('Precisa da cor do dente')
     )
     index = models.IntegerField(
         verbose_name=_('índice'),
@@ -128,8 +139,10 @@ class Process(BaseJob):
             queryset = list(Process.objects.filter(
                 lab=self.lab
             ).order_by('index').reverse())
-            if queryset: self.index = queryset[0].index + 1
-            else: self.index = 0
+            if queryset:
+                self.index = queryset[0].index + 1
+            else:
+                self.index = 0
         return super(Process, self).save(*args, **kwargs)
 
     class Meta:
@@ -138,13 +151,14 @@ class Process(BaseJob):
         verbose_name_plural = _('Processos')
         ordering = ('-registration_date', 'lab')
 
-class Job(BaseJob):    
+
+class Job(BaseJob):
     kind = models.ForeignKey(
         Process,
         verbose_name=_('Tipo'),
         on_delete=models.SET_NULL,
         related_name='kind',
-        null=True   
+        null=True
     )
     amount = models.IntegerField(
         verbose_name=_('Quantidade'),
@@ -159,7 +173,7 @@ class Job(BaseJob):
         editable=True,
         verbose_name=_('Data da chegada'),
         auto_now_add=True
-    )    
+    )
     started = models.DateTimeField(
         verbose_name=_('Data de início'),
         null=True,
@@ -186,7 +200,7 @@ class Job(BaseJob):
 
     def __str__(self):
         return f'{self.patient.name}: {self.amount} x {self.kind.name}'
-    
+
     def get_discount(self):
         return self.get_price() - self.get_default_price()
 
@@ -202,14 +216,28 @@ class Job(BaseJob):
         else:
             return self.get_default_price()
 
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if(self.kind.need_color and not self.patient.tooth_color):
+            raise ValidationError(
+                _('É preciso informar a cor dos dentes do paciente %(patient) para utilizar o processo %(process)'),
+                params=dict(
+                    patient=self.patient.name,
+                    process=self.kind.name,
+                )
+            )
+
     def save(self, *args, **kwargs):
+        self.clean_fields()
         self.price = self.get_price()
         if not self.id:
             queryset = Job.objects.filter(
                 patient=self.patient,
             ).order_by('index').reverse()
-            if queryset: self.index = queryset[0].index + 1
-            else: self.index = 0
+            if queryset:
+                self.index = queryset[0].index + 1
+            else:
+                self.index = 0
         return super(Job, self).save(*args, **kwargs)
 
     class Meta:
