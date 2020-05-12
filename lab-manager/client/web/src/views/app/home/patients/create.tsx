@@ -177,7 +177,7 @@ export default function CreateClients(props: Props) {
                                 alignItems="center"
                             >
                                 <Grid item md={6}>
-                                    <Typography variant="h5">Novo Dentista</Typography>
+                                    <Typography variant="h5">Novo Paciente</Typography>
                                 </Grid>
                                 <Grid item md={6} />
                                 <Grid item md={12}>

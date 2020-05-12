@@ -128,7 +128,7 @@ export default function Details(props: Props) {
                     />
                     <Divider />
                     {!!data?.laboratory &&
-                        < CardContent >
+                        <CardContent >
                             <Grid
                                 container
                                 direction="row"
