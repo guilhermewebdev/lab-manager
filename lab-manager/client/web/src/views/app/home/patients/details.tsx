@@ -10,7 +10,6 @@ import {
     Theme,
     createStyles,
     Typography,
-    Chip,
     CardActions,
     Button,
     Dialog,
@@ -87,7 +86,11 @@ type State = {
     dialogDelete: boolean,
 }
 
-export default function Details() {
+type Props = {
+    onDelete: Function,
+}
+
+export default function Details(props: Props) {
     const classes = createTheme()
     const { client, patient } = useParams()
     const lab = useQuery(LAB_QUERY)
@@ -104,10 +107,12 @@ export default function Details() {
         setState({ ...state, [prop]: value })
     }
 
-    if (deletion.data?.deletePatient.ok) return (
-        <Redirect to={`/client/${client}/patient/`} />
-    )
-
+    if (deletion.data?.deletePatient.ok) {
+        props.onDelete()
+        return (
+            <Redirect to={`/client/${client}/patient/`} />
+        )
+    }
     return (
 
         <Grid

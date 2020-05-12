@@ -16,7 +16,7 @@ import Works from '../../../../components/Works';
 import { useQuery } from 'react-apollo';
 import { gql } from 'apollo-boost';
 
-import Details from './details';
+import  Details from './details';
 
 import CreatePatient from './create';
 import { Route, useParams, Redirect } from 'react-router';
@@ -99,7 +99,7 @@ export default function Patients() {
                 <Redirect to={`/client/${state.client.index}/`} />
             }
             <Route path="/client/:client/patient/:patient/">
-                <Details />
+                <Details onDelete={refetch} />
             </Route>
         </Works>
     )
