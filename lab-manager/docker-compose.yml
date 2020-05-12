@@ -18,13 +18,14 @@ services:
             ipv4_address: 172.35.10.40
 
     client:
-        build: 
-            context: ./client/web
-            dockerfile: Dockerfile.dev
+        build: ./client/web
         restart: always
         volumes: 
             - ./client/web:/app
-        command: npm run serve
+        environment: 
+            PORT: 80
+        command: yarn start
+        stdin_open: true
         depends_on: 
             - api
             - proxy
