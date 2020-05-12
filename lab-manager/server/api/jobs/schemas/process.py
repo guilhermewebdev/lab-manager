@@ -4,6 +4,7 @@ from jobs import models
 from . import stage
 from graphql_jwt.decorators import login_required
 
+
 class ProcessType(
     types.DjangoObjectType,
     stage.StageQuery,
@@ -20,33 +21,41 @@ class ProcessType(
             'stages',
             'stage',
             'is_custom',
+            'need_color',
             'registration_date',
         )
+
 
 class ProcessQuery:
     processes = graphene.List(ProcessType)
     process = graphene.Field(ProcessType)
 
+    @staticmethod
     @login_required
     def resolve_processes(parent, info, **kwargs):
         return parent.processes.filter(**kwargs).all().iterator()
 
+    @staticmethod
     @login_required
     def resolve_process(parent, info, **kwargs):
         return parent.processes.get(**kwargs)
+
 
 class StageProcessInput(graphene.InputObjectType):
     index = graphene.Int(required=True)
     procedure = graphene.Int(required=True)
     price = graphene.Float()
 
+
 class ProcessInput(graphene.InputObjectType):
     index = graphene.Int()
     name = graphene.String(rquired=True)
     description = graphene.String()
     price = graphene.Float()
+    need_color = graphene.Boolean(required=True)
     lab = graphene.Int(required=True)
     stages = graphene.List(StageProcessInput)
+
 
 class ProcessMutation(graphene.Mutation):
     process = graphene.Field(ProcessType)
@@ -55,9 +64,9 @@ class ProcessMutation(graphene.Mutation):
     @staticmethod
     @login_required
     def mutate(root, info, input):
-        process:models.Process = None
-        created:bool = False
-        stages:list = []
+        process: models.Process = None
+        created: bool = False
+        stages: list = []
         if 'stages' in input:
             stages = input.pop('stages')
         if 'index' in input:
@@ -71,8 +80,9 @@ class ProcessMutation(graphene.Mutation):
             process = models.Process(**input)
             created = True
         process.save()
+
         def set_stage(stage):
-            stg:dict = dict(
+            stg: dict = dict(
                 process=process,
                 procedure=models.Procedure.objects.get(
                     lab=input['lab'],
@@ -81,10 +91,11 @@ class ProcessMutation(graphene.Mutation):
                 index=stage['index'],
                 price=False,
             )
-            if 'price' in stage: stg['price'] = stage['price']
+            if 'price' in stage:
+                stg['price'] = stage['price']
             return stg
         if created:
-            stgs:list = []
+            stgs: list = []
             for stage in stages:
                 stgs.append(models.Stage(
                     **set_stage(stage),
@@ -103,9 +114,11 @@ class ProcessMutation(graphene.Mutation):
     class Arguments:
         input = ProcessInput(required=True)
 
+
 class ProcessDeletionInput(graphene.InputObjectType):
     index = graphene.Int(required=True)
     lab = graphene.Int(required=True)
+
 
 class ProcessDeletion(graphene.Mutation):
     ok = graphene.Boolean()
@@ -120,6 +133,6 @@ class ProcessDeletion(graphene.Mutation):
                 ).delete()[0]
             )
         )
-    
+
     class Arguments:
         input = ProcessDeletionInput()
