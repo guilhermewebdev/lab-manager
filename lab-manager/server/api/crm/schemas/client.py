@@ -131,3 +131,7 @@ class ClientDeletion(graphene.Mutation):
 
     class Arguments:
         input = ClientDeletionInput(required=True)
+
+class Mutation:
+    upsert_client = ClientMutation.Field()
+    delete_client = ClientDeletion.Field()

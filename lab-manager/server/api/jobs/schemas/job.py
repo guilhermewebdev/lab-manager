@@ -12,6 +12,7 @@ class JobType(types.DjangoObjectType):
             'index',
             'id',
             'description',
+            'amount',
             'price',
             'registration_date',
             'kind',
@@ -43,6 +44,7 @@ class JobInput(graphene.InputObjectType):
     description = graphene.String()
     price = graphene.Float()
     kind = graphene.Int(required=True)
+    amount = graphene.Int()
     patient = graphene.Int(required=True)
     client = graphene.Int(required=True)
     lab = graphene.Int(required=True)

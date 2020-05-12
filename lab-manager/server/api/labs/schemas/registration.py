@@ -29,7 +29,7 @@ class RegisterMutation(graphene.Mutation):
             Q(labs__name__in=[input['laboratory']])
         ).exists()
         if(not user_exists):
-            lab = models.Laboratory(name=input.pop('laboratory'))        
+            lab = models.Laboratory.objects.create(name=input.pop('laboratory'))        
             lab.save()
             professional = models.Professional.objects.create_user(
                 **input
