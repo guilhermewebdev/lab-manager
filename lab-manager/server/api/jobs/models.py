@@ -146,6 +146,10 @@ class Job(BaseJob):
         related_name='kind',
         null=True   
     )
+    amount = models.IntegerField(
+        verbose_name=_('Quantidade'),
+        default=1,
+    )
     patient = models.ForeignKey(
         Patient,
         on_delete=models.DO_NOTHING,
@@ -179,18 +183,18 @@ class Job(BaseJob):
         blank=True,
         editable=False,
     )
+
+    def __str__(self):
+        return f'{self.patient.name}: {self.amount} x {self.kind.name}'
     
     def get_discount(self):
-        if self.discount:
-            return self.discount
-        else:
-            return self.get_default_discount()
+        return self.get_price() - self.get_default_price()
 
     def get_default_discount(self):
         return self.patient.client.discount
 
     def get_default_price(self):
-        return self.kind.price * ((100 - self.get_default_discount()) / 100)
+        return self.kind.price * self.amount * ((100 - self.get_default_discount()) / 100)
 
     def get_price(self):
         if self.price:
