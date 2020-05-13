@@ -9,7 +9,6 @@ import { ApolloProvider } from 'react-apollo'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
 import { verifyAuth, getToken } from './services/auth'
-import { createMuiTheme, ThemeProvider, responsiveFontSizes } from '@material-ui/core/styles';
 
 const client = new ApolloClient({
   uri: 'http://localhost/api/',
@@ -25,30 +24,16 @@ const client = new ApolloClient({
   typeDefs: gql`
     extend type Query {
       isAuthenticated: Boolean!
+      laboratory: Int
+      themeDark: Boolean
     }
   `,
   resolvers: {}
 });
 
-const theme = responsiveFontSizes(createMuiTheme({
-  palette: {
-    primary: {
-      main: '#37474f',
-      light: '#62727b',
-      dark: '#102027',
-    },
-    secondary: {
-      main: '#90a4ae',
-      light: '#c1d5e0',
-      dark: '#62757f',
-    },
-    error: {
-      main: '#f44336',
-      light: '#ff7961',
-      dark: '#ba000d',
-    },
-  }
-}))
+
+
+
 
 verifyAuth(client)
 
@@ -56,9 +41,7 @@ render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <ApolloHooksProvider client={client}>
-        <ThemeProvider theme={theme}>
-          <App />
-        </ThemeProvider>
+        <App />
       </ApolloHooksProvider>
     </ApolloProvider>
   </React.StrictMode>,
