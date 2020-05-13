@@ -84,24 +84,48 @@ type State = {
     form: Form,
 }
 
-const CLIENT_MUTATION = gql`
-    mutation createClient(
+const JOB_MUTATION = gql`
+    mutation createJob(
         $lab: Int!
         $client: ID!
-        $name: String!
-        $toothColor: String!
-        $gender: String!
+        $description: String
+        $price: Float
+        $kind: Int!
+        $amount: Int
+        $patient: Int!
+        $deadline: DateTime!        
     ){
-        upsertPatient(input: {
+        upsertJob(input: {
             lab: $lab
             client: $client
-            name: $name
-            toothColor: $toothColor
-            gender: $gender
+            description: $description
+            price: $price
+            kind: $kind
+            amount: $amount
+            patient: $patient
+            deadline: $deadline
         }){
-            patient {
-                name
+            job {
+                pk
                 index
+            }
+        }
+    }
+`
+
+const PROCESSES_QUERY = gql`
+    query getProcesses($lab: Int!, $client: Int!, $patient: Int!){
+        laboratory(lab: $lab){
+            client(index: $client){
+                patient(index: $patient){
+                    toothColor
+                }
+            }
+            processes {
+                index
+                price
+                name
+                needColor
             }
         }
     }
@@ -114,9 +138,12 @@ type Props = {
 export default function CreateClients(props: Props) {
     const classes = useStiles()
     const { register, errors, handleSubmit, reset, triggerValidation } = useForm()
-    const [create, { error, loading }] = useMutation(CLIENT_MUTATION)
+    const [create, { error, loading }] = useMutation(JOB_MUTATION)
     const lab = useQuery(LAB_QUERY)
-    const { client } = useParams()
+    const { client, patient } = useParams()
+    const processes = useQuery(PROCESSES_QUERY, {
+        variables: { lab: Number(lab.data?.laboratory | 0), client, patient }
+    })
     const initialState: State = {
         modal: false,
         grow: true,
@@ -177,7 +204,7 @@ export default function CreateClients(props: Props) {
                                 alignItems="center"
                             >
                                 <Grid item md={6}>
-                                    <Typography variant="h5">Novo Dentista</Typography>
+                                    <Typography variant="h5">Novo Trabalho</Typography>
                                 </Grid>
                                 <Grid item md={6} />
                                 <Grid item md={12}>
@@ -190,19 +217,19 @@ export default function CreateClients(props: Props) {
                                         className={classes.form}
                                     >
                                         <Grid item md={8}>
-                                            <TextField
+                                            <Autocomplete
                                                 fullWidth
-                                                label="Nome *"
-                                                onInput={changeForm}
-                                                name="name"
-                                                autoFocus
-                                                value={form.name}
-                                                helperText={!!errors.name && "Digite um nome válido"}
-                                                error={!!errors.name}
-                                                inputRef={register({
-                                                    required: true,
-                                                    pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/
-                                                })}
+                                                options={processes.data?.laboratory.processes}
+                                                loading={processes.loading}
+                                                getOptionLabel={(option: any) => option.name}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        error={!!processes.error}
+                                                        label="Tipo *"
+                                                        helperText={!!processes.error && processes.error.message}
+                                                    />
+                                                )}
                                             />
                                         </Grid>
                                         <Grid item md={4}>

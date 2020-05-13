@@ -27,14 +27,15 @@ function App() {
     palette: {
       type: data.data?.themeDark ? 'dark' : 'light',
       primary: {
-        main: '#37474f',
-        light: '#62727b',
-        dark: '#102027',
+        main: '#fdd835',
+        light: '#fddf5d',
+        dark: '#b19725',
+        contrastText: '#000',
       },
       secondary: {
-        main: '#90a4ae',
-        light: '#c1d5e0',
-        dark: '#62757f',
+        main: '#03a9f4',
+        light: '#35baf6',
+        dark: '#0276aa',
       },
       error: {
         main: '#f44336',

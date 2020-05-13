@@ -32,9 +32,6 @@ const client = new ApolloClient({
 });
 
 
-
-
-
 verifyAuth(client)
 
 render(
