@@ -27,6 +27,7 @@ import {
     FormControlLabel,
     Radio,
     Zoom,
+    LinearProgress,
 } from "@material-ui/core";
 import { useForm } from 'react-hook-form';
 
@@ -221,6 +222,13 @@ export default function CreateClients(props: Props) {
                                                 fullWidth
                                                 options={processes.data?.laboratory.processes}
                                                 loading={processes.loading}
+                                                loadingText={
+                                                    <>
+                                                        <Typography>Carregando...</Typography>
+                                                        <LinearProgress />
+                                                    </>
+                                                }
+                                                openOnFocus
                                                 getOptionLabel={(option: any) => option.name}
                                                 renderInput={(params) => (
                                                     <TextField
