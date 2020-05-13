@@ -214,9 +214,7 @@ export default function CreateClients(props: Props) {
                                                 value={form.toothColor}
                                                 helperText={!!errors.toothColor && "É preciso informar uma cor"}
                                                 error={!!errors.toothColor}
-                                                inputRef={register({
-                                                    required: true,
-                                                })}
+                                                inputRef={register({})}
                                             />
                                         </Grid>
                                         <Grid item md={12}>

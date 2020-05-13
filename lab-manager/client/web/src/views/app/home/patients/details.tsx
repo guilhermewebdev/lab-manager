@@ -28,6 +28,8 @@ import { useQuery, useMutation } from 'react-apollo';
 
 import { Alert } from '@material-ui/lab';
 
+import Jobs from '../jobs/index';
+
 const createTheme = makeStyles((theme: Theme) =>
     createStyles({
         container: {
@@ -36,14 +38,7 @@ const createTheme = makeStyles((theme: Theme) =>
         card: {
             height: '100%',
         },
-        telephones: {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            '& > *': {
-                margin: theme.spacing(0.5),
-            },
+        subheader: {
         }
     })
 )
@@ -125,16 +120,20 @@ export default function Details(props: Props) {
                 <Card className={classes.card}>
                     <CardHeader
                         title={data?.laboratory.client.patient.name || (error && "Erro!")}
-                    />
-                    <Divider />
-                    {!!data?.laboratory &&
-                        <CardContent >
+                        action={
+                            <Button
+                                onClick={handleChange('dialogDelete', true)}
+                                color="secondary"
+                            >Deletar</Button>
+                        }
+                        subheader={
                             <Grid
                                 container
                                 direction="row"
                                 justify="space-evenly"
                                 alignItems="flex-start"
                                 spacing={3}
+                                className={classes.subheader}
                             >
                                 <Grid item md>
                                     <Typography>
@@ -159,21 +158,13 @@ export default function Details(props: Props) {
                                     </Grid>
                                 }
                             </Grid>
-                        </CardContent>
-                    }
+                        }
+                    />
+                    <Divider />
                     {!!data?.laboratory &&
-                        <CardActions>
-                            <Button
-                                onClick={handleChange('dialogDelete', true)}
-                                color="secondary"
-                            >Deletar</Button>
-                            <Button
-                                component={Link}
-                                to={`/client/${client}/patient/${data?.laboratory.client.patient.index}/job/`}
-                                variant="contained"
-                                color="primary"
-                            >Ver tabalhos</Button>
-                        </CardActions>
+                        <CardContent >
+                            <Jobs />
+                        </CardContent>
                     }
                     {!!error &&
                         <CardContent>

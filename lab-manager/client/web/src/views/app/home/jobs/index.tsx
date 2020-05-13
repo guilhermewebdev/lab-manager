@@ -10,6 +10,24 @@ import {
     Box,
     Slide,
     Grow,
+    List,
+    Grid,
+    GridList,
+    GridListTile,
+    ListSubheader,
+    Typography,
+    Divider,
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    Toolbar,
+    Tooltip,
+    IconButton,
+    Icon,
+    Paper,
 } from '@material-ui/core'
 
 import Works from '../../../../components/Works';
@@ -18,12 +36,22 @@ import { gql } from 'apollo-boost';
 
 // import Details from './details';
 
+import { Icon as MDI } from '@mdi/react';
+
 import CreateJob from './create';
 import { Route, useParams, Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
+import { mdiPlus } from '@mdi/js';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        root: {
+            maxHeight: '100%',
+        },
+        toolbar: {
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(1),
+        },
         container: {
             height: "100%",
             flexGrow: 1,
@@ -46,7 +74,7 @@ const LAB_QUERY = gql`
         }
     `
 
-const PATIENTS_QUERY = gql`
+const JOBS_QUERY = gql`
     query patienta($patient: Int!, $lab: Int!, $client: Int!){
         laboratory(lab: $lab){
             client(index: $client){
@@ -54,6 +82,7 @@ const PATIENTS_QUERY = gql`
                     name
                     jobs{
                         price
+                        amount
                         kind{
                             name
                         }
@@ -66,47 +95,103 @@ const PATIENTS_QUERY = gql`
     }
 `
 
+interface Column {
+    id: 'price' | 'amount' | 'kind' | 'deadline' | 'index';
+    label: string;
+    minWidth?: number;
+    align?: 'right' | 'left';
+    format?: (value: any) => string;
+}
+
+const columns: Column[] = [
+    {
+        id: 'kind',
+        label: 'Tipo',
+        format: (value) => value.name
+    },
+    {
+        id: 'amount',
+        label: 'Quantidade',
+    },
+    {
+        id: 'deadline',
+        label: 'Previsão de entrega',
+        format: (value) => String(new Date(value))
+    },
+    {
+        id: 'price',
+        label: 'Valor Total',
+        format: (value) => `R$${value}`
+    }
+]
+
 export default function Jobs() {
     const classes = useStyles();
     const lab = useQuery(LAB_QUERY)
-    const { client, patient, job } = useParams()
-    const { data, refetch } = useQuery(PATIENTS_QUERY, {
+    const { client, patient } = useParams()
+    const { data, refetch } = useQuery(JOBS_QUERY, {
         variables: { lab: (lab.data?.laboratory || 0), client, patient }
     })
     const [state, setState] = React.useState<any>({
-        patient: {}
+        job: {}
     })
-    const created = (newPatient: any) => {
+    const created = (newJob: any) => {
         refetch().then(() =>
-            setState({ patient: newPatient })
+            setState({ job: newJob })
         )
     }
 
     return (
-        <Works
-            title={`Trabalhos de ${data?.laboratory.client.patient.name}`}
-            list={data?.laboratory.client.patient.jobs.map((item: any) => (
-                <ListItem
-                    button
-                    component={Link}
-                    to={`/client/${client}/patient/${patient}/job/${item.index}/`}
-                    selected={job == item.index}
-                >
-                    <ListItemText
-                        primary={item.name}
-                    />
-                </ListItem>
-            ))}
-            actions={
-                <CreateJob onCreate={created} />
-            }
+        <Paper
+            elevation={5}
+            className={classes.root}
         >
-            {!!state.patient.index &&
-                <Redirect to={`/client/${client}/patient/${state.patient.index}`} />
-            }
-            <Route path="/client/:client/patient/:patient/">
-                {/* <Details /> */}
-            </Route>
-        </Works>
+            <Toolbar
+                variant="dense"
+                className={classes.toolbar}
+            >
+                <Typography variant="h6" id="tableTitle" component="div">
+                    Trabalhos
+                </Typography>
+                <CreateJob onCreate={created} />
+            </Toolbar>
+            <TableContainer>
+                <Table stickyHeader>
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((column: Column, index: number) => (
+                                <TableCell
+                                    key={index}
+                                    align={column.align}
+                                >
+                                    {column.label}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data?.laboratory.client.patient.jobs.map((job: any, index: number) => (
+                            <TableRow
+                                hover
+                                key={index}
+                            >
+                                {columns.map((column: Column, index: number) => {
+                                    const value = job[column.id];
+                                    return (
+                                        <TableCell
+                                            key={index}
+                                            align={column.align}
+                                            padding="checkbox"
+                                        >
+                                            {column.format && typeof value === 'number' ? column.format(value) : value}
+                                        </TableCell>
+                                    );
+                                })}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Paper>
     )
 }

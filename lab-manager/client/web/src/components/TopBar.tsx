@@ -19,7 +19,7 @@ import Breadcrumbs from './Breadcrumbs';
 
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-import { mdiBrightness4, mdiBrightness5 } from '@mdi/js';
+import { mdiBrightness3, mdiBrightness5 } from '@mdi/js';
 
 export default function () {
 	const { data } = useQuery(gql`
@@ -55,9 +55,8 @@ export default function () {
 				>
 					<Icon
 						component={MDI}
-						path={theme.data?.themeDark ? mdiBrightness4 : mdiBrightness5}
-						color='default'
-
+						path={theme.data?.themeDark ? mdiBrightness5 : mdiBrightness3}
+						color='inherit'
 					/>
 				</IconButton>
 				{data?.isAuthenticated ?
