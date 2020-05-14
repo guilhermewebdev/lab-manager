@@ -7,6 +7,7 @@ import { mdiPlus } from '@mdi/js';
 import { Autocomplete, RenderInputParams } from '@material-ui/lab';
 import { gql } from 'apollo-boost';
 import { useQuery } from 'react-apollo';
+import CreateProcedure from './CreateProcedure'
 
 class State {
     dialog: boolean = false;
@@ -123,18 +124,25 @@ export default function CreateProcess() {
                                             />
                                         </Grid>
                                         <Grid item md={7}>
-                                            <Autocomplete
-                                                fullWidth
-                                                options={procedures.data?.laboratory.procedures}
-                                                loading={procedures.loading}
-                                                renderInput={(params: RenderInputParams) => (
-                                                    <TextField
-                                                        {...params}
-                                                        error={!!procedures.error}
-                                                        label='Procedimento *'
+                                            <Grid container spacing={0} direction="row">
+                                                <Grid item md={10}>
+                                                    <Autocomplete
+                                                        fullWidth
+                                                        options={procedures.data?.laboratory.procedures}
+                                                        loading={procedures.loading}
+                                                        renderInput={(params: RenderInputParams) => (
+                                                            <TextField
+                                                                {...params}
+                                                                error={!!procedures.error}
+                                                                label='Procedimento *'
+                                                            />
+                                                        )}
                                                     />
-                                                )}
-                                            />
+                                                </Grid>
+                                                <Grid item md={2}>
+                                                    <CreateProcedure />
+                                                </Grid>
+                                            </Grid>
                                         </Grid>
                                         <Grid item md={3}>
                                             <TextField
@@ -166,7 +174,7 @@ export default function CreateProcess() {
                         <Button color="primary" variant="contained">Salvar</Button>
                     </DialogActions>
                 </Dialog>
-            </form>
+            </form >
         </>
     )
 }
