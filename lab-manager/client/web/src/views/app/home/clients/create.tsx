@@ -166,12 +166,12 @@ export default function CreateClients(props: Props) {
         }).then((data) => {
             reset()
             setState(initialState)
-            if(props?.onCreate) props.onCreate(data.data.upsertClient.client)
+            if (props?.onCreate) props.onCreate(data.data.upsertClient.client)
         })
     }
 
     return (
-        <div>
+        <>
             <Tooltip arrow title="Cadastrar Dentista">
                 <IconButton onClick={open}>
                     <Icon component={MDI} path={mdiPlus} color="inherit" />
@@ -286,17 +286,14 @@ export default function CreateClients(props: Props) {
                                                 fullWidth
                                                 id="tags-filled"
                                                 options={state.options}
-                                                value={form.telephones.map((value) => value.telephone)}
+                                                value={form.telephones}
                                                 freeSolo
-                                                onChange={(event: any, newValue: any | null) => {
-                                                    const telephones: Array<Telephone> = []
-                                                    if (newValue) {
-                                                        for (let tel in newValue) {
-                                                            telephones.push({ telephone: newValue[tel] })
+                                                onChange={(event: any, telephones: any | null) => {
+                                                    setState({
+                                                        ...state, form: {
+                                                            ...form, telephones
                                                         }
-                                                        setState({ ...state, form: { ...form, telephones } })
-                                                    }
-
+                                                    })
                                                 }}
                                                 autoComplete={false}
                                                 autoSelect={false}
@@ -341,7 +338,7 @@ export default function CreateClients(props: Props) {
                     </Grow>
                 </form>
             </Modal >
-        </div>
+        </>
     )
 
 }

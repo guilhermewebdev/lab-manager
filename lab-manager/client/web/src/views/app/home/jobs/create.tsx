@@ -29,6 +29,7 @@ import {
     Zoom,
     LinearProgress,
 } from "@material-ui/core";
+
 import { useForm } from 'react-hook-form';
 
 import MaskedInput from 'react-text-mask';
@@ -42,6 +43,8 @@ import { gql } from 'apollo-boost';
 
 import { Autocomplete, Alert } from '@material-ui/lab';
 import { useParams } from 'react-router';
+
+import CreateProcess from '../../../../components/CreateProcess';
 
 const useStiles = makeStyles((theme: Theme) =>
     createStyles({
@@ -77,12 +80,14 @@ type Form = {
     gender: string,
     toothColor: string,
     client: number,
+    kind: number,
 }
 
 type State = {
     grow: boolean,
     modal: boolean,
     form: Form,
+    kind: string,
 }
 
 const JOB_MUTATION = gql`
@@ -148,10 +153,12 @@ export default function CreateClients(props: Props) {
     const initialState: State = {
         modal: false,
         grow: true,
+        kind: '',
         form: {
             lab: lab.data?.laboratory || 0,
             client,
             name: '',
+            kind: NaN,
             gender: '',
             toothColor: '',
         }
@@ -218,27 +225,44 @@ export default function CreateClients(props: Props) {
                                         className={classes.form}
                                     >
                                         <Grid item md={8}>
-                                            <Autocomplete
-                                                fullWidth
-                                                options={processes.data?.laboratory.processes}
-                                                loading={processes.loading}
-                                                loadingText={
-                                                    <>
-                                                        <Typography>Carregando...</Typography>
-                                                        <LinearProgress />
-                                                    </>
-                                                }
-                                                openOnFocus
-                                                getOptionLabel={(option: any) => option.name}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        error={!!processes.error}
-                                                        label="Tipo *"
-                                                        helperText={!!processes.error && processes.error.message}
+                                            <Grid
+                                                container
+                                                spacing={1}
+                                                direction="row"
+                                                justify="flex-start"
+                                                alignItems="flex-end"
+                                            >
+                                                <Grid item md={11}>
+                                                    <Autocomplete
+                                                        fullWidth
+                                                        options={processes.data?.laboratory.processes}
+                                                        loading={processes.loading}
+                                                        value={state.form.kind}
+                                                        inputValue={state.kind}
+                                                        onInputChange={(event: any, newValue: string) => setState({ ...state, kind: newValue })}
+                                                        onChange={(event: any, newValue: any) => setState({ ...state, form: { ...state.form, kind: newValue } })}
+                                                        loadingText={
+                                                            <>
+                                                                <Typography>Carregando...</Typography>
+                                                                <LinearProgress />
+                                                            </>
+                                                        }
+                                                        openOnFocus
+                                                        getOptionLabel={(option: any) => option.name}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                error={!!processes.error}
+                                                                label="Tipo *"
+                                                                helperText={!!processes.error && processes.error.message}
+                                                            />
+                                                        )}
                                                     />
-                                                )}
-                                            />
+                                                </Grid>
+                                                <Grid item md={1}>
+                                                    <CreateProcess />
+                                                </Grid>
+                                            </Grid>
                                         </Grid>
                                         <Grid item md={4}>
                                             <TextField
