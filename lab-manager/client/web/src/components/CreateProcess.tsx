@@ -8,6 +8,7 @@ import { Autocomplete, RenderInputParams } from '@material-ui/lab';
 import { gql } from 'apollo-boost';
 import { useQuery } from 'react-apollo';
 import CreateProcedure from './CreateProcedure'
+import { useForm } from 'react-hook-form';
 
 class State {
     dialog: boolean = false;
@@ -54,6 +55,7 @@ const PROCEDURES_QUERY = gql`
 `;
 
 export default function CreateProcess() {
+    const { register, errors, handleSubmit, getValues, reset, triggerValidation } = useForm()
     const lab = useQuery(LAB_QUERY)
     const procedures = useQuery(PROCEDURES_QUERY, { variables: { lab: Number(lab.data?.laboratory) || 0 } })
     const [state, setState] = React.useState<State>(new State())
@@ -97,6 +99,9 @@ export default function CreateProcess() {
                                     name='name'
                                     value={form.name}
                                     onInput={changeForm}
+                                    inputRef={register({
+                                        required: true,
+                                    })}
                                 />
                             </Grid>
                             <Grid item md={3}>
@@ -106,6 +111,9 @@ export default function CreateProcess() {
                                     onInput={changeForm}
                                     name='price'
                                     value={form.price}
+                                    inputRef={register({
+                                        required: true,
+                                    })}
                                 />
                             </Grid>
                             <Grid item md={12}>
@@ -140,7 +148,7 @@ export default function CreateProcess() {
                                                     />
                                                 </Grid>
                                                 <Grid item md={2}>
-                                                    <CreateProcedure />
+                                                    <CreateProcedure onCreate={procedures.refetch} />
                                                 </Grid>
                                             </Grid>
                                         </Grid>
