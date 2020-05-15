@@ -18,7 +18,7 @@ class Stage {
     constructor(obj: Stage) {
         Object.assign(this, obj)
     }
-    procedure!: number;
+    procedure!: any;
     index!: number;
     price?: number;
 }
@@ -29,7 +29,7 @@ class Form {
     }
     name?: string = '';
     lab!: number;
-    stages: Stage[] = [
+    stages: Array<Stage> = [
         { procedure: NaN, index: 1, price: 0 }
     ];
     price?: number;
@@ -62,6 +62,9 @@ export default function CreateProcess() {
     const [form, setForm] = React.useState<Form>(new Form({
         lab: Number(lab.data?.laboratory) || 0
     }))
+    const voidStage: Stage = new Stage({ procedure: NaN, index: form.stages.length + 1, price: 0 });
+
+    const sortStages = (a: any, b: any) => (a.index - 1) - (b.index - 1)
     const changeState = (prop: keyof State, value: any) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setState({ ...state, [prop]: value })
         event.stopPropagation()
@@ -69,6 +72,22 @@ export default function CreateProcess() {
     }
     const changeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [event.target.name]: event.target.value })
+    }
+    const changeStage = (index: number, prop: keyof Stage) => (e: React.ChangeEvent<any>, value: any) => {
+        form.stages[index][prop] = value;
+        setForm({ ...form, stages: [...form.stages, voidStage] })
+    }
+    const changeStagePosition = (position: number) => async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = + e.target.value;
+        if ((value < 1 || value > form.stages.length || !value)) return;
+        const oldIndex = form.stages[position].index
+        setForm({
+            ...form, stages: form.stages.map((stage: Stage, index: number) => {
+                if (index === position) return { ...stage, index: value };
+                else if (index + 1 === value) return { ...stage, index: oldIndex };
+                else return { ...stage, index: index + 1 };
+            })
+        })
     }
 
     return (
@@ -117,50 +136,67 @@ export default function CreateProcess() {
                                 />
                             </Grid>
                             <Grid item md={12}>
-                                {form.stages.map((stage, index) => (
-                                    <Grid
-                                        container
-                                        spacing={2}
-                                        key={index}
-                                    >
-                                        <Grid item md={2}>
-                                            <TextField
-                                                value={stage.index}
-                                                fullWidth
-                                                label="Estágio *"
-                                                type="number"
-                                            />
-                                        </Grid>
-                                        <Grid item md={7}>
-                                            <Grid container spacing={0} direction="row">
-                                                <Grid item md={10}>
-                                                    <Autocomplete
-                                                        fullWidth
-                                                        options={procedures.data?.laboratory.procedures}
-                                                        loading={procedures.loading}
-                                                        renderInput={(params: RenderInputParams) => (
-                                                            <TextField
-                                                                {...params}
-                                                                error={!!procedures.error}
-                                                                label='Procedimento *'
-                                                            />
-                                                        )}
-                                                    />
-                                                </Grid>
-                                                <Grid item md={2}>
-                                                    <CreateProcedure onCreate={procedures.refetch} />
+                                {form.stages.sort(sortStages).map((stage: Stage, index: number) => (
+                                    <Grow in={true}>
+                                        <Grid
+                                            container
+                                            spacing={2}
+                                            key={`${stage.index}`}
+                                        >
+                                            <Grid item md={2}>
+                                                <TextField
+                                                    value={stage.index}
+                                                    fullWidth
+                                                    label="Estágio *"
+                                                    type="number"
+                                                    onChange={changeStagePosition(index)}
+                                                    onInput={changeStagePosition(index)}
+                                                    name={`stage[${stage.index}]`}
+                                                    inputRef={register({
+                                                        required: true
+                                                    })}
+                                                />
+                                            </Grid>
+                                            <Grid item md={7}>
+                                                <Grid container spacing={0} direction="row">
+                                                    <Grid item md={10}>
+                                                        <Autocomplete
+                                                            fullWidth
+                                                            openOnFocus
+                                                            value={stage.procedure}
+                                                            getOptionLabel={(procedure: any) => procedure.name}
+                                                            options={procedures.data?.laboratory.procedures}
+                                                            loading={procedures.loading}
+                                                            onChange={changeStage(index, 'procedure')}
+                                                            renderInput={(params: RenderInputParams) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    name={`procedure[${stage.index}]`}
+                                                                    error={!!procedures.error}
+                                                                    label='Procedimento *'
+                                                                    inputRef={register({
+                                                                        required: true
+                                                                    })}
+                                                                />
+                                                            )}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item md={2}>
+                                                        <CreateProcedure onCreate={procedures.refetch} />
+                                                    </Grid>
                                                 </Grid>
                                             </Grid>
+                                            <Grid item md={3}>
+                                                <TextField
+                                                    value={stage.price}
+                                                    name={`price[${stage.index}]`}
+                                                    fullWidth
+                                                    label="Preço *"
+                                                />
+                                            </Grid>
                                         </Grid>
-                                        <Grid item md={3}>
-                                            <TextField
-                                                value={stage.price}
-                                                fullWidth
-                                                label="Preço *"
-                                            />
-                                        </Grid>
-                                    </Grid>
-                                )).sort((a: any, b: any) => a.index - b.index)}
+                                    </Grow>
+                                ))}
                             </Grid>
                             <Grid item md={12}>
                                 <FormControlLabel
