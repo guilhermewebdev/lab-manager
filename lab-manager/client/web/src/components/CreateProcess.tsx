@@ -61,11 +61,18 @@ const PROCEDURES_QUERY = gql`
 `;
 
 const PROCESS_MUTATION = gql`
-    
+    mutation createProcess($form: ProcessInput!){
+        upsertProcess(input: $form){
+            created
+            process {
+                index
+            }
+        }
+    }
 `
 
 export default function CreateProcess() {
-    const { register, errors, handleSubmit, getValues, reset, triggerValidation } = useForm()
+    const { register, errors, handleSubmit, reset, triggerValidation } = useForm()
     const lab = useQuery(LAB_QUERY)
     const procedures = useQuery(PROCEDURES_QUERY, { variables: { lab: Number(lab.data?.laboratory) || 0 } })
     const [state, setState] = React.useState<State>(new State())
@@ -82,6 +89,7 @@ export default function CreateProcess() {
         event.preventDefault()
     }
     const changeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+        triggerValidation(event.target.name)
         setForm({ ...form, [event.target.name]: event.target.value })
     }
     const getDefaultPrice = () => form.stages
@@ -96,14 +104,17 @@ export default function CreateProcess() {
         stages.splice(index, 1, {
             ...stages[index],
             [prop]: value,
-            price: prop === 'procedure' ? value.price : prop === 'price' ? e.target.value : stages[index].price,
+            price: prop === 'procedure' ?
+                value?.price || 0 : prop === 'price' ?
+                    e.target.value : !!stages[index] ?
+                        Number(stages[index]?.price || 0) : 0,
         });
 
-        if (prop === 'procedure') stages.push(voidStage);
+        if (prop === 'procedure' && index === stages.length - 1 && value) stages.push(voidStage);
 
         setForm({
             ...form,
-            price,
+            price: getDefaultPrice(),
             stages
         })
     }
@@ -177,6 +188,7 @@ export default function CreateProcess() {
                                     fullWidth
                                     label="Nome *"
                                     name='name'
+                                    error={errors.name}
                                     value={form.name}
                                     onInput={changeForm}
                                     inputRef={register({
@@ -187,6 +199,7 @@ export default function CreateProcess() {
                             <Grid item md={4}>
                                 <TextField
                                     fullWidth
+                                    error={errors.price}
                                     label="Preço *"
                                     onInput={changeForm}
                                     name='price'
@@ -217,10 +230,11 @@ export default function CreateProcess() {
                                                     fullWidth
                                                     label="Estágio *"
                                                     type="number"
+                                                    error={errors[`stages[${stage.index}]`]}
                                                     autoFocus
                                                     onChange={changeStagePosition(index)}
                                                     onInput={changeStagePosition(index)}
-                                                    name={`stage[${stage.index}]`}
+                                                    name={`stages[${stage.index}]`}
                                                     inputRef={register({
                                                         required: true
                                                     })}
@@ -241,9 +255,9 @@ export default function CreateProcess() {
                                                             renderInput={(params: RenderInputParams) => (
                                                                 <TextField
                                                                     {...params}
+                                                                    name={`procedures[${stage.index}]`}
                                                                     autoFocus={(index === form.stages.length - 1) && index !== 0}
-                                                                    name={`procedure[${stage.index}]`}
-                                                                    error={!!procedures.error}
+                                                                    error={!!procedures.error || errors[`procedures[${stage.index}]`]}
                                                                     label='Procedimento *'
                                                                     inputRef={register({
                                                                         required: true
@@ -260,8 +274,10 @@ export default function CreateProcess() {
                                             <Grid item md={index > 0 ? 3 : 4}>
                                                 <TextField
                                                     value={stage.price}
-                                                    name={`price[${stage.index}]`}
+                                                    name={`prices[${stage.index}]`}
+                                                    error={errors[`prices[${stage.index}]`]}
                                                     fullWidth
+                                                    helperText={stage.price !== Number(stage.procedure?.price || 0) && `${stage.price > Number(stage.procedure?.price || 0) ? "Acréscimo" : "Desconto"} de R$${parseCurrency(stage.price - Number(stage.procedure?.price || 0))}`}
                                                     onChange={changeStage(index, 'price')}
                                                     label="Preço *"
                                                     InputProps={{
