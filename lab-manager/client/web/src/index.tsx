@@ -8,11 +8,20 @@ import { ApolloProvider as ApolloHooksProvider } from '@apollo/react-hooks';
 import { ApolloProvider } from 'react-apollo'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
-import { verifyAuth, getToken } from './services/auth'
+import { verifyAuth, getToken, getStorage } from './services/auth'
+import { persistCache } from 'apollo-cache-persist';
+
+const cache = new InMemoryCache()
+
+persistCache({
+  cache,
+  storage: getStorage(),
+  trigger: 'background',
+})
 
 const client = new ApolloClient({
   uri: 'http://localhost/api/',
-  cache: new InMemoryCache(),
+  cache,
   request: (operation) => {
     const token = getToken();
     operation.setContext({

@@ -1,6 +1,6 @@
 import DefaultClient, { ApolloClient, gql } from "apollo-boost";
 
-const TOKEN_NAME = 'lafdljdsf'
+const TOKEN_NAME = 'grupon'
 
 
 export function getToken(): string {
@@ -16,7 +16,7 @@ export function setToken(token: string, keep: boolean): boolean {
       localStorage.removeItem(TOKEN_NAME)
       sessionStorage.removeItem(TOKEN_NAME)
       keep ? localStorage.setItem(TOKEN_NAME, token) : sessionStorage.setItem(TOKEN_NAME, token)
-      return getToken() === token ? true : tring(tryes + 1) ;
+      return getToken() === token ? true : tring(tryes + 1);
     } else {
       return tryes === 3 ? false : tring(tryes + 1)
     }
@@ -24,7 +24,7 @@ export function setToken(token: string, keep: boolean): boolean {
   return tring(0)
 }
 
-export async function setAuth(client: ApolloClient<any> | DefaultClient<unknown>, state: boolean): Promise<boolean>{
+export async function setAuth(client: ApolloClient<any> | DefaultClient<unknown>, state: boolean): Promise<boolean> {
   client.writeData({ data: { isAuthenticated: state } });
   return state;
 }
@@ -69,4 +69,10 @@ export async function logout(client: ApolloClient<any> | DefaultClient<unknown>)
   } catch (error) {
     return error;
   }
+}
+
+export function getStorage(): any {
+  return !!sessionStorage.getItem(TOKEN_NAME) ?
+    window.sessionStorage : !!window.localStorage.getItem(TOKEN_NAME) ?
+      window.localStorage : window.sessionStorage
 }

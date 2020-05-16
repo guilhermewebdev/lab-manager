@@ -22,6 +22,7 @@
     "@types/react-swipeable-views": "^0.13.0",
     "@types/react-text-mask": "^5.4.6",
     "apollo-boost": "^0.4.7",
+    "apollo-cache-persist": "^0.1.1",
     "clsx": "^1.1.0",
     "graphql": "^15.0.0",
     "react": "^16.13.1",
