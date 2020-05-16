@@ -98,7 +98,6 @@ class Stage(models.Model):
     class Meta:
         unique_together = (
             ('process', 'index'),
-            ('procedure', 'process'),
         )
         ordering = ['index', 'process']
 
