@@ -260,7 +260,7 @@ export default function CreateClients(props: Props) {
                                                     />
                                                 </Grid>
                                                 <Grid item md={1}>
-                                                    <CreateProcess />
+                                                    <CreateProcess onCreate={processes.refetch} />
                                                 </Grid>
                                             </Grid>
                                         </Grid>

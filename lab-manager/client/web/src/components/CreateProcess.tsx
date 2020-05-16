@@ -1,13 +1,13 @@
 import * as React from 'react';
 
-import { Tooltip, IconButton, Icon, Dialog, DialogTitle, DialogContent, Grid, TextField, Checkbox, FormControlLabel, DialogActions, Button, Grow, InputAdornment } from '@material-ui/core';
+import { Tooltip, IconButton, Icon, Dialog, DialogTitle, DialogContent, Grid, TextField, Checkbox, FormControlLabel, DialogActions, Button, Grow, InputAdornment, FormControl, FormHelperText } from '@material-ui/core';
 import { Autocomplete, RenderInputParams } from '@material-ui/lab';
 
 import { Icon as MDI } from '@mdi/react'
 import { mdiPlus, mdiClose } from '@mdi/js';
 
 import { gql } from 'apollo-boost';
-import { useQuery } from 'react-apollo';
+import { useQuery, useMutation } from 'react-apollo';
 
 import { useForm } from 'react-hook-form';
 
@@ -71,7 +71,11 @@ const PROCESS_MUTATION = gql`
     }
 `
 
-export default function CreateProcess() {
+type Props = {
+    onCreate: (process: any) => void;
+}
+
+export default function CreateProcess(props: Props) {
     const { register, errors, handleSubmit, reset, triggerValidation } = useForm()
     const lab = useQuery(LAB_QUERY)
     const procedures = useQuery(PROCEDURES_QUERY, { variables: { lab: Number(lab.data?.laboratory) || 0 } })
@@ -89,7 +93,6 @@ export default function CreateProcess() {
         event.preventDefault()
     }
     const changeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
-        triggerValidation(event.target.name)
         setForm({ ...form, [event.target.name]: event.target.value })
     }
     const getDefaultPrice = () => form.stages
@@ -160,6 +163,27 @@ export default function CreateProcess() {
         const splitted = string.includes('.') ? string.split('.') : [string, '00']
         return `${String(splitted[0])},${String(splitted[1]).slice(0, 2)}`
     }
+
+    const [create] = useMutation(PROCESS_MUTATION)
+
+    const submit = () => {
+        const stages = form.stages
+            .filter((value) => !!value.procedure && !!value.index && !!value.price && value.procedure?.index)
+            .map((value) => ({
+                ...value,
+                procedure: value.procedure.index
+            }))
+        const newForm = { ...form, stages }
+        create({ variables: { form: newForm } })
+            .then((data: any) => {
+                reset()
+                props.onCreate(data)
+                setForm(new Form({
+                    lab: Number(lab.data?.laboratory) || 0
+                }))
+            })
+    }
+
     return (
         <>
             <Tooltip title="Cadastrar Processo">
@@ -167,7 +191,7 @@ export default function CreateProcess() {
                     <Icon component={MDI} path={mdiPlus} />
                 </IconButton>
             </Tooltip>
-            <form onSubmit={(event: React.FormEvent<HTMLFormElement>) => { event.stopPropagation(); event.preventDefault() }}>
+            <form onSubmit={handleSubmit(submit)}>
                 <Dialog
                     onClose={changeState('dialog', false)}
                     open={state.dialog}
@@ -190,7 +214,9 @@ export default function CreateProcess() {
                                     name='name'
                                     error={errors.name}
                                     value={form.name}
+                                    helperText={errors.name && "É preciso informar um nome para o processo"}
                                     onInput={changeForm}
+                                    onChange={changeForm}
                                     inputRef={register({
                                         required: true,
                                     })}
@@ -232,6 +258,7 @@ export default function CreateProcess() {
                                                     type="number"
                                                     error={errors[`stages[${stage.index}]`]}
                                                     autoFocus
+                                                    helperText={errors[`stages[${stage.index}]`] && "É preciso informar a ordem dos procedimentos"}
                                                     onChange={changeStagePosition(index)}
                                                     onInput={changeStagePosition(index)}
                                                     name={`stages[${stage.index}]`}
@@ -324,27 +351,36 @@ export default function CreateProcess() {
                                 />
                             </Grid>
                             <Grid item md={12}>
-                                <FormControlLabel
-                                    label="Precisa de cor?"
-                                    control={
-                                        <Checkbox
-                                            indeterminate={form.needColor == (null || undefined)}
-                                            onChange={() => setForm({ ...form, needColor: !form.needColor })}
-                                            checked={form.needColor}
-                                            name="needColor"
-                                            ref={register({
-                                                required: true,
-                                                validate: (value) => value === true || value == false
-                                            })}
-                                        />
+                                <FormControl
+                                    error={errors.needColor}
+                                >
+                                    <FormControlLabel
+                                        label="Precisa de cor?"
+                                        control={
+                                            <Checkbox
+                                                indeterminate={form.needColor == (null || undefined)}
+                                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                    setForm({ ...form, needColor: event.target.checked })
+                                                }}
+                                                checked={form.needColor}
+                                                name="needColor"
+                                                inputRef={register({
+                                                    required: true,
+                                                    validate: (value) => (value === true || value == false)
+                                                })}
+                                            />
+                                        }
+                                    />
+                                    {!!errors.needColor &&
+                                        <FormHelperText>É preciso informar se o processo precisa da cor dos dentes do paciente</FormHelperText>
                                     }
-                                />
+                                </FormControl>
                             </Grid>
                         </Grid>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={changeState('dialog', false)}>Cancelar</Button>
-                        <Button color="primary" variant="contained">Salvar</Button>
+                        <Button onClick={handleSubmit(submit)} color="primary" variant="contained">Salvar</Button>
                     </DialogActions>
                 </Dialog>
             </form >
