@@ -1,14 +1,20 @@
 import * as React from 'react';
 
-import { Tooltip, IconButton, Icon, Dialog, DialogTitle, DialogContent, Grid, TextField, Checkbox, FormControlLabel, DialogActions, Button, Grow } from '@material-ui/core';
+import { Tooltip, IconButton, Icon, Dialog, DialogTitle, DialogContent, Grid, TextField, Checkbox, FormControlLabel, DialogActions, Button, Grow, InputAdornment } from '@material-ui/core';
+import { Autocomplete, RenderInputParams } from '@material-ui/lab';
 
 import { Icon as MDI } from '@mdi/react'
 import { mdiPlus, mdiClose } from '@mdi/js';
-import { Autocomplete, RenderInputParams } from '@material-ui/lab';
+
 import { gql } from 'apollo-boost';
 import { useQuery } from 'react-apollo';
-import CreateProcedure from './CreateProcedure'
+
 import { useForm } from 'react-hook-form';
+
+import CreateProcedure from './CreateProcedure'
+
+import NumberFormat from 'react-number-format';
+import CurrencyFormat from './CurrencyFormat';
 
 class State {
     dialog: boolean = false;
@@ -20,7 +26,7 @@ class Stage {
     }
     procedure!: any;
     index!: number;
-    price?: number;
+    price: number = 0;
 }
 
 class Form {
@@ -30,10 +36,10 @@ class Form {
     name?: string = '';
     lab!: number;
     stages: Array<Stage> = [
-        { procedure: NaN, index: 1, price: 0 }
+        { procedure: null, index: 1, price: 0 }
     ];
-    price?: number;
-    description?: string = '';
+    price: number = 0;
+    description?: string;
     needColor?: boolean;
 }
 
@@ -54,6 +60,10 @@ const PROCEDURES_QUERY = gql`
     }
 `;
 
+const PROCESS_MUTATION = gql`
+    
+`
+
 export default function CreateProcess() {
     const { register, errors, handleSubmit, getValues, reset, triggerValidation } = useForm()
     const lab = useQuery(LAB_QUERY)
@@ -62,8 +72,8 @@ export default function CreateProcess() {
     const [form, setForm] = React.useState<Form>(new Form({
         lab: Number(lab.data?.laboratory) || 0
     }))
-    const voidStage: Stage = new Stage({ procedure: NaN, index: form.stages.length + 1, price: 0 });
-    const addStageButton: boolean = (!!form.stages[form.stages.length - 1].procedure)
+    const voidStage: Stage = new Stage({ procedure: null, index: form.stages.length + 1, price: 0 });
+    const addStageButton: boolean = (!!form.stages[form.stages.length - 1]?.procedure)
 
     const sortStages = (a: any, b: any) => (a.index - 1) - (b.index - 1)
     const changeState = (prop: keyof State, value: any) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -74,10 +84,28 @@ export default function CreateProcess() {
     const changeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [event.target.name]: event.target.value })
     }
-    const changeStage = (index: number, prop: keyof Stage) => (e: React.ChangeEvent<any | HTMLInputElement | HTMLTextAreaElement>, value?: any) => {
-        form.stages[index][prop] = value;
-        if (index === form.stages.length - 1) form.stages.push(voidStage);
-        setForm({ ...form, stages: [...form.stages] })
+    const getDefaultPrice = () => form.stages
+        .filter((item) => !!item && !!item.price)
+        .map((value) => value.price)
+        .reduce((p, c) => (p + c), 0)
+
+    const price: number = getDefaultPrice();
+
+    const changeStage = (index: number, prop: keyof Stage) => (e: any, value?: any) => {
+        const stages: Stage[] = form.stages;
+        stages.splice(index, 1, {
+            ...stages[index],
+            [prop]: value,
+            price: prop === 'procedure' ? value.price : prop === 'price' ? e.target.value : stages[index].price,
+        });
+
+        if (prop === 'procedure') stages.push(voidStage);
+
+        setForm({
+            ...form,
+            price,
+            stages
+        })
     }
     const changeStagePosition = (position: number) => async (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = + e.target.value;
@@ -93,21 +121,33 @@ export default function CreateProcess() {
     }
     const removeStage = (position: number) => () => {
         form.stages.splice(position, 1)
-        form.stages.map((item, index) => {
-            item.index = index + 1;
-            return item;
+        setForm({
+            ...form,
+            price: getDefaultPrice(),
+            stages: form.stages.map((item, index) => {
+                item.index = index + 1;
+                return item;
+            })
         })
-        setForm({ ...form, stages: form.stages })
     }
     const autoRemoveStage = (position: number) => () => {
         if ((position === (form.stages.length - 1)) && !addStageButton && position > 0) {
-            form.stages.splice(position, 1)
-            setForm({ ...form, stages: form.stages })
+            setForm({
+                ...form, stages: form.stages.filter((item, index) => {
+                    return (index !== position && !!item.procedure || index === 0)
+                })
+            })
         }
     }
     const addStage = () => {
         form.stages.push(voidStage)
         setForm({ ...form, stages: form.stages })
+    }
+    const parseCurrency = (value: number) => {
+        const positive = value >= 0 ? value : value * -1
+        const string = String(positive);
+        const splitted = string.includes('.') ? string.split('.') : [string, '00']
+        return `${String(splitted[0])},${String(splitted[1]).slice(0, 2)}`
     }
     return (
         <>
@@ -122,7 +162,7 @@ export default function CreateProcess() {
                     open={state.dialog}
                     closeAfterTransition
                     fullWidth
-                    maxWidth="sm"
+                    maxWidth="md"
                     TransitionComponent={Grow}
                     keepMounted={false}
                 >
@@ -132,7 +172,7 @@ export default function CreateProcess() {
                             container
                             spacing={2}
                         >
-                            <Grid item md={9}>
+                            <Grid item md={8}>
                                 <TextField
                                     fullWidth
                                     label="Nome *"
@@ -144,13 +184,20 @@ export default function CreateProcess() {
                                     })}
                                 />
                             </Grid>
-                            <Grid item md={3}>
+                            <Grid item md={4}>
                                 <TextField
                                     fullWidth
                                     label="Preço *"
                                     onInput={changeForm}
                                     name='price'
                                     value={form.price}
+                                    helperText={form.price !== price && `${form.price > price ? "Acréscimo" : "Desconto"} de R$${parseCurrency(form.price - price)}`}
+                                    InputProps={{
+                                        inputComponent: CurrencyFormat as any,
+                                        startAdornment: <InputAdornment position='start'>R$</InputAdornment>,
+                                        onChange: changeForm,
+                                        name: 'price',
+                                    }}
                                     inputRef={register({
                                         required: true,
                                     })}
@@ -179,7 +226,7 @@ export default function CreateProcess() {
                                                     })}
                                                 />
                                             </Grid>
-                                            <Grid item md={7}>
+                                            <Grid item md={6}>
                                                 <Grid container spacing={0} direction="row">
                                                     <Grid item md={10}>
                                                         <Autocomplete
@@ -210,13 +257,21 @@ export default function CreateProcess() {
                                                     </Grid>
                                                 </Grid>
                                             </Grid>
-                                            <Grid item md={index > 0 ? 2 : 3}>
+                                            <Grid item md={index > 0 ? 3 : 4}>
                                                 <TextField
                                                     value={stage.price}
                                                     name={`price[${stage.index}]`}
                                                     fullWidth
                                                     onChange={changeStage(index, 'price')}
                                                     label="Preço *"
+                                                    InputProps={{
+                                                        inputComponent: CurrencyFormat as any,
+                                                        startAdornment: <InputAdornment position='start'>R$</InputAdornment>,
+                                                        onChange: changeStage(index, 'price')
+                                                    }}
+                                                    inputRef={register({
+                                                        required: true,
+                                                    })}
                                                 />
                                             </Grid>
                                             {index > 0 &&
@@ -241,6 +296,18 @@ export default function CreateProcess() {
                                 </Grow>
                             }
                             <Grid item md={12}>
+                                <TextField
+                                    multiline
+                                    fullWidth
+                                    variant="filled"
+                                    label="Descrição (opcional)"
+                                    value={form.description}
+                                    name="description"
+                                    onInput={changeForm}
+                                    onChange={changeForm}
+                                />
+                            </Grid>
+                            <Grid item md={12}>
                                 <FormControlLabel
                                     label="Precisa de cor?"
                                     control={
@@ -249,6 +316,10 @@ export default function CreateProcess() {
                                             onChange={() => setForm({ ...form, needColor: !form.needColor })}
                                             checked={form.needColor}
                                             name="needColor"
+                                            ref={register({
+                                                required: true,
+                                                validate: (value) => value === true || value == false
+                                            })}
                                         />
                                     }
                                 />

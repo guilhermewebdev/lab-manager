@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Tooltip, IconButton, Icon, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, FormControl, FormControlLabel, InputLabel, TextareaAutosize, Input, InputAdornment, Backdrop, CircularProgress, makeStyles, createStyles, Theme, Snackbar } from '@material-ui/core';
 
-import NumberFormat from 'react-number-format';
-
 import { Icon as MDI } from '@mdi/react';
 import { mdiPlus } from '@mdi/js';
 import { useForm } from 'react-hook-form';
 import { gql } from 'apollo-boost';
 import { useMutation, useQuery } from 'react-apollo';
 import { Alert } from '@material-ui/lab';
+import CurrencyFormat from './CurrencyFormat';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -33,38 +32,6 @@ class Form {
     price: number = 0.00;
 }
 
-interface NumberFormatCustomProps {
-    inputRef: (instance: NumberFormat | null) => void;
-    onChange: (event: { target: { name: string; value: string } }) => void;
-    name: string;
-}
-
-function NumberFormatCustom(props: NumberFormatCustomProps) {
-    const { inputRef, onChange, ...other } = props;
-
-    return (
-        <NumberFormat
-            {...other}
-            getInputRef={inputRef}
-            onValueChange={(values) => {
-                onChange({
-                    target: {
-                        name: props.name,
-                        value: values.value,
-                    },
-                });
-            }}
-            thousandSeparator="."
-            decimalSeparator=","
-            isNumericString
-            allowEmptyFormatting
-            defaultValue={0}
-            allowNegative={false}
-            fixedDecimalScale
-            decimalScale={2}
-        />
-    );
-}
 
 const PROCEDURE_MUTATION = gql`
     mutation create($form: ProcedureInput!){
@@ -171,7 +138,7 @@ export default function CreateProcedure(props: Props) {
                                     onInput={changeForm('price')}
                                     value={form.price}
                                     InputProps={{
-                                        inputComponent: NumberFormatCustom as any,
+                                        inputComponent: CurrencyFormat as any,
                                         startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                                         inputRef: register({
                                             required: true,
