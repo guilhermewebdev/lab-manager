@@ -1,6 +1,26 @@
 import * as React from 'react';
 
-import { Tooltip, IconButton, Icon, Dialog, DialogTitle, DialogContent, Grid, TextField, Checkbox, FormControlLabel, DialogActions, Button, Grow, InputAdornment, FormControl, FormHelperText } from '@material-ui/core';
+import {
+    Tooltip,
+    IconButton,
+    Icon,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    Grid,
+    TextField,
+    Checkbox,
+    FormControlLabel,
+    DialogActions,
+    Button,
+    Grow,
+    InputAdornment,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    RadioGroup,
+    Radio
+} from '@material-ui/core';
 import { Autocomplete, RenderInputParams } from '@material-ui/lab';
 
 import { Icon as MDI } from '@mdi/react'
@@ -13,7 +33,6 @@ import { useForm } from 'react-hook-form';
 
 import CreateProcedure from './CreateProcedure'
 
-import NumberFormat from 'react-number-format';
 import CurrencyFormat from './CurrencyFormat';
 
 class State {
@@ -39,8 +58,8 @@ class Form {
         { procedure: null, index: 1, price: 0 }
     ];
     price: number = 0;
-    description?: string;
-    needColor?: boolean;
+    description?: string = '';
+    needColor: boolean | null = null;
 }
 
 const LAB_QUERY = gql`
@@ -354,23 +373,38 @@ export default function CreateProcess(props: Props) {
                                 <FormControl
                                     error={errors.needColor}
                                 >
-                                    <FormControlLabel
-                                        label="Precisa de cor?"
-                                        control={
-                                            <Checkbox
-                                                indeterminate={form.needColor == (null || undefined)}
-                                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    setForm({ ...form, needColor: event.target.checked })
-                                                }}
-                                                checked={form.needColor}
-                                                name="needColor"
+                                    <FormLabel>Precisa de cor?</FormLabel>
+                                    <RadioGroup
+                                        value={form.needColor}
+                                        onChange={changeForm}
+                                        row
+                                        color="primary"
+                                        name="needColor"
+
+                                    >
+                                        <FormControlLabel
+                                            label="Sim"
+                                            control={<Radio
+                                                color="primary"
                                                 inputRef={register({
                                                     required: true,
-                                                    validate: (value) => (value === true || value == false)
+                                                    validate: (value) => value === 'true' || value === 'false'
                                                 })}
-                                            />
-                                        }
-                                    />
+                                            />}
+                                            value="true"
+                                        />
+                                        <FormControlLabel
+                                            label="Não"
+                                            control={<Radio
+                                                color="primary"
+                                                inputRef={register({
+                                                    required: true,
+                                                    validate: (value) => value === 'true' || value === 'false'
+                                                })}
+                                            />}
+                                            value="false"
+                                        />
+                                    </RadioGroup>
                                     {!!errors.needColor &&
                                         <FormHelperText>É preciso informar se o processo precisa da cor dos dentes do paciente</FormHelperText>
                                     }

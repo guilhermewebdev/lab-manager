@@ -28,6 +28,10 @@ import {
     Radio,
     Zoom,
     LinearProgress,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from "@material-ui/core";
 
 import { useForm } from 'react-hook-form';
@@ -188,7 +192,7 @@ export default function CreateClients(props: Props) {
     }
 
     return (
-        <div>
+        <>
             <Tooltip arrow title="Cadastrar Paciente">
                 <IconButton onClick={open}>
                     <Icon component={MDI} path={mdiPlus} color="inherit" />
@@ -197,172 +201,148 @@ export default function CreateClients(props: Props) {
             <Snackbar open={!!error} autoHideDuration={6000}>
                 <Alert severity="error">{error?.message}</Alert>
             </Snackbar>
-            <Modal
-                open={state.modal}
-                onClose={changeState('modal', false)}
-                className={classes.modal}
-            >
-                <form autoComplete="off" onSubmit={handleSubmit(submit)}>
-                    <Grow in={state.grow} onExited={changeState('modal', false)} mountOnEnter unmountOnExit>
-                        <Paper className={classes.root} elevation={3}>
-                            <Grid
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="center"
-                            >
-                                <Grid item md={6}>
-                                    <Typography variant="h5">Novo Trabalho</Typography>
-                                </Grid>
-                                <Grid item md={6} />
-                                <Grid item md={12}>
-                                    <Grid
-                                        container
-                                        direction="row"
-                                        justify="flex-start"
-                                        alignItems="center"
-                                        spacing={4}
-                                        className={classes.form}
-                                    >
-                                        <Grid item md={8}>
-                                            <Grid
-                                                container
-                                                spacing={1}
-                                                direction="row"
-                                                justify="flex-start"
-                                                alignItems="flex-end"
-                                            >
-                                                <Grid item md={11}>
-                                                    <Autocomplete
-                                                        fullWidth
-                                                        options={processes.data?.laboratory.processes}
-                                                        loading={processes.loading}
-                                                        value={state.form.kind}
-                                                        inputValue={state.kind}
-                                                        onInputChange={(event: any, newValue: string) => setState({ ...state, kind: newValue })}
-                                                        onChange={(event: any, newValue: any) => setState({ ...state, form: { ...state.form, kind: newValue } })}
-                                                        loadingText={
-                                                            <>
-                                                                <Typography>Carregando...</Typography>
-                                                                <LinearProgress />
-                                                            </>
-                                                        }
-                                                        openOnFocus
-                                                        getOptionLabel={(option: any) => option.name}
-                                                        renderInput={(params) => (
-                                                            <TextField
-                                                                {...params}
-                                                                error={!!processes.error}
-                                                                label="Tipo *"
-                                                                helperText={!!processes.error && processes.error.message}
-                                                            />
-                                                        )}
-                                                    />
-                                                </Grid>
-                                                <Grid item md={1}>
-                                                    <CreateProcess onCreate={processes.refetch} />
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                        <Grid item md={4}>
-                                            <TextField
-                                                fullWidth
-                                                label="Cor dos dentes *"
-                                                onInput={changeForm}
-                                                name="toothColor"
-                                                value={form.toothColor}
-                                                helperText={!!errors.toothColor && "É preciso informar uma cor"}
-                                                error={!!errors.toothColor}
-                                                inputRef={register({
-                                                    required: true,
-                                                })}
-                                            />
-                                        </Grid>
-                                        <Grid item md={12}>
-                                            <FormControl component="fieldset">
-                                                <FormLabel component="legend">Genero</FormLabel>
-                                                <RadioGroup
-                                                    aria-label="gender"
-                                                    row
-                                                    value={form.gender}
-                                                    name="gender"
-                                                    ref={register({
-                                                        pattern: /^[M|F]$/igm
-                                                    })}
-                                                    onChange={changeForm}
-                                                >
-                                                    <FormControlLabel
-                                                        label="Feminino"
-                                                        value="F"
-                                                        control={<Radio
-                                                            color="primary"
-                                                            checkedIcon={
-                                                                <Zoom in={true}>
-                                                                    <Icon
-                                                                        path={mdiGenderFemale}
-                                                                        component={MDI}
-                                                                    />
-                                                                </Zoom>
-                                                            }
-                                                            icon={
-                                                                <Icon
-                                                                    path={mdiGenderFemale}
-                                                                    component={MDI}
-                                                                />
-                                                            }
-                                                        />}
-                                                    />
-                                                    <FormControlLabel
-                                                        label="Masculino"
-                                                        value="M"
-                                                        control={<Radio
-                                                            color="primary"
-                                                            checkedIcon={
-                                                                <Zoom in={true}>
-                                                                    <Icon
-                                                                        path={mdiGenderMale}
-                                                                        component={MDI}
-                                                                    />
-                                                                </Zoom>
-                                                            }
-                                                            icon={
-                                                                <Icon
-                                                                    path={mdiGenderMale}
-                                                                    component={MDI}
-                                                                />
-                                                            }
-                                                        />}
-                                                    />
-                                                </RadioGroup>
-                                            </FormControl>
-                                        </Grid>
+            <form autoComplete="off" onSubmit={handleSubmit(submit)}>
+                <Dialog
+                    open={state.modal}
+                    onClose={changeState('modal', false)}
+                    TransitionComponent={Grow}
+                    keepMounted={false}
+                    maxWidth="md"
+                    fullWidth
+                >
+                    <DialogTitle>Novo Trabalho</DialogTitle>
+                    <DialogContent>
+                        <Grid
+                            container
+                            direction="row"
+                            justify="flex-start"
+                            alignItems="center"
+                            spacing={2}
+                        >
+                            <Grid item md={8}>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justify="flex-start"
+                                    alignItems="flex-end"
+                                >
+                                    <Grid item md={11}>
+                                        <Autocomplete
+                                            fullWidth
+                                            options={processes.data?.laboratory.processes}
+                                            loading={processes.loading}
+                                            value={state.form.kind}
+                                            inputValue={state.kind}
+                                            onInputChange={(event: any, newValue: string) => setState({ ...state, kind: newValue })}
+                                            onChange={(event: any, newValue: any) => setState({ ...state, form: { ...state.form, kind: newValue } })}
+                                            loadingText={
+                                                <>
+                                                    <Typography>Carregando...</Typography>
+                                                    <LinearProgress />
+                                                </>
+                                            }
+                                            openOnFocus
+                                            getOptionLabel={(option: any) => option.name}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    error={!!processes.error}
+                                                    label="Tipo *"
+                                                    helperText={!!processes.error && processes.error.message}
+                                                />
+                                            )}
+                                        />
                                     </Grid>
-                                </Grid>
-                                <Grid item md={12}>
-                                    <Grid
-                                        container
-                                        direction="row"
-                                        justify="flex-end"
-                                        alignItems="flex-end"
-                                        spacing={5}
-                                    >
-                                        <Grid item>
-                                            <Button onClick={handleClose} color="inherit">Cancelar</Button>
-                                        </Grid>
-                                        <Grid item>
-                                            <Button variant="contained" onClick={handleSubmit(submit)} color="primary">Salvar</Button>
-                                            <Backdrop className={classes.backdrop} open={loading}>
-                                                <CircularProgress color='primary' />
-                                            </Backdrop>
-                                        </Grid>
+                                    <Grid item md={1}>
+                                        <CreateProcess onCreate={processes.refetch} />
                                     </Grid>
                                 </Grid>
                             </Grid>
-                        </Paper>
-                    </Grow>
-                </form>
-            </Modal >
-        </div>
+                            <Grid item md={4}>
+                                <TextField
+                                    fullWidth
+                                    label="Cor dos dentes *"
+                                    onInput={changeForm}
+                                    name="toothColor"
+                                    value={form.toothColor}
+                                    helperText={!!errors.toothColor && "É preciso informar uma cor"}
+                                    error={!!errors.toothColor}
+                                    inputRef={register({
+                                        required: true,
+                                    })}
+                                />
+                            </Grid>
+                            <Grid item md={12}>
+                                <FormControl component="fieldset">
+                                    <FormLabel component="legend">Genero</FormLabel>
+                                    <RadioGroup
+                                        aria-label="gender"
+                                        row
+                                        value={form.gender}
+                                        name="gender"
+                                        ref={register({
+                                            pattern: /^[M|F]$/igm
+                                        })}
+                                        onChange={changeForm}
+                                    >
+                                        <FormControlLabel
+                                            label="Feminino"
+                                            value="F"
+                                            control={<Radio
+                                                color="primary"
+                                                checkedIcon={
+                                                    <Zoom in={true}>
+                                                        <Icon
+                                                            path={mdiGenderFemale}
+                                                            component={MDI}
+                                                        />
+                                                    </Zoom>
+                                                }
+                                                icon={
+                                                    <Icon
+                                                        path={mdiGenderFemale}
+                                                        component={MDI}
+                                                    />
+                                                }
+                                            />}
+                                        />
+                                        <FormControlLabel
+                                            label="Masculino"
+                                            value="M"
+                                            control={<Radio
+                                                color="primary"
+                                                checkedIcon={
+                                                    <Zoom in={true}>
+                                                        <Icon
+                                                            path={mdiGenderMale}
+                                                            component={MDI}
+                                                        />
+                                                    </Zoom>
+                                                }
+                                                icon={
+                                                    <Icon
+                                                        path={mdiGenderMale}
+                                                        component={MDI}
+                                                    />
+                                                }
+                                            />}
+                                        />
+                                    </RadioGroup>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="inherit">Cancelar</Button>
+                        <Button variant="contained" onClick={handleSubmit(submit)} color="primary">Salvar</Button>
+                        <Backdrop className={classes.backdrop} open={loading}>
+                            <CircularProgress color='primary' />
+                        </Backdrop>
+                    </DialogActions>
+                </Dialog>
+            </form>
+        </>
     )
 
 }
