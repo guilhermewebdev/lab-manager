@@ -26,7 +26,7 @@ const client = new ApolloClient({
     const token = getToken();
     operation.setContext({
       headers: {
-        authorization: `JWT ${token}`
+        authorization: !!token && `JWT ${token}`
       }
     })
   },
