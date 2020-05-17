@@ -60,8 +60,8 @@ export async function login(client: ApolloClient<any> | DefaultClient<unknown>, 
 
 export async function logout(client: ApolloClient<any> | DefaultClient<unknown>): Promise<boolean> {
   try {
-    localStorage.removeItem(TOKEN_NAME)
-    sessionStorage.removeItem(TOKEN_NAME)
+    localStorage.clear()
+    sessionStorage.clear()
     client.clearStore()
     client.cache.reset()
     client.resetStore()

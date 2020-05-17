@@ -10,13 +10,16 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
 import { verifyAuth, getToken, getStorage } from './services/auth'
 import { persistCache } from 'apollo-cache-persist';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 const cache = new InMemoryCache()
 
 persistCache({
   cache,
   storage: getStorage(),
-  trigger: 'background',
+  key: 'andrack',
+  debug: true,
 })
 
 const client = new ApolloClient({
@@ -47,7 +50,9 @@ render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <ApolloHooksProvider client={client}>
-        <App />
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <App />
+        </MuiPickersUtilsProvider>
       </ApolloHooksProvider>
     </ApolloProvider>
   </React.StrictMode>,

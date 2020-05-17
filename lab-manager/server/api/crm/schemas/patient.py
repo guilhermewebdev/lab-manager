@@ -39,7 +39,7 @@ class PatientQuery(types.ObjectType):
 
 class PatientInput(graphene.InputObjectType):
     index = graphene.Int()
-    client = graphene.ID(required=True)
+    client = graphene.Int(required=True)
     lab = graphene.Int(required=True)
     name = graphene.String(required=True)    
     gender = graphene.String()
