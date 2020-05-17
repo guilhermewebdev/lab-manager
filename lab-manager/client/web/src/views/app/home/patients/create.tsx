@@ -87,7 +87,7 @@ type State = {
 const CLIENT_MUTATION = gql`
     mutation createClient(
         $lab: Int!
-        $client: ID!
+        $client: Int!
         $name: String!
         $toothColor: String!
         $gender: String!

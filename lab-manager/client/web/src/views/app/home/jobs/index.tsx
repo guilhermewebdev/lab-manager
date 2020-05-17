@@ -64,7 +64,11 @@ const useStyles = makeStyles((theme: Theme) =>
             overflow: 'auto',
             height: "100%",
         },
-
+        tableRow: {
+            // '&:nth-of-type(odd)': {
+            //     backgroundColor: theme.palette.action.focus,
+            // },
+        },
     }),
 );
 
@@ -80,7 +84,7 @@ const JOBS_QUERY = gql`
             client(index: $client){
                 patient(index: $patient){
                     name
-                    jobs{
+                    jobs {
                         price
                         amount
                         kind{
@@ -99,7 +103,7 @@ interface Column {
     id: 'price' | 'amount' | 'kind' | 'deadline' | 'index';
     label: string;
     minWidth?: number;
-    align?: 'right' | 'left';
+    align?: 'right' | 'left' | 'center';
     format?: (value: any) => string;
 }
 
@@ -110,13 +114,15 @@ const columns: Column[] = [
         format: (value) => value.name
     },
     {
-        id: 'amount',
-        label: 'Quantidade',
-    },
-    {
         id: 'deadline',
         label: 'Previsão de entrega',
-        format: (value) => String(new Date(value))
+        format: (value) => String(new Date(value).toLocaleString()),
+        align: 'center',
+    },
+    {
+        id: 'amount',
+        label: 'Quantidade',
+        align: 'center',
     },
     {
         id: 'price',
@@ -125,7 +131,11 @@ const columns: Column[] = [
     }
 ]
 
-export default function Jobs() {
+type Props = {
+    onCreateJob?: (job: any) => void;
+}
+
+export default function Jobs(props: Props) {
     const classes = useStyles();
     const lab = useQuery(LAB_QUERY)
     const { client, patient } = useParams()
@@ -136,9 +146,10 @@ export default function Jobs() {
         job: {}
     })
     const created = (newJob: any) => {
-        refetch().then(() =>
+        refetch().then(() => {
             setState({ job: newJob })
-        )
+            props.onCreateJob && props.onCreateJob(newJob)
+        })
     }
 
     return (
@@ -156,12 +167,12 @@ export default function Jobs() {
                 <CreateJob onCreate={created} />
             </Toolbar>
             <TableContainer>
-                <Table stickyHeader>
+                <Table stickyHeader size="medium">
                     <TableHead>
                         <TableRow>
-                            {columns.map((column: Column, index: number) => (
+                            {columns.map((column: Column) => (
                                 <TableCell
-                                    key={index}
+                                    key={column.id}
                                     align={column.align}
                                 >
                                     {column.label}
@@ -170,20 +181,24 @@ export default function Jobs() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data?.laboratory.client.patient.jobs.map((job: any, index: number) => (
+                        {data?.laboratory.client.patient.jobs.map((job: any) => (
                             <TableRow
                                 hover
-                                key={index}
+                                key={job.index}
+                                tabIndex={-1}
+                                className={classes.tableRow}
                             >
-                                {columns.map((column: Column, index: number) => {
+                                {columns.map((column: Column) => {
                                     const value = job[column.id];
+
                                     return (
                                         <TableCell
-                                            key={index}
+                                            key={column.id}
                                             align={column.align}
-                                            padding="checkbox"
+                                            variant="body"
+                                            size="medium"
                                         >
-                                            {column.format && typeof value === 'number' ? column.format(value) : value}
+                                            {column.format && typeof value !== 'number' ? column.format(value) : value}
                                         </TableCell>
                                     );
                                 })}

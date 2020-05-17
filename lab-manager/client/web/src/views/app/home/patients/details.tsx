@@ -92,7 +92,7 @@ export default function Details(props: Props) {
     const defaultState: State = {
         dialogDelete: false,
     }
-    const { data, error, loading } = useQuery(
+    const { data, error, refetch, loading } = useQuery(
         PATIENT_QUERY,
         { variables: { lab: lab.data?.laboratory || 0, client, patient } }
     );
@@ -135,11 +135,6 @@ export default function Details(props: Props) {
                                 spacing={3}
                                 className={classes.subheader}
                             >
-                                <Grid item md>
-                                    <Typography>
-                                        Nome: {data?.laboratory.client.patient.name}
-                                    </Typography>
-                                </Grid>
                                 {!!data?.laboratory.client.patient.toothColor &&
                                     <Grid item md>
                                         <Typography>
@@ -163,7 +158,7 @@ export default function Details(props: Props) {
                     <Divider />
                     {!!data?.laboratory &&
                         <CardContent >
-                            <Jobs />
+                            <Jobs onCreateJob={refetch} />
                         </CardContent>
                     }
                     {!!error &&

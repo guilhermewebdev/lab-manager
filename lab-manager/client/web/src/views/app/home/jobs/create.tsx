@@ -153,6 +153,9 @@ const JOB_MUTATION = gql`
             toothColor: $toothColor
         }) @include(if: $useToothColor) {
             created
+            patient {
+                toothColor
+            }
         }
         upsertJob(input: {
             lab: $lab
