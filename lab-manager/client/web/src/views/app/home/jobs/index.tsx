@@ -47,7 +47,6 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             flexGrow: 1,
             flexDirection: 'column',
-            margin: 15,
         },
         toolbar: {
             paddingLeft: theme.spacing(2),
@@ -69,6 +68,10 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         tableContainer: {
             flex: "1 1 auto"
+        },
+        tableBody: {
+            overflow: 'auto',
+            flex: '1 1 auto'
         }
     }),
 );
@@ -157,6 +160,7 @@ export default function Jobs(props: Props) {
         <Paper
             elevation={3}
             className={classes.root}
+            square
         >
             <Toolbar
                 variant="dense"
@@ -182,7 +186,7 @@ export default function Jobs(props: Props) {
                             ))}
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody className={classes.tableBody}>
                         {data?.laboratory.client.patient.jobs.map((job: any) => (
                             <TableRow
                                 hover
@@ -192,7 +196,6 @@ export default function Jobs(props: Props) {
                             >
                                 {columns.map((column: Column) => {
                                     const value = job[column.id];
-
                                     return (
                                         <TableCell
                                             key={column.id}

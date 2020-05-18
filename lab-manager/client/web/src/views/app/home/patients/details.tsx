@@ -95,6 +95,8 @@ const createTheme = makeStyles((theme: Theme) =>
         paper: {
             height: "100%",
             width: "100%",
+            display: "flex",
+            flexFlow: "column",
         },
         subheader: {
         }
@@ -128,52 +130,59 @@ export default function Details(props: Props) {
     return (
         <>
             <Paper className={classes.paper} square elevation={3}>
-                <ExpansionPanel>
-                    <ExpansionPanelSummary
-                        expandIcon={<ExpandMore />}
-                        aria-controls="panel1c-content"
-                        id="panel1c-header"
-                    >
-                        <Typography variant="h5">{data?.laboratory.client.patient.name || (error && "Erro!")}</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
-                        <Grid
-                            container
-                            direction="row"
-                            justify="space-evenly"
-                            alignItems="flex-start"
-                            spacing={3}
-                            className={classes.subheader}
-                        >
-                            {!!data?.laboratory.client.patient.toothColor &&
-                                <Grid item md>
-                                    <Typography>
-                                        Cor dos dentes: {data?.laboratory.client.patient.toothColor}
-                                    </Typography>
-                                </Grid>
-                            }
-                            {!!data?.laboratory.client.patient.gender &&
-                                <Grid item md>
-                                    <Typography>
-                                        Gênero: {
-                                            (data?.laboratory.client.patient.gender === 'M' && 'Masculino') ||
-                                            (data?.laboratory.client.patient.gender === 'F' && 'Feminino')
-                                        }
-                                    </Typography>
-                                </Grid>
-                            }
-                        </Grid>
-                    </ExpansionPanelDetails>
-                    <ExpansionPanelActions>
-                        <Button
-                            onClick={handleChange('dialogDelete', true)}
-                            color="secondary"
-                        >Deletar</Button>
-
-                    </ExpansionPanelActions>
-                </ExpansionPanel>
                 <Box
-                    {...fullBoxProperties}
+                    flex="0 1 auto"
+                >
+                    <ExpansionPanel
+                    
+                    >
+                        <ExpansionPanelSummary
+                            expandIcon={<ExpandMore />}
+                            aria-controls="panel1c-content"
+                            id="panel1c-header"
+                        >
+                            <Typography variant="h5">{data?.laboratory.client.patient.name || (error && "Erro!")}</Typography>
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="space-evenly"
+                                alignItems="flex-start"
+                                spacing={3}
+                                className={classes.subheader}
+                            >
+                                {!!data?.laboratory.client.patient.toothColor &&
+                                    <Grid item md>
+                                        <Typography>
+                                            Cor dos dentes: {data?.laboratory.client.patient.toothColor}
+                                        </Typography>
+                                    </Grid>
+                                }
+                                {!!data?.laboratory.client.patient.gender &&
+                                    <Grid item md>
+                                        <Typography>
+                                            Gênero: {
+                                                (data?.laboratory.client.patient.gender === 'M' && 'Masculino') ||
+                                                (data?.laboratory.client.patient.gender === 'F' && 'Feminino')
+                                            }
+                                        </Typography>
+                                    </Grid>
+                                }
+                            </Grid>
+                        </ExpansionPanelDetails>
+                        <ExpansionPanelActions>
+                            <Button
+                                onClick={handleChange('dialogDelete', true)}
+                                color="secondary"
+                            >Deletar</Button>
+
+                        </ExpansionPanelActions>
+                    </ExpansionPanel>
+                </Box>
+                <Box
+                    flex="1 1 auto"
+                    overflow="auto"
                 >
                     {!!data?.laboratory &&
                         <Jobs onCreateJob={refetch} />
