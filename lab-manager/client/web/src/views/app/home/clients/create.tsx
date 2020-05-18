@@ -63,14 +63,10 @@ const LAB_QUERY = gql`
     }
 `
 
-type Telephone = {
-    telephone: string,
-}
-
 type Form = {
     lab: number,
     name: string,
-    telephones: Array<Telephone>,
+    telephones: Array<string>,
     address: string,
     email: string,
     discount: number,
@@ -102,7 +98,7 @@ const CLIENT_MUTATION = gql`
     mutation createClient(
         $lab: ID!
         $name: String!
-        $telephones: [TelephoneInput]
+        $telephones: [String]!
         $address: String
         $email: String
         $discount: Float
@@ -154,7 +150,6 @@ export default function CreateClients(props: Props) {
         setState({ ...state, [prop]: value })
     }
     const changeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
-        triggerValidation(event.target.name);
         if (event.target.name === 'discount' && Number(event.target.value) > 100 || Number(event.target.value) < 0) return;
         setState({ ...state, form: { ...form, [event.target.name]: event.target.value } })
     }
@@ -280,7 +275,6 @@ export default function CreateClients(props: Props) {
                                             </FormControl>
                                         </Grid>
                                         <Grid item md={9}>
-
                                             <Autocomplete
                                                 multiple
                                                 fullWidth

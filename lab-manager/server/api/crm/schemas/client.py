@@ -65,7 +65,7 @@ class ClientInput(graphene.InputObjectType):
     index = graphene.Int()
     lab = graphene.ID(required=True)
     name = graphene.String(required=True)
-    telephones = graphene.List(TelephoneInput)
+    telephones = graphene.List(graphene.String, required=True)
     address = graphene.String()
     email = graphene.String()
     stage_funnel = graphene.ID()
@@ -91,7 +91,7 @@ class ClientMutation(graphene.Mutation):
                 client.telephones.all().delete()
                 for tel in telephones:
                     tels.append(
-                        models.Telephone(**tel, client=client, index=0)
+                        models.Telephone(telephone=tel, client=client, index=0)
                     )
                 client.telephones.bulk_create(tels)
             models.Client.objects.filter(
@@ -106,7 +106,7 @@ class ClientMutation(graphene.Mutation):
                 for tel in telephones:
                     tels.append(
                         models.Telephone(
-                            telephone=tel['telephone'],
+                            telephone=tel,
                             client=client,
                         )
                     )

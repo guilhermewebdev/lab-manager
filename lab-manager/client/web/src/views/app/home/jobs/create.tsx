@@ -210,9 +210,11 @@ export default function CreateClients(props: Props) {
     const [state, setState] = React.useState<State>(createState())
     const [form, setForm] = React.useState<Form>(createForm(defaultData))
 
+    const getPrice = (price: number, amount: number = form.amount): number =>
+        (price * amount) * ((100 - (processes.data?.laboratory.client.discount || 0)) / 100)
+
     const changeForm = (prop: keyof Form) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const price = prop === 'amount' ?
-            (Number(e.target.value || 0) * (form.kind?.price || 0) * (100 - (processes.data?.laboratory.client.discount || 0)) / 100) : form.price;
+        const price = prop === 'amount' ? getPrice(form.price, Number(e.target.value || 0)) : form.price;
         ((prop === 'amount' && Number(e.target.value) > 0) || prop !== 'amount') && setForm({ ...form, price, [prop]: e.target.value })
     }
     const changeDateForm = (prop: 'deadline' | 'deadlineHour') => (date: Date | null) => {
@@ -236,7 +238,7 @@ export default function CreateClients(props: Props) {
 
     return (
         <>
-            <Tooltip arrow title="Cadastrar Paciente">
+            <Tooltip arrow title="Cadastrar Trabalho">
                 <IconButton onClick={() => setState({ ...state, dialog: true })}>
                     <Icon component={MDI} path={mdiPlus} color="inherit" />
                 </IconButton>
@@ -278,7 +280,7 @@ export default function CreateClients(props: Props) {
                                             onChange={(e: any, value: Process | null) => setForm({
                                                 ...form,
                                                 kind: value,
-                                                price: form.amount * (value?.price || 0) * (100 - (processes.data?.laboratory.client.discount || 0)) / 100
+                                                price: getPrice(value?.price || 0, form.amount),
                                             })}
                                             loadingText={
                                                 <>

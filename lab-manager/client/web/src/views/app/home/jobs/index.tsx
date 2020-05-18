@@ -28,6 +28,7 @@ import {
     IconButton,
     Icon,
     Paper,
+    Zoom,
 } from '@material-ui/core'
 
 import { useQuery } from 'react-apollo';
@@ -70,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
             flex: "1 1 auto"
         },
         tableBody: {
-            overflow: 'auto',
+            overflowY: 'auto',
             flex: '1 1 auto'
         }
     }),
@@ -187,27 +188,35 @@ export default function Jobs(props: Props) {
                         </TableRow>
                     </TableHead>
                     <TableBody className={classes.tableBody}>
-                        {data?.laboratory.client.patient.jobs.map((job: any) => (
-                            <TableRow
-                                hover
+                        {data?.laboratory.client.patient.jobs.map((job: any, index: number) => (
+                            <Slide
+                                in={true}
+                                direction="left"
+                                style={{ transformOrigin: '0 0 0' }}
+                                {...(true ? { timeout: index * 100 } : {})}
                                 key={job.index}
-                                tabIndex={-1}
-                                className={classes.tableRow}
                             >
-                                {columns.map((column: Column) => {
-                                    const value = job[column.id];
-                                    return (
-                                        <TableCell
-                                            key={column.id}
-                                            align={column.align}
-                                            variant="body"
-                                            size="medium"
-                                        >
-                                            {!!column.format ? column.format(value) : value}
-                                        </TableCell>
-                                    );
-                                })}
-                            </TableRow>
+
+                                <TableRow
+                                    hover
+                                    tabIndex={-1}
+                                    className={classes.tableRow}
+                                >
+                                    {columns.map((column: Column) => {
+                                        const value = job[column.id];
+                                        return (
+                                            <TableCell
+                                                key={column.id}
+                                                align={column.align}
+                                                variant="body"
+                                                size="medium"
+                                            >
+                                                {!!column.format ? column.format(value) : value}
+                                            </TableCell>
+                                        );
+                                    })}
+                                </TableRow>
+                            </Slide>
                         ))}
                     </TableBody>
                 </Table>
