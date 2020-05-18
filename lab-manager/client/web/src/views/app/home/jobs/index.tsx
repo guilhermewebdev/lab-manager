@@ -120,7 +120,7 @@ const columns: Column[] = [
     {
         id: 'deadline',
         label: 'Previsão de entrega',
-        format: (value) => String(new Date(value).toLocaleString()),
+        format: (value) => new Date(value).toLocaleString('pt-br'),
         align: 'center',
     },
     {
@@ -131,7 +131,7 @@ const columns: Column[] = [
     {
         id: 'price',
         label: 'Valor Total',
-        format: (value) => `R$${value}`
+        format: (value: number) => value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
     }
 ]
 
@@ -203,7 +203,7 @@ export default function Jobs(props: Props) {
                                             variant="body"
                                             size="medium"
                                         >
-                                            {column.format && typeof value !== 'number' ? column.format(value) : value}
+                                            {!!column.format ? column.format(value) : value}
                                         </TableCell>
                                     );
                                 })}

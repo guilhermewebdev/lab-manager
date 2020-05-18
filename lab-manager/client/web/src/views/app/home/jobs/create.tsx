@@ -31,7 +31,7 @@ import MaskedInput from 'react-text-mask';
 
 import { Icon as MDI } from '@mdi/react'
 
-import { mdiPlus, mdiGenderFemale, mdiGenderMale, mdiClock } from '@mdi/js';
+import { mdiPlus, mdiGenderFemale, mdiGenderMale, mdiClock, mdiCalendar } from '@mdi/js';
 
 import { useQuery, useMutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
@@ -43,7 +43,9 @@ import CreateProcess from '../../../../components/CreateProcess';
 
 import {
     KeyboardDatePicker,
-    KeyboardTimePicker
+    KeyboardTimePicker,
+    DateTimePicker,
+    KeyboardDateTimePicker,
 } from '@material-ui/pickers';
 import CurrencyFormat from '../../../../components/CurrencyFormat';
 
@@ -110,7 +112,6 @@ function createForm(obj?: any): Form {
         client: NaN,
         lab: 0,
         deadline: null,
-        deadlineHour: null,
     }
     Object.assign(conf, obj)
     return new Form(conf);
@@ -209,8 +210,6 @@ export default function CreateClients(props: Props) {
     const [state, setState] = React.useState<State>(createState())
     const [form, setForm] = React.useState<Form>(createForm(defaultData))
 
-    const getPrice = () => form.amount * (form.kind?.price || 0) * (100 - (processes.data?.laboratory.client.discount || 0)) / 100
-
     const changeForm = (prop: keyof Form) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const price = prop === 'amount' ?
             (Number(e.target.value || 0) * (form.kind?.price || 0) * (100 - (processes.data?.laboratory.client.discount || 0)) / 100) : form.price;
@@ -224,7 +223,6 @@ export default function CreateClients(props: Props) {
         const variables = createForm({
             ...form,
             kind: form.kind?.index,
-            deadline: new Date((form.deadline?.getTime() || 0) + (form.deadlineHour?.getTime() || 0)),
             useToothColor: !!form.toothColor,
             patientName: processes.data?.laboratory.client.patient.name
         })
@@ -264,7 +262,7 @@ export default function CreateClients(props: Props) {
                             alignItems="center"
                             spacing={2}
                         >
-                            <Grid item md={6}>
+                            <Grid item md={8}>
                                 <Grid
                                     container
                                     direction="row"
@@ -312,7 +310,7 @@ export default function CreateClients(props: Props) {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item md={3}>
+                            <Grid item md={4}>
                                 <TextField
                                     autoComplete="off"
                                     fullWidth
@@ -329,7 +327,7 @@ export default function CreateClients(props: Props) {
                                     })}
                                 />
                             </Grid>
-                            <Grid item md={3}>
+                            <Grid item md={6}>
                                 <TextField
                                     fullWidth
                                     onInput={changeForm('price')}
@@ -338,7 +336,10 @@ export default function CreateClients(props: Props) {
                                     label="Preço *"
                                     value={form.price}
                                     error={errors.price}
-                                    helperText={errors.price && "Informe um preço válido"}
+                                    helperText={
+                                        (errors.price && "Informe um preço válido") ||
+                                        (!!processes.data?.laboratory.client.discount && `Cliente com desconto de ${processes.data?.laboratory.client.discount}%`)
+                                    }
                                     InputProps={{
                                         inputComponent: CurrencyFormat as any,
                                         startAdornment: <InputAdornment position='start'>R$</InputAdornment>,
@@ -350,10 +351,10 @@ export default function CreateClients(props: Props) {
                                 />
                             </Grid>
                             <Grid item md={6}>
-                                <KeyboardDatePicker
+                                <KeyboardDateTimePicker
                                     margin="normal"
                                     id="date-picker-dialog"
-                                    label="Data da entrega"
+                                    label="Previsão de entrega"
                                     disablePast
                                     format="dd/MM/yyyy"
                                     value={form.deadline}
@@ -371,26 +372,6 @@ export default function CreateClients(props: Props) {
                                     })}
                                 />
 
-                            </Grid>
-                            <Grid item md={6}>
-                                <KeyboardTimePicker
-                                    keyboardIcon={
-                                        <Icon component={MDI} path={mdiClock} />
-                                    }
-                                    margin="normal"
-                                    fullWidth
-                                    id="time-picker"
-                                    label="Horário da entrega (opcional)"
-                                    autoComplete="off"
-                                    ampm={false}
-                                    value={form.deadlineHour}
-                                    onChange={changeDateForm('deadlineHour')}
-                                    KeyboardButtonProps={{
-                                        'aria-label': 'change time',
-                                    }}
-                                    name="deadlineHour"
-                                    inputRef={register({})}
-                                />
                             </Grid>
                             {(!!form.kind?.needColor && !processes.data?.laboratory.client.patient.toothColor) &&
                                 <Grow in={true}>
