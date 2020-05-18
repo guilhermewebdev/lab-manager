@@ -96,7 +96,7 @@ export default function Patients() {
             }
         >
             {!!state.patient.index &&
-                <Redirect to={`/client/${state.client?.index || 0}/`} />
+                <Redirect to={`/client/${client}/patient/${state.patient?.index}/`} />
             }
             <Route path="/client/:client/patient/:patient/">
                 <Details onDelete={refetch} />

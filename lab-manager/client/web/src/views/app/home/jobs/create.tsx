@@ -199,7 +199,7 @@ type Props = {
     onCreate: Function
 }
 
-export default function CreateClients(props: Props) {
+export default function CreateJob(props: Props) {
     const classes = useStiles()
     const { register, errors, handleSubmit, reset, triggerValidation } = useForm()
     const [create, { error, loading }] = useMutation(JOB_MUTATION)
@@ -214,7 +214,7 @@ export default function CreateClients(props: Props) {
         (price * amount) * ((100 - (processes.data?.laboratory.client.discount || 0)) / 100)
 
     const changeForm = (prop: keyof Form) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const price = prop === 'amount' ? getPrice(form.price, Number(e.target.value || 0)) : form.price;
+        const price = prop === 'amount' ? getPrice(form.kind?.price || 0, Number(e.target.value || 0)) : form.price;
         ((prop === 'amount' && Number(e.target.value) > 0) || prop !== 'amount') && setForm({ ...form, price, [prop]: e.target.value })
     }
     const changeDateForm = (prop: 'deadline' | 'deadlineHour') => (date: Date | null) => {

@@ -74,8 +74,8 @@ export default function CreateProcedure(props: Props) {
 
     const submit = (e: React.BaseSyntheticEvent<object, any, any> | undefined) => {
         handleSubmit(() => {
-            create().then(() => {
-                props.onCreate(data?.data.upsertProcess)
+            create().then((data) => {
+                props.onCreate(data?.data?.upsertProcess)
                 reset()
                 setForm(new Form({ lab: Number(lab.data?.laboratory) || 0 }))
             })

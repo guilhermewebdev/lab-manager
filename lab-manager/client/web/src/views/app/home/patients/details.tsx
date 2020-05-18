@@ -134,7 +134,7 @@ export default function Details(props: Props) {
                     flex="0 1 auto"
                 >
                     <ExpansionPanel
-                    
+                        square
                     >
                         <ExpansionPanelSummary
                             expandIcon={<ExpandMore />}
