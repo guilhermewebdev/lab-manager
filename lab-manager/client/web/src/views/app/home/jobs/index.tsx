@@ -30,7 +30,6 @@ import {
     Paper,
 } from '@material-ui/core'
 
-import Works from '../../../../components/Works';
 import { useQuery } from 'react-apollo';
 import { gql } from 'apollo-boost';
 
@@ -39,18 +38,21 @@ import { gql } from 'apollo-boost';
 import { Icon as MDI } from '@mdi/react';
 
 import CreateJob from './create';
-import { Route, useParams, Redirect } from 'react-router';
-import { Link } from 'react-router-dom';
-import { mdiPlus } from '@mdi/js';
+import { useParams } from 'react-router';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            maxHeight: '100%',
+            height: '100%',
+            display: 'flex',
+            flexGrow: 1,
+            flexDirection: 'column',
+            margin: 15,
         },
         toolbar: {
             paddingLeft: theme.spacing(2),
             paddingRight: theme.spacing(1),
+            flexGrow: 0,
         },
         container: {
             height: "100%",
@@ -60,15 +62,14 @@ const useStyles = makeStyles((theme: Theme) =>
         list: {
             paddingTop: 0,
         },
-        card: {
-            overflow: 'auto',
-            height: "100%",
-        },
         tableRow: {
             // '&:nth-of-type(odd)': {
             //     backgroundColor: theme.palette.action.focus,
             // },
         },
+        tableContainer: {
+            flex: "1 1 auto"
+        }
     }),
 );
 
@@ -154,7 +155,7 @@ export default function Jobs(props: Props) {
 
     return (
         <Paper
-            elevation={5}
+            elevation={3}
             className={classes.root}
         >
             <Toolbar
@@ -166,14 +167,15 @@ export default function Jobs(props: Props) {
                 </Typography>
                 <CreateJob onCreate={created} />
             </Toolbar>
-            <TableContainer>
-                <Table stickyHeader size="medium">
+            <TableContainer className={classes.tableContainer}>
+                <Table className={classes.tableContainer} stickyHeader size="medium">
                     <TableHead>
                         <TableRow>
                             {columns.map((column: Column) => (
                                 <TableCell
                                     key={column.id}
                                     align={column.align}
+                                    size="small"
                                 >
                                     {column.label}
                                 </TableCell>

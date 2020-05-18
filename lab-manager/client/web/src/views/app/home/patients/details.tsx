@@ -18,6 +18,14 @@ import {
     DialogContent,
     Snackbar,
     CircularProgress,
+    Box,
+    Paper,
+    ExpansionPanel,
+    ExpansionPanelSummary,
+    ExpansionPanelDetails,
+    ExpansionPanelActions,
+    BoxProps,
+    Container,
 } from '@material-ui/core';
 
 import { useParams, Redirect } from 'react-router';
@@ -29,19 +37,8 @@ import { useQuery, useMutation } from 'react-apollo';
 import { Alert } from '@material-ui/lab';
 
 import Jobs from '../jobs/index';
+import { ExpandMore } from '@material-ui/icons';
 
-const createTheme = makeStyles((theme: Theme) =>
-    createStyles({
-        container: {
-            height: '100%',
-        },
-        card: {
-            height: '100%',
-        },
-        subheader: {
-        }
-    })
-)
 
 const PATIENT_QUERY = gql`
     query getClient($lab: Int!, $client: Int!, $patient: Int!){
@@ -85,6 +82,25 @@ type Props = {
     onDelete: Function,
 }
 
+const fullBoxProperties: BoxProps = {
+    display: 'flex',
+    alignItems: 'stretch',
+    alignContent: 'stretch',
+    flex: '1 1 0',
+    flexDirection: 'column',
+}
+
+const createTheme = makeStyles((theme: Theme) =>
+    createStyles({
+        paper: {
+            height: "100%",
+            width: "100%",
+        },
+        subheader: {
+        }
+    })
+)
+
 export default function Details(props: Props) {
     const classes = createTheme()
     const { client, patient } = useParams()
@@ -108,91 +124,91 @@ export default function Details(props: Props) {
             <Redirect to={`/client/${client}/patient/`} />
         )
     }
-    return (
 
-        <Grid
-            container
-            alignItems="stretch"
-            direction="column"
-            className={classes.container}
-        >
-            <Grid item md={12}>
-                <Card className={classes.card}>
-                    <CardHeader
-                        title={data?.laboratory.client.patient.name || (error && "Erro!")}
-                        action={
-                            <Button
-                                onClick={handleChange('dialogDelete', true)}
-                                color="secondary"
-                            >Deletar</Button>
-                        }
-                        subheader={
-                            <Grid
-                                container
-                                direction="row"
-                                justify="space-evenly"
-                                alignItems="flex-start"
-                                spacing={3}
-                                className={classes.subheader}
-                            >
-                                {!!data?.laboratory.client.patient.toothColor &&
-                                    <Grid item md>
-                                        <Typography>
-                                            Cor dos dentes: {data?.laboratory.client.patient.toothColor}
-                                        </Typography>
-                                    </Grid>
-                                }
-                                {!!data?.laboratory.client.patient.gender &&
-                                    <Grid item md>
-                                        <Typography>
-                                            Gênero: {
-                                                (data?.laboratory.client.patient.gender === 'M' && 'Masculino') ||
-                                                (data?.laboratory.client.patient.gender === 'F' && 'Feminino')
-                                            }
-                                        </Typography>
-                                    </Grid>
-                                }
-                            </Grid>
-                        }
-                    />
-                    <Divider />
+    return (
+        <>
+            <Paper className={classes.paper} square elevation={3}>
+                <ExpansionPanel>
+                    <ExpansionPanelSummary
+                        expandIcon={<ExpandMore />}
+                        aria-controls="panel1c-content"
+                        id="panel1c-header"
+                    >
+                        <Typography variant="h5">{data?.laboratory.client.patient.name || (error && "Erro!")}</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                        <Grid
+                            container
+                            direction="row"
+                            justify="space-evenly"
+                            alignItems="flex-start"
+                            spacing={3}
+                            className={classes.subheader}
+                        >
+                            {!!data?.laboratory.client.patient.toothColor &&
+                                <Grid item md>
+                                    <Typography>
+                                        Cor dos dentes: {data?.laboratory.client.patient.toothColor}
+                                    </Typography>
+                                </Grid>
+                            }
+                            {!!data?.laboratory.client.patient.gender &&
+                                <Grid item md>
+                                    <Typography>
+                                        Gênero: {
+                                            (data?.laboratory.client.patient.gender === 'M' && 'Masculino') ||
+                                            (data?.laboratory.client.patient.gender === 'F' && 'Feminino')
+                                        }
+                                    </Typography>
+                                </Grid>
+                            }
+                        </Grid>
+                    </ExpansionPanelDetails>
+                    <ExpansionPanelActions>
+                        <Button
+                            onClick={handleChange('dialogDelete', true)}
+                            color="secondary"
+                        >Deletar</Button>
+
+                    </ExpansionPanelActions>
+                </ExpansionPanel>
+                <Box
+                    {...fullBoxProperties}
+                >
                     {!!data?.laboratory &&
-                        <CardContent >
-                            <Jobs onCreateJob={refetch} />
-                        </CardContent>
+                        <Jobs onCreateJob={refetch} />
                     }
                     {!!error &&
-                        <CardContent>
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                {error?.message.split(':')[1]}
-                            </Typography>
-                        </CardContent>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            {error?.message.split(':')[1]}
+                        </Typography>
                     }
-                    <Dialog
-                        open={state.dialogDelete}
-                        onClose={handleChange('dialogDelete', false)}
-                    >
-                        <DialogTitle>Deletar?</DialogTitle>
-                        <DialogContent>Tem certeza que deseja deletar o paciente {data?.laboratory.client.patient.name}?</DialogContent>
-                        {!!deletion.loading &&
-                            <CircularProgress />
-                        }
-                        <DialogActions>
-                            <Button disabled={deletion.loading} onClick={handleChange('dialogDelete', false)} color="inherit">Cancelar</Button>
-                            <Button disabled={deletion.loading} onClick={() => {
-                                deleteClient({ variables: { lab: lab.data?.laboratory || 0, client, patient } })
-                                    .then(() => handleChange('dialogDelete', false))
-                            }} color="secondary">Deletar</Button>
-                        </DialogActions>
-                    </Dialog>
-                    <Snackbar
-                        open={!!deletion.error}
-                        autoHideDuration={6000}
-                    >
-                        <Alert severity="error">Erro ao deletar paciente! {deletion.error?.message}</Alert>
-                    </Snackbar>
-                </Card>
-            </Grid>
-        </Grid >
+                </Box>
+            </Paper>
+            <Dialog
+                open={state.dialogDelete}
+                onClose={handleChange('dialogDelete', false)}
+            >
+                <DialogTitle>Deletar?</DialogTitle>
+                <DialogContent>Tem certeza que deseja deletar o paciente {data?.laboratory.client.patient.name}?</DialogContent>
+                {!!deletion.loading &&
+                    <CircularProgress />
+                }
+                <DialogActions>
+                    <Button disabled={deletion.loading} onClick={handleChange('dialogDelete', false)} color="inherit">Cancelar</Button>
+                    <Button disabled={deletion.loading} onClick={() => {
+                        deleteClient({ variables: { lab: lab.data?.laboratory || 0, client, patient } })
+                            .then(() => handleChange('dialogDelete', false))
+                    }} color="secondary">Deletar</Button>
+                </DialogActions>
+            </Dialog>
+            <Snackbar
+                open={!!deletion.error}
+                autoHideDuration={6000}
+            >
+                <Alert severity="error">Erro ao deletar paciente! {deletion.error?.message}</Alert>
+            </Snackbar>
+        </>
+
     )
 }

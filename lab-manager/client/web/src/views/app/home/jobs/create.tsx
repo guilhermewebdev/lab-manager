@@ -362,6 +362,7 @@ export default function CreateClients(props: Props) {
                                     KeyboardButtonProps={{
                                         "aria-label": 'change date',
                                     }}
+                                    fullWidth
                                     name="deadline"
                                     error={errors.deadline}
                                     helperText={errors.deadline && "Informe uma data para entrega válida"}
@@ -377,6 +378,7 @@ export default function CreateClients(props: Props) {
                                         <Icon component={MDI} path={mdiClock} />
                                     }
                                     margin="normal"
+                                    fullWidth
                                     id="time-picker"
                                     label="Horário da entrega (opcional)"
                                     autoComplete="off"

@@ -8,6 +8,7 @@ import { createMuiTheme, ThemeProvider, responsiveFontSizes } from '@material-ui
 import {
   Box,
   Toolbar,
+  Paper,
 } from '@material-ui/core'
 import { useQuery } from 'react-apollo';
 import { gql } from 'apollo-boost';
@@ -56,18 +57,20 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <TopBar />
-        <Box width="100%" height={distance} />
-        <Box
-          width="100%"
-          top={0} bottom={0}
-          left={0} right={0}
-          overflow="hidden"
-          position="relative"
-          height={state.height}
-        >
-          <Content />
-        </Box>
+        <Paper>
+          <TopBar />
+          <Box width="100%" height={distance} />
+          <Box
+            width="100%"
+            top={0} bottom={0}
+            left={0} right={0}
+            overflow="hidden"
+            position="relative"
+            height={state.height}
+          >
+            <Content />
+          </Box>
+        </Paper>
       </Router>
     </ThemeProvider>
   );
