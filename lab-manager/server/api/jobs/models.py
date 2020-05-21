@@ -244,3 +244,47 @@ class Job(BaseJob):
         verbose_name_plural = _('Trabalhos')
         unique_together = ('index', 'patient')
         ordering = ('-registration_date', 'patient')
+
+
+class Proof(models.Model):
+    departure = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Saída")
+    )
+    arrival = models.DateTimeField(
+        verbose_name=_("Retorno")
+    )
+    job = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE,
+        related_name='proofs'
+    )
+    description = models.CharField(
+        max_length=200,
+        null=True,
+    )
+    stage = models.ForeignKey(
+        Stage,
+        on_delete=models.DO_NOTHING,
+        related_name=_('proofs')
+    )
+
+    def __str__(self):
+        return f"{self.job}: {self.stage}"
+
+    def save(self, *args, **kwargs):
+        self.clean_fields()
+        self.price = self.get_price()
+        if not self.id:
+            queryset = Proof.objects.filter(
+                patient=self.patient,
+            ).order_by('index').reverse()
+            if queryset.exists():
+                self.index = queryset[0].index + 1
+            else:
+                self.index = 0
+        return super(Job, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Prova')
+        verbose_name_plural = _('Provas')

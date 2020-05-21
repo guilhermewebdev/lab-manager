@@ -23,6 +23,7 @@ class ClientType(
 ):
     telephones = graphene.List(TelephoneType)
     
+    @staticmethod
     @login_required
     def resolve_telephones(parent, info, **kwargs):
         return parent.telephones.filter(**kwargs).all().iterator()

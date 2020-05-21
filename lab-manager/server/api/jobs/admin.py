@@ -34,3 +34,18 @@ class JobAdmin(admin.ModelAdmin):
         'patient__client__lab__name'
     )
     ordering = ['index', 'patient']
+
+@admin.register(models.Proof)
+class ProofAdmin(admin.ModelAdmin):
+    list_filter = (
+        'job',
+        'job__patient',
+        'job__patient__client',
+        'job__patient__client__lab__name'
+    )
+    search_fields = (
+        'job',
+        'job__kind__name',
+        'job__patient__name',
+        'job__patient__client__name',
+    )
