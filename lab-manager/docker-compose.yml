@@ -37,7 +37,7 @@ services:
         build:
             context: ./server/api
             dockerfile: Dockerfile.dev
-        command: ./manage.py runserver 0.0.0.0:8000
+        command: bash main.sh
         environment: 
             DB_PASSWORD: password
             DB_USER: protetics
