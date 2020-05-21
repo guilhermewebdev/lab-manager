@@ -50,8 +50,7 @@ class Role(Group):
         verbose_name = _('Cargo')
         verbose_name_plural = _('Cargos')
 
-class Professional(AbstractUser):
-    groups = None
+class Professional(AbstractUser,):
     labs = models.ManyToManyField(
         Laboratory,
         verbose_name=_('groups'),
@@ -73,15 +72,9 @@ class Professional(AbstractUser):
         Role,
         related_name='professionals',
     )
-    email = models.EmailField(
-        _('Endereço de email'),
-        blank=True,
-        unique=True,
-    )
     
     class Meta(AbstractUser.Meta):
         swappable = 'AUTH_USER_MODEL'
         abstract = False
         verbose_name = _('Profissional')
         verbose_name_plural = _('Profissionais')
-

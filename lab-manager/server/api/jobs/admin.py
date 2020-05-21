@@ -18,6 +18,10 @@ class ProcedureAdmin(admin.ModelAdmin):
         'lab__name',
     )
 
+class ProofsInline(admin.TabularInline):
+    extra = 1
+    model = models.Proof
+
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
     list_filter = (
@@ -34,6 +38,7 @@ class JobAdmin(admin.ModelAdmin):
         'patient__client__lab__name'
     )
     ordering = ['index', 'patient']
+    inlines = (ProofsInline,)
 
 @admin.register(models.Proof)
 class ProofAdmin(admin.ModelAdmin):
