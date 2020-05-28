@@ -37,7 +37,7 @@ services:
         build:
             context: ./server/api
             dockerfile: Dockerfile.dev
-        command: ./manage.py runserver 0.0.0.0:8000
+        command: bash main.sh
         environment: 
             DB_PASSWORD: password
             DB_USER: protetics
@@ -63,6 +63,8 @@ services:
             POSTGRES_PASSWORD: password
             POSTGRES_USER: protetics
             POSTGRES_DB: database
+        volumes: 
+            - ./server/database/data:/var/lib/postgresql/data
         networks: 
             db:
                 ipv4_address: 172.25.20.20
