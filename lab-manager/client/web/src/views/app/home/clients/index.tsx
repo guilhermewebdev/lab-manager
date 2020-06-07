@@ -107,7 +107,7 @@ export default function Clients() {
                 <Redirect to={`/client/${state.client.index}/`} />
             }
             <Route path="/client/:client/">
-                <Details />
+                <Details onDelete={refetch} />
             </Route>
         </Works>
     )
