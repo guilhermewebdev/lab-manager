@@ -23,7 +23,7 @@ from datetime import timedelta
 SECRET_KEY = 'f59oj)-2^8vjt2bcneida$u(6yq=h--@p6n2rb!mc(30^ghvy7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', True)
 
 ALLOWED_HOSTS = ['*']
 AXES_ENABLED = not DEBUG

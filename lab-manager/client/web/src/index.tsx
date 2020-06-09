@@ -23,7 +23,7 @@ persistCache({
 })
 
 const client = new ApolloClient({
-  uri: 'http://localhost/api/',
+  uri: '/api/',
   cache,
   request: (operation) => {
     const token = getToken();
