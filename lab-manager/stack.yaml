@@ -1,7 +1,8 @@
-version: "3"
+version: "3.7"
 
 services: 
     proxy:
+        image: 127.0.0.1:5000/lab-proxy
         build: .
         volumes:
             - ./server/proxy/prod/nginx/conf.d:/etc/nginx/conf.d
@@ -19,6 +20,7 @@ services:
             ipv4_address: 172.35.10.4
 
     api:
+        image: 127.0.0.1:5000/lab-api
         build:
             context: ./server/api
             dockerfile: Dockerfile
