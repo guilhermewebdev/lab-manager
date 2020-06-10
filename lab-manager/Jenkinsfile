@@ -13,8 +13,8 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'docker-compose -f stack.yaml build; \
-                docker-compose -f stack.yaml push'
+                sh 'docker-compose -f lab-manager/stack.yaml build; \
+                docker-compose -f lab-manager/stack.yaml push'
             }
         }
         stage('Test') {
@@ -28,7 +28,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh 'docker swarm init; \
-                docker stack deploy --compose-file stack.yaml lab-manager'
+                docker stack deploy --compose-file lab-manager/stack.yaml lab-manager'
             }
         }
     }
