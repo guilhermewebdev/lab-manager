@@ -1,24 +1,6 @@
 pipeline {
     agent any
     stages {
-        stage('Set up registry') {
-            steps {
-                sh 'if [docker container ls -f name=registry]; \
-                    then \
-                        docker run -d \
-                        -e REGISTRY_HTTP_ADDR=127.0.0.1:5000 \
-                        -p 5000:5000 \
-                        --restart=always \
-                        --name registry \
-                        registry:2; \
-                    else \
-                        docker exec registry -d \
-                        -e REGISTRY_HTTP_ADDR=127.0.0.1:5000 \
-                        -p 5000:5000 \
-                        --restart=always; \
-                    fi'
-            }
-        }
         stage('Build') {
             steps {
                 sh 'docker-compose -f lab-manager/stack.yaml build; \
