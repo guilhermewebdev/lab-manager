@@ -6,7 +6,7 @@ from datetime import date
 from django.core.exceptions import ValidationError
 from api.testecase import MyTestCase
 from api.middlewares import set_laboratory
-from datetime import date
+from datetime import date, datetime
 from django.utils import timezone
 
 class JobsTestCase(TestCase):
@@ -110,7 +110,21 @@ class JobsGraphQLTestCase(MyTestCase):
             name='Paciente',
         )
         self.patient.save()
-
+        
+        stage = models.Stage(
+            index=1,
+            procedure=self.procedure,
+            price=50,
+        )
+        stage.save()
+        self.process = models.Process(
+            name='Teste',
+            price=30,
+            need_color=False,
+            lab=self.lab,
+        )
+        self.process.save()
+        self.process.stages.add(stage)
 
     def test_create_job_with_custom_process(self):
         executed = self.client.execute('''
@@ -135,15 +149,37 @@ class JobsGraphQLTestCase(MyTestCase):
                             price=50,
                         )
                     ],
-                    lab=0,
                 ),
+                patient=self.patient.index,
+                client=self.dentist.index,
+                lab=0,
+                deadline=datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
+            )
+        ))
+        print(executed)
+        assert 'data' in executed
+        assert not 'errors' in executed
+        assert executed['data']['upsertJob']['created']
+
+    def test_create_job_with_kind(self):
+        executed = self.client.execute('''
+            mutation newJob($input: JobInput!) {
+                upsertJob(input:$input){
+                    created
+                    job {
+                        price
+                    }
+                }
+            }
+        ''', variables=dict(
+            input=dict(
+                kind=self.process.index,
                 patient=self.patient.index,
                 client=self.dentist.index,
                 lab=0,
                 deadline=timezone.now()
             )
         ))
-        print(executed)
         assert 'data' in executed
         assert not 'errors' in executed
         assert executed['data']['upsertJob']['created']

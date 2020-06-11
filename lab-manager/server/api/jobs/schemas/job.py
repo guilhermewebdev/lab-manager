@@ -2,7 +2,7 @@ from graphene_django import types
 import graphene
 from jobs import models
 from crm.models import Patient
-from .process import ProcessInput, ProcessMutation
+from .process import ProcessMutation, StageProcessInput
 from graphql_jwt.decorators import login_required
 
 class JobType(types.DjangoObjectType):
@@ -40,15 +40,20 @@ class JobQuery:
     def resolve_job(parent, info, **kwargs):
         return parent.jobs.get(**kwargs)
 
-ProInput = ProcessInput
-ProInput.lab = None
+class ProcessJobInput(graphene.InputObjectType):
+    index = graphene.Int()
+    name = graphene.String(rquired=True)
+    description = graphene.String()
+    price = graphene.Float()
+    need_color = graphene.Boolean()
+    stages = graphene.List(StageProcessInput)
 
 class JobInput(graphene.InputObjectType):
     index = graphene.Int()
     description = graphene.String()
     price = graphene.Float()
     kind = graphene.Int()
-    process = graphene.Field(ProInput)
+    process = graphene.Field(ProcessJobInput)
     amount = graphene.Int()
     patient = graphene.Int(required=True)
     client = graphene.Int(required=True)
@@ -74,7 +79,7 @@ class JobMutation(graphene.Mutation):
             client__index=input.pop('client')
         )
         if 'process' in input:
-            if input['process']:
+            if input['process'] != None:
                 input['kind'] = ProcessMutation.mutate(root, info, {
                     **input.pop('process'),
                     'lab': input['lab'],
