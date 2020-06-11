@@ -33,6 +33,7 @@ class ProcedureInput(graphene.InputObjectType):
     index = graphene.Int()
     lab = graphene.Int(required=True)
     name = graphene.String(required=True)
+    need_color = graphene.Boolean(required=True)
     description = graphene.String()
     price = graphene.Float(required=True)
 

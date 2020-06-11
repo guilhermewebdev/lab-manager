@@ -1,7 +1,7 @@
 from django.utils.translation import gettext as _
 from django.db import models
 from crm.models import Client, Patient, validate_discount
-from django.contrib.auth.models import Group
+from labs.models import Laboratory
 from django.core.exceptions import ValidationError
 
 
@@ -20,7 +20,7 @@ class BaseJob(models.Model):
         auto_now=True,
         verbose_name=_("Data de cadastro"),
     )
-    
+
     class Meta:
         required_db_vendor = 'postgresql'
 
@@ -36,9 +36,14 @@ class Procedure(BaseJob):
         editable=False,
     )
     lab = models.ForeignKey(
-        Group,
+        Laboratory,
         on_delete=models.CASCADE,
         related_name='procedures',
+    )
+    need_color = models.BooleanField(
+        verbose_name=_('Precisa da cor do dente'),
+        null=True,
+        blank=True,
     )
 
     def save(self, *args, **kwargs):
@@ -112,7 +117,9 @@ class Process(BaseJob):
         default=False
     )
     need_color = models.BooleanField(
-        verbose_name=_('Precisa da cor do dente')
+        verbose_name=_('Precisa da cor do dente'),
+        null=True,
+        blank=True,
     )
     index = models.IntegerField(
         verbose_name=_('índice'),
@@ -120,7 +127,7 @@ class Process(BaseJob):
         editable=False,
     )
     lab = models.ForeignKey(
-        Group,
+        Laboratory,
         on_delete=models.CASCADE,
         related_name='processes'
     )
@@ -130,6 +137,9 @@ class Process(BaseJob):
 
     def set_default_price(self):
         self.price = self.get_default_price()
+
+    def check_need_color(self):
+        return self.stages.all().filter(need_color=True).exists()
 
     def save(self, *args, **kwargs):
         if not self.price:
@@ -142,6 +152,8 @@ class Process(BaseJob):
                 self.index = queryset[0].index + 1
             else:
                 self.index = 0
+            if self.need_color == None:
+                self.need_color = self.check_need_color()
         return super(Process, self).save(*args, **kwargs)
 
     class Meta:
@@ -227,8 +239,8 @@ class Job(BaseJob):
             )
 
     def save(self, *args, **kwargs):
-        self.clean_fields()
         self.price = self.get_price()
+        self.clean_fields()
         if not self.id:
             queryset = Job.objects.filter(
                 patient=self.patient,

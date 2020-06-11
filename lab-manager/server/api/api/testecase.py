@@ -9,8 +9,7 @@ class MyClient(JSONWebTokenClient):
     def __init__(self, format_error=None, **defaults):
         self.format_error = format_error or default_format_error
         super().__init__(**defaults)
-        middleware = lambda: set_laboratory
-        self.middleware([middleware, JSONWebTokenMiddleware])
+        self.middleware([lambda: set_laboratory, JSONWebTokenMiddleware])
 
     def format_result(self, result):
         return format_execution_result(result, self.format_error)

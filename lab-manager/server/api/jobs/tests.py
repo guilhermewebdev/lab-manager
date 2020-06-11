@@ -4,6 +4,10 @@ from labs import models as labs
 from crm import models as crm
 from datetime import date
 from django.core.exceptions import ValidationError
+from api.testecase import MyTestCase
+from api.middlewares import set_laboratory
+from datetime import date
+from django.utils import timezone
 
 class JobsTestCase(TestCase):
 
@@ -73,3 +77,73 @@ class JobsTestCase(TestCase):
         )
 
         job.save()
+
+
+class JobsGraphQLTestCase(MyTestCase):
+
+    def setUp(self):
+        self.lab = labs.Laboratory.objects.create(name='Teste')
+        self.lab.save()
+        self.professional = labs.Professional.objects.create_user(username='teste')
+        self.professional.save()
+        self.professional.labs.add(self.lab)
+        self.client.authenticate(self.professional)
+        
+        self.procedure = models.Procedure(
+            name='teste',
+            lab=self.lab,
+            price=100,
+            need_color=False,
+        )
+        self.procedure.save()
+
+        self.dentist = crm.Client(
+            lab=self.lab,
+            name='Teste',
+            address='Rua 15',
+            email='teste@gmail.com',
+        )
+        self.dentist.save()
+
+        self.patient = crm.Patient(
+            client=self.dentist,
+            name='Paciente',
+        )
+        self.patient.save()
+
+
+    def test_create_job_with_custom_process(self):
+        executed = self.client.execute('''
+            mutation newJob($input: JobInput!) {
+                upsertJob(input:$input){
+                    created
+                    job {
+                        price
+                    }
+                }
+            }
+        ''', variables=dict(
+            input=dict(
+                process=dict(
+                    name='Teste',
+                    price=30,
+                    needColor=False,
+                    stages=[
+                        dict(
+                            index=1,
+                            procedure=self.procedure.index,
+                            price=50,
+                        )
+                    ],
+                    lab=0,
+                ),
+                patient=self.patient.index,
+                client=self.dentist.index,
+                lab=0,
+                deadline=timezone.now()
+            )
+        ))
+        print(executed)
+        assert 'data' in executed
+        assert not 'errors' in executed
+        assert executed['data']['upsertJob']['created']

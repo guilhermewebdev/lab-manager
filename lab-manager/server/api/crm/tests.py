@@ -17,7 +17,7 @@ class ClientTestCase(MyTestCase):
         variables = {
             'lab': 0,
             'name': 'Dentista modelo',
-            'telephones': [{ 'telephone': '(32) 3333-3333' }],
+            'telephones': ['(32) 3333-3333',],
             'address': 'Address Place',
             'email': 'teste@teste.com',
             'discount': 0
@@ -26,7 +26,7 @@ class ClientTestCase(MyTestCase):
             mutation create(
                 $lab: ID!,
                 $name: String!
-                $telephones: [TelephoneInput],
+                $telephones: [String]!,
                 $address: String,
                 $email: String,
                 $discount: Float
@@ -54,7 +54,9 @@ class ClientTestCase(MyTestCase):
                 'upsertClient': {
                     'client': {
                         'name': variables['name'],
-                        'telephones': variables['telephones']
+                        'telephones':[
+                            { 'telephone': variables['telephones'][0] }
+                        ]
                     }
                 }
             }

@@ -3,6 +3,9 @@ import graphene
 from jobs import models
 from . import stage
 from graphql_jwt.decorators import login_required
+from django.db.models import Q
+import functools 
+from operator import or_
 
 
 class ProcessType(
@@ -52,7 +55,7 @@ class ProcessInput(graphene.InputObjectType):
     name = graphene.String(rquired=True)
     description = graphene.String()
     price = graphene.Float()
-    need_color = graphene.Boolean(required=True)
+    need_color = graphene.Boolean()
     lab = graphene.Int(required=True)
     stages = graphene.List(StageProcessInput)
 
@@ -80,14 +83,15 @@ class ProcessMutation(graphene.Mutation):
             process = models.Process(**input)
             created = True
         process.save()
-
+        query = functools.reduce(
+                lambda x, y: x | y, 
+                map(lambda stage: Q(index=stage['procedure']), stages)
+            )
+        procedures = list(models.Procedure.objects.filter(query, lab=input['lab']))
         def set_stage(stage):
             stg: dict = dict(
                 process=process,
-                procedure=models.Procedure.objects.get(
-                    lab=input['lab'],
-                    index=stage['procedure']
-                ),
+                procedure=list(filter(lambda item: item.index == stage['procedure'], procedures))[0],
                 index=stage['index'],
                 price=False,
             )

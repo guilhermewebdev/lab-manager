@@ -4,6 +4,7 @@ from graphene_django.debug import DjangoDebug
 from crm import schemas as crm
 from jobs import schemas as jobs
 import graphql_jwt
+from .middlewares import set_laboratory
 
 class Query(
     graphene.ObjectType,
