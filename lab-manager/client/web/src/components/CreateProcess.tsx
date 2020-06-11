@@ -74,6 +74,7 @@ const PROCEDURES_QUERY = gql`
                 name
                 price
                 index
+                needColor
             }
         }
     }
@@ -121,6 +122,7 @@ export default function CreateProcess(props: Props) {
 
     const price: number = getDefaultPrice();
 
+
     const changeStage = (index: number, prop: keyof Stage) => (e: any, value?: any) => {
         const stages: Stage[] = form.stages;
         stages.splice(index, 1, {
@@ -132,11 +134,13 @@ export default function CreateProcess(props: Props) {
                         Number(stages[index]?.price || 0) : 0,
         });
 
-        if (prop === 'procedure' && index === stages.length - 1 && value) stages.push(voidStage);
-
+        if (prop === 'procedure') {
+            if (index === stages.length - 1 && value) stages.push(voidStage);
+        }
         setForm({
             ...form,
             price: getDefaultPrice(),
+            needColor: form.stages.filter((stage: Stage) => !!stage.procedure?.needColor).length !== 0,
             stages
         })
     }
@@ -375,8 +379,7 @@ export default function CreateProcess(props: Props) {
                                 >
                                     <FormLabel>Precisa de cor?</FormLabel>
                                     <RadioGroup
-                                        value={form.needColor}
-                                        onChange={changeForm}
+                                        value={Boolean(form.needColor).toString()}
                                         row
                                         color="primary"
                                         name="needColor"

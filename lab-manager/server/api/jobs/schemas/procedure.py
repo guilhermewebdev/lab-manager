@@ -15,6 +15,7 @@ class ProcedureType(types.DjangoObjectType):
             'description',
             'price',
             'registration_date',
+            'need_color',
         )
 
 class ProcedureQuery:
