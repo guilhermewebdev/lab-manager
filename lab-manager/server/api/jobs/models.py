@@ -20,10 +20,7 @@ class BaseJob(models.Model):
         auto_now=True,
         verbose_name=_("Data de cadastro"),
     )
-
-    def __str__(self):
-        return self.name
-
+    
     class Meta:
         required_db_vendor = 'postgresql'
 
