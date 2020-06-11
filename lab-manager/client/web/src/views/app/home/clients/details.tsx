@@ -88,7 +88,11 @@ type State = {
     dialogDelete: boolean,
 }
 
-export default function Details() {
+type Props = {
+    onDelete: () => void
+}
+
+export default function Details(props: Props) {
     const classes = createTheme()
     const { client } = useParams()
     const lab = useQuery(LAB_QUERY)
@@ -201,6 +205,7 @@ export default function Details() {
                             <Button disabled={deletion.loading} onClick={() => {
                                 deleteClient({ variables: { lab: lab.data?.laboratory || 0, client } })
                                 .then(() => handleChange('dialogDelete', false))
+                                .then(props.onDelete)
                             }} color="secondary">Deletar</Button>
                             <Button variant="contained" disabled={deletion.loading} onClick={handleChange('dialogDelete', false)} color="primary">Cancelar</Button>
                         </DialogActions>
