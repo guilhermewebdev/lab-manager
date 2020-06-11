@@ -94,7 +94,7 @@ export default function Clients() {
                         }}
                         secondary={item.telephones
                             .map((tel: any) => `${tel.telephone}; `)
-                            .reduce(((accum: string, tel: string) => (accum + tel)))
+                            .reduce(((accum: string, tel: string) => (accum + tel)), '')
                         }
                     />
                 </ListItem>
