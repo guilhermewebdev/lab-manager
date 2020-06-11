@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from . import models
 
 @admin.register(models.Laboratory)
@@ -12,5 +13,13 @@ class RoleAdmin(admin.ModelAdmin):
     )
 
 @admin.register(models.Professional)
-class ProfessionalAdmin(admin.ModelAdmin):
-    pass
+class ProfessionalAdmin(UserAdmin):
+    
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj=obj)
+        return (
+            (None, {
+                'fields': ('full_name', 'labs')
+            }),
+            *fieldsets
+        )

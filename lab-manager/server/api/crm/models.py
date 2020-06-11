@@ -137,7 +137,8 @@ class Client(models.Model):
         Stage,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='clients'
+        related_name='clients',
+        blank=True,
     )
     registration_date = models.DateField(
         auto_now=True,

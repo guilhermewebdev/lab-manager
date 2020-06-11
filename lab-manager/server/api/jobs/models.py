@@ -87,6 +87,9 @@ class Stage(models.Model):
         verbose_name=_("Data de cadastro"),
     )
 
+    def __str__(self):
+        return f"{self.process}: {self.procedure}"
+
     def get_default_price(self):
         return self.procedure.price
 
@@ -104,7 +107,7 @@ class Stage(models.Model):
 
 class Process(BaseJob):
     name = models.CharField(
-        verbose_name=_('Trabalho'),
+        verbose_name=_('Nome'),
         max_length=200
     )
     is_custom = models.BooleanField(
@@ -244,3 +247,50 @@ class Job(BaseJob):
         verbose_name_plural = _('Trabalhos')
         unique_together = ('index', 'patient')
         ordering = ('-registration_date', 'patient')
+
+
+class Proof(models.Model):
+    departure = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Saída"),
+        editable=True,
+    )
+    arrival = models.DateTimeField(
+        verbose_name=_("Retorno"),
+        null=True,
+        blank=True,
+    )
+    job = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE,
+        related_name='proofs'
+    )
+    description = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+    )
+    stage = models.ForeignKey(
+        Stage,
+        on_delete=models.DO_NOTHING,
+        related_name=_('proofs')
+    )
+
+    def __str__(self):
+        return f"{self.job}: {self.stage}"
+
+    def save(self, *args, **kwargs):
+        self.clean_fields()
+        if not self.id:
+            queryset = Proof.objects.filter(
+                job=self.job,
+            ).order_by('index').reverse()
+            if queryset.exists():
+                self.index = queryset[0].index + 1
+            else:
+                self.index = 0
+        return super(Proof, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Prova')
+        verbose_name_plural = _('Provas')
