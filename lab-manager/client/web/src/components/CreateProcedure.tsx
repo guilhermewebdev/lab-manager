@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tooltip, IconButton, Icon, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, FormControl, FormControlLabel, InputLabel, TextareaAutosize, Input, InputAdornment, Backdrop, CircularProgress, makeStyles, createStyles, Theme, Snackbar } from '@material-ui/core';
+import { Tooltip, IconButton, Icon, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, FormControl, FormControlLabel, InputLabel, TextareaAutosize, Input, InputAdornment, Backdrop, CircularProgress, makeStyles, createStyles, Theme, Snackbar, FormLabel, RadioGroup, Radio, FormHelperText } from '@material-ui/core';
 
 import { Icon as MDI } from '@mdi/react';
 import { mdiPlus } from '@mdi/js';
@@ -30,6 +30,7 @@ class Form {
     name: string = '';
     description?: string;
     price: number = 0.00;
+    needColor: boolean = false;
 }
 
 
@@ -161,6 +162,47 @@ export default function CreateProcedure(props: Props) {
                                         inputComponent: TextareaAutosize
                                     }}
                                 />
+                            </Grid>
+                            <Grid item md={12}>
+                                <FormControl
+                                    error={errors.needColor}
+                                >
+                                    <FormLabel>Precisa de cor?</FormLabel>
+                                    <RadioGroup
+                                        value={form.needColor}
+                                        onChange={changeForm('needColor')}
+                                        row
+                                        color="primary"
+                                        name="needColor"
+
+                                    >
+                                        <FormControlLabel
+                                            label="Sim"
+                                            control={<Radio
+                                                color="primary"
+                                                inputRef={register({
+                                                    required: true,
+                                                    validate: (value) => value === 'true' || value === 'false'
+                                                })}
+                                            />}
+                                            value="true"
+                                        />
+                                        <FormControlLabel
+                                            label="Não"
+                                            control={<Radio
+                                                color="primary"
+                                                inputRef={register({
+                                                    required: true,
+                                                    validate: (value) => value === 'true' || value === 'false'
+                                                })}
+                                            />}
+                                            value="false"
+                                        />
+                                    </RadioGroup>
+                                    {!!errors.needColor &&
+                                        <FormHelperText>É preciso informar se o processo precisa da cor dos dentes do paciente</FormHelperText>
+                                    }
+                                </FormControl>
                             </Grid>
                         </Grid>
                     </DialogContent>
