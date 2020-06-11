@@ -25,49 +25,11 @@ class BaseJob(models.Model):
         required_db_vendor = 'postgresql'
 
 
-class Procedure(BaseJob):
-    name = models.CharField(
-        verbose_name=_('Trabalho'),
-        max_length=200
-    )
-    index = models.IntegerField(
-        verbose_name=_('índice'),
-        blank=True,
-        editable=False,
-    )
-    lab = models.ForeignKey(
-        Laboratory,
-        on_delete=models.CASCADE,
-        related_name='procedures',
-    )
-    need_color = models.BooleanField(
-        verbose_name=_('Precisa da cor do dente'),
-        null=True,
-        blank=True,
-    )
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            queryset = Procedure.objects.filter(
-                lab=self.lab).order_by('index').reverse()
-            if queryset:
-                self.index = queryset[0].index + 1
-            else:
-                self.index = 0
-        return super(Procedure, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = ('index', 'lab')
-        verbose_name = _('Procedimento')
-        verbose_name_plural = _('Procedimentos')
-        ordering = ('-registration_date', 'lab')
-
-
 class Stage(models.Model):
     objects = models.Manager()
 
     procedure = models.ForeignKey(
-        Procedure,
+        'Procedure',
         on_delete=models.CASCADE,
         related_name='stages'
     )
@@ -135,15 +97,15 @@ class Process(BaseJob):
     def get_default_price(self):
         return self.stages.all().aggregate(models.Sum('price'))['price__sum'] or None
 
-    def set_default_price(self):
+    def __set_default_price(self):
         self.price = self.get_default_price()
 
-    def check_need_color(self):
+    def __check_need_color(self):
         return self.stages.all().filter(need_color=True).exists()
 
     def save(self, *args, **kwargs):
         if not self.price:
-            self.set_default_price()
+            self.__set_default_price()
         if not self.id:
             queryset = list(Process.objects.filter(
                 lab=self.lab
@@ -153,13 +115,62 @@ class Process(BaseJob):
             else:
                 self.index = 0
             if self.need_color == None:
-                self.need_color = self.check_need_color()
+                self.need_color = self.__check_need_color()
         return super(Process, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = ('index', 'lab')
         verbose_name = _('Processo')
         verbose_name_plural = _('Processos')
+        ordering = ('-registration_date', 'lab')
+
+
+class Procedure(BaseJob):
+    name = models.CharField(
+        verbose_name=_('Trabalho'),
+        max_length=200
+    )
+    index = models.IntegerField(
+        verbose_name=_('índice'),
+        blank=True,
+        editable=False,
+    )
+    lab = models.ForeignKey(
+        Laboratory,
+        on_delete=models.CASCADE,
+        related_name='procedures',
+    )
+    need_color = models.BooleanField(
+        verbose_name=_('Precisa da cor do dente'),
+        null=True,
+        blank=True,
+    )
+
+    def __set_stages_need_color(self):
+        if self.need_color:
+            stages = list(self.stages.all().iterator())
+            def set_process(stage):
+                process = stage.process
+                process.need_color = self.need_color
+                return process
+            processes = list(map(set_process, stages))
+            Process.objects.bulk_update(processes, ['need_color'])
+            
+    def save(self, *args, **kwargs):
+        self.__set_stages_need_color()
+        if not self.id:
+            queryset = Procedure.objects.filter(
+                lab=self.lab).order_by('index').reverse()
+            if queryset:
+                self.index = queryset[0].index + 1
+            else:
+                self.index = 0
+        return super(Procedure, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = ('index', 'lab')
+        verbose_name = _('Procedimento')
+        verbose_name_plural = _('Procedimentos')
         ordering = ('-registration_date', 'lab')
 
 
