@@ -9,12 +9,11 @@ services:
     - docker:dind
     
 before_script:
-- docker info
-- apk update
-- apk upgrade
-- apk add python python-dev py-pip build-base
-- pip install docker-compose
-- docker run -d -p 5000:5000 --restart=always --name registry registry:2
+    - docker info
+    - apk update
+    - apk upgrade
+    - apk add python3
+    - docker run -d -p 5000:5000 --restart=always --name registry registry:2
 
 build:
     stage: 'build'
