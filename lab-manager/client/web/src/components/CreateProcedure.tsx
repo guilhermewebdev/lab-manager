@@ -30,7 +30,7 @@ class Form {
     name: string = '';
     description?: string;
     price: number = 0.00;
-    needColor: boolean = false;
+    needColor: boolean | null = null;
 }
 
 
@@ -73,7 +73,7 @@ export default function CreateProcedure(props: Props) {
         variables: { form }
     })
 
-    const submit = (e: React.BaseSyntheticEvent<object, any, any> | undefined) => {
+    const submit = async (e: React.BaseSyntheticEvent<object, any, any> | undefined) => {
         handleSubmit(() => {
             create().then((data) => {
                 props.onCreate(data?.data?.upsertProcess)
@@ -169,12 +169,13 @@ export default function CreateProcedure(props: Props) {
                                 >
                                     <FormLabel>Precisa de cor?</FormLabel>
                                     <RadioGroup
-                                        value={form.needColor}
-                                        onChange={changeForm('needColor')}
+                                        value={form.needColor?.toString()}
+                                        onChange={(e) => {
+                                            setForm({...form, needColor: e.target.value === 'true'})
+                                        }}
                                         row
                                         color="primary"
                                         name="needColor"
-
                                     >
                                         <FormControlLabel
                                             label="Sim"

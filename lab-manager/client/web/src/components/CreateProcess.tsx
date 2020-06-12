@@ -96,7 +96,7 @@ type Props = {
 }
 
 export default function CreateProcess(props: Props) {
-    const { register, errors, handleSubmit, reset, triggerValidation } = useForm()
+    const { register, errors, handleSubmit, reset } = useForm()
     const lab = useQuery(LAB_QUERY)
     const procedures = useQuery(PROCEDURES_QUERY, { variables: { lab: Number(lab.data?.laboratory) || 0 } })
     const [state, setState] = React.useState<State>(new State())
@@ -122,6 +122,7 @@ export default function CreateProcess(props: Props) {
 
     const price: number = getDefaultPrice();
 
+    const getNeedColor = ():boolean => form.stages.filter((stage: Stage) => stage.procedure?.needColor === true).length !== 0
 
     const changeStage = (index: number, prop: keyof Stage) => (e: any, value?: any) => {
         const stages: Stage[] = form.stages;
@@ -140,7 +141,7 @@ export default function CreateProcess(props: Props) {
         setForm({
             ...form,
             price: getDefaultPrice(),
-            needColor: form.stages.filter((stage: Stage) => !!stage.procedure?.needColor).length !== 0,
+            needColor: getNeedColor(),
             stages
         })
     }
@@ -161,6 +162,7 @@ export default function CreateProcess(props: Props) {
         setForm({
             ...form,
             price: getDefaultPrice(),
+            needColor: getNeedColor(),
             stages: form.stages.map((item, index) => {
                 item.index = index + 1;
                 return item;
@@ -383,12 +385,12 @@ export default function CreateProcess(props: Props) {
                                         row
                                         color="primary"
                                         name="needColor"
-
                                     >
                                         <FormControlLabel
                                             label="Sim"
                                             control={<Radio
                                                 color="primary"
+                                                disableRipple
                                                 inputRef={register({
                                                     required: true,
                                                     validate: (value) => value === 'true' || value === 'false'
@@ -400,6 +402,7 @@ export default function CreateProcess(props: Props) {
                                             label="Não"
                                             control={<Radio
                                                 color="primary"
+                                                disableRipple
                                                 inputRef={register({
                                                     required: true,
                                                     validate: (value) => value === 'true' || value === 'false'
