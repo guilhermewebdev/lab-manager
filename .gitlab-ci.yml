@@ -13,6 +13,7 @@ before_script:
     - apk update
     - apk upgrade
     - apk add python3
+    - pip install docker-compose
     - docker run -d -p 5000:5000 --restart=always --name registry registry:2
 
 build:
