@@ -1,0 +1,27 @@
+stages:
+    - build
+    - test
+    - deploy
+  
+image: alpine
+
+build:
+    stage: 'build'
+    script:
+        - docker-compose -f lab-manager/stack.yaml build
+        - docker-compose -f lab-manager/stack.yaml push
+
+test:
+    stage: 'test'
+    script:
+        - docker-compose up -d
+        - docker-compose exec api ./manage.py test
+        - docker-compose exec client yarn test
+        - docker-compose exec proxy nginx -t
+        - docker-compose down
+
+deploy:
+    stage: 'deploy'
+    script:
+        - docker swarm init;
+        - docker stack deploy --compose-file lab-manager/stack.yaml lab-manage
