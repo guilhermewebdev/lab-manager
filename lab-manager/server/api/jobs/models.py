@@ -72,7 +72,9 @@ class Stage(models.Model):
 class Process(BaseJob):
     name = models.CharField(
         verbose_name=_('Nome'),
-        max_length=200
+        max_length=200,
+        null=True,
+        blank=True,
     )
     is_custom = models.BooleanField(
         verbose_name=_('É customizado?'),
