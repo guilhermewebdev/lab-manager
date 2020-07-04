@@ -133,15 +133,24 @@ class JobsGraphQLTestCase(MyTestCase):
                     created
                     job {
                         price
+                        kind {
+                            isCustom
+                            stages {
+                                index
+                                price
+                                procedure {
+                                    name
+                                    price
+                                }
+                            }
+                        }
                     }
                 }
             }
         ''', variables=dict(
             input=dict(
                 process=dict(
-                    name='Teste',
                     price=30,
-                    needColor=False,
                     stages=[
                         dict(
                             index=1,
@@ -180,6 +189,53 @@ class JobsGraphQLTestCase(MyTestCase):
                 deadline=timezone.now()
             )
         ))
+        assert 'data' in executed
+        assert not 'errors' in executed
+        assert executed['data']['upsertJob']['created']
+
+
+
+    def test_create_job_with_custom_process_and_kind(self):
+        executed = self.client.execute('''
+            mutation newJob($input: JobInput!) {
+                upsertJob(input:$input){
+                    created
+                    job {
+                        price
+                        kind {
+                            isCustom
+                            stages {
+                                index
+                                price
+                                procedure {
+                                    name
+                                    price
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ''', variables=dict(
+            input=dict(
+                kind=self.process.index,
+                process=dict(
+                    price=30,
+                    stages=[
+                        dict(
+                            index=2,
+                            procedure=self.procedure.index,
+                            price=50,
+                        )
+                    ],
+                ),
+                patient=self.patient.index,
+                client=self.dentist.index,
+                lab=0,
+                deadline=datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
+            )
+        ))
+        print(executed)
         assert 'data' in executed
         assert not 'errors' in executed
         assert executed['data']['upsertJob']['created']

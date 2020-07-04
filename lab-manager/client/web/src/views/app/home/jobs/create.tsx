@@ -23,6 +23,9 @@ import {
     DialogContent,
     DialogActions,
     InputAdornment,
+    Slide,
+    AppBar,
+    Toolbar,
 } from "@material-ui/core";
 
 import { useForm } from 'react-hook-form';
@@ -31,7 +34,7 @@ import MaskedInput from 'react-text-mask';
 
 import { Icon as MDI } from '@mdi/react'
 
-import { mdiPlus, mdiGenderFemale, mdiGenderMale, mdiClock, mdiCalendar } from '@mdi/js';
+import { mdiPlus, mdiGenderFemale, mdiGenderMale, mdiClock, mdiCalendar, mdiClose } from '@mdi/js';
 
 import { useQuery, useMutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
@@ -48,6 +51,8 @@ import {
     KeyboardDateTimePicker,
 } from '@material-ui/pickers';
 import CurrencyFormat from '../../../../components/CurrencyFormat';
+import { TransitionProps } from '@material-ui/core/transitions';
+import { TopBar } from '../../../../components';
 
 
 
@@ -195,6 +200,12 @@ const PROCESSES_QUERY = gql`
     }
 `
 
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & { children?: React.ReactElement },
+    ref: React.Ref<unknown>,) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 type Props = {
     onCreate: Function
 }
@@ -248,14 +259,34 @@ export default function CreateJob(props: Props) {
             </Snackbar>
             <form autoComplete="off" onSubmit={handleSubmit(submit)}>
                 <Dialog
+                    fullScreen
                     open={state.dialog}
                     onClose={() => setState({ ...state, dialog: false })}
-                    TransitionComponent={Grow}
+                    TransitionComponent={Transition}
                     keepMounted={false}
                     maxWidth="sm"
                     fullWidth
                 >
-                    <DialogTitle>Novo Trabalho</DialogTitle>
+                    <AppBar position="relative" color="primary">
+                        <Toolbar>
+                            <IconButton
+                                edge="start"
+                                color="inherit"
+                                onClick={() => setState({ ...state, dialog: false })}
+                                aria-label="fechar"
+                            >
+                                <Icon component={MDI} path={mdiClose} color="inherit" />
+                            </IconButton>
+                            <Typography variant="h6">
+                                Novo Trabalho para {processes.data?.laboratory.client.patient.name}
+                            </Typography>
+                            <span className="spacer" />
+                            <Button onClick={handleSubmit(submit)} color="inherit">Salvar</Button>
+                            <Backdrop className={classes.backdrop} open={loading}>
+                                <CircularProgress color='primary' />
+                            </Backdrop>
+                        </Toolbar>
+                    </AppBar>
                     <DialogContent>
                         <Grid
                             container
@@ -395,13 +426,6 @@ export default function CreateJob(props: Props) {
                             }
                         </Grid>
                     </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setState({ ...state, dialog: false })} color="inherit">Cancelar</Button>
-                        <Button onClick={handleSubmit(submit)} variant="contained" color="primary">Salvar</Button>
-                        <Backdrop className={classes.backdrop} open={loading}>
-                            <CircularProgress color='primary' />
-                        </Backdrop>
-                    </DialogActions>
                 </Dialog>
             </form>
         </>

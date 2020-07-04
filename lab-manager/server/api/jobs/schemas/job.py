@@ -43,7 +43,6 @@ class JobQuery:
 class ProcessJobInput(graphene.InputObjectType):
     index = graphene.Int()
     price = graphene.Float()
-    need_color = graphene.Boolean()
     stages = graphene.List(StageProcessInput)
 
 class JobInput(graphene.InputObjectType):
@@ -51,7 +50,7 @@ class JobInput(graphene.InputObjectType):
     description = graphene.String()
     price = graphene.Float()
     kind = graphene.Int()
-    process = graphene.Field(ProcessJobInput)
+    process = graphene.Field(ProcessJobInput, required=False)
     amount = graphene.Int()
     patient = graphene.Int(required=True)
     client = graphene.Int(required=True)
@@ -78,11 +77,23 @@ class JobMutation(graphene.Mutation):
         )
         if 'process' in input:
             if input['process'] != None:
-                input['kind'] = ProcessMutation.mutate(root, info, {
+                process = ProcessMutation.mutate(root, info, {
                     **input.pop('process'),
                     'lab': input['lab'],
                     'is_custom': True,
                 }).process
+                if input.get('kind', None) == None:
+                    input['kind'] = process
+                else:
+                    kind = models.Process.objects.get(
+                        index=input.pop('kind'),
+                        lab=input['lab'],
+                    )
+                    process.stages.set([
+                        *process.stages.all().iterator(),
+                        *kind.stages.all().iterator(),
+                    ])
+                    input['kind'] = process
             else:
                 input['kind'] = models.Process.objects.get(
                     index=input.pop('kind'),

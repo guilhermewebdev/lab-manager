@@ -54,12 +54,12 @@ class Stage(models.Model):
     def __str__(self):
         return f"{self.process}: {self.procedure}"
 
-    def get_default_price(self):
+    def __get_default_price(self):
         return self.procedure.price
 
     def save(self, *args, **kwargs):
         if not self.price:
-            self.price = self.get_default_price()
+            self.price = self.__get_default_price()
         return super(Stage, self).save(*args, **kwargs)
 
     class Meta:
@@ -96,14 +96,14 @@ class Process(BaseJob):
         related_name='processes'
     )
 
-    def get_default_price(self):
+    def __get_default_price(self):
         return self.stages.all().aggregate(models.Sum('price'))['price__sum'] or None
 
     def __set_default_price(self):
-        self.price = self.get_default_price()
+        self.price = self.__get_default_price()
 
     def __check_need_color(self):
-        return self.stages.all().filter(need_color=True).exists()
+        return self.stages.all().filter(process__need_color=True).exists()
 
     def save(self, *args, **kwargs):
         if not self.price:
@@ -226,19 +226,19 @@ class Job(BaseJob):
         return f'{self.patient.name}: {self.amount} x {self.kind.name}'
 
     def get_discount(self):
-        return self.get_price() - self.get_default_price()
+        return self.get_price() - self.__get_default_price()
 
-    def get_default_discount(self):
+    def __get_default_discount(self):
         return self.patient.client.discount
 
-    def get_default_price(self):
-        return self.kind.price * self.amount * ((100 - self.get_default_discount()) / 100)
+    def __get_default_price(self):
+        return self.kind.price * self.amount * ((100 - self.__get_default_discount()) / 100)
 
     def get_price(self):
         if self.price:
             return self.price
         else:
-            return self.get_default_price()
+            return self.__get_default_price()
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
