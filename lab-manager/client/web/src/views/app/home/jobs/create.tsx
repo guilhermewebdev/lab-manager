@@ -26,6 +26,7 @@ import {
     Slide,
     AppBar,
     Toolbar,
+    Divider,
 } from "@material-ui/core";
 
 import { useForm } from 'react-hook-form';
@@ -196,6 +197,28 @@ const PROCESSES_QUERY = gql`
                 name
                 needColor
             }
+            procedures {
+                price
+                
+            }
+        }
+    }
+`
+const STAGES_QUERY = gql`
+    query getStages($lab: Int!, $process: Int!) {
+        laboratory(lab: $lab) {
+            process(index: $process) {
+                stages {
+                    price
+                    index
+                    procedure {
+                        index
+                        price
+                        name
+                        needColor
+                    }
+                }
+            }
         }
     }
 `
@@ -290,140 +313,155 @@ export default function CreateJob(props: Props) {
                     <DialogContent>
                         <Grid
                             container
-                            direction="row"
+                            direction="column"
                             justify="flex-start"
-                            alignItems="center"
+                            alignItems="flex-start"
                             spacing={2}
                         >
-                            <Grid item md={8}>
-                                <Grid
+                            <Grid item md={6}>
+                                <Grid 
                                     container
                                     direction="row"
                                     justify="flex-start"
-                                    alignItems="flex-end"
+                                    alignItems="center"
+                                    spacing={2}
                                 >
-                                    <Grid item md={11}>
-                                        <Autocomplete
-                                            fullWidth
-                                            options={processes.data?.laboratory.processes}
-                                            loading={processes.loading}
-                                            value={form.kind}
-                                            onChange={(e: any, value: Process | null) => setForm({
-                                                ...form,
-                                                kind: value,
-                                                price: getPrice(value?.price || 0, form.amount),
-                                            })}
-                                            loadingText={
-                                                <>
-                                                    <Typography>Carregando...</Typography>
-                                                    <LinearProgress />
-                                                </>
-                                            }
-                                            openOnFocus
-                                            getOptionLabel={(option: any) => option.name}
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    autoComplete="off"
-                                                    error={!!processes.error || errors.kind}
-                                                    label="Tipo *"
-                                                    name="kind"
-                                                    helperText={(!!processes.error && processes.error.message) ||
-                                                        (errors.kind && "Informe um processo válido")
-                                                    }
-                                                    inputRef={register({
-                                                        required: true,
+                                    <Grid item md={8}>
+                                        <Grid
+                                            container
+                                            direction="row"
+                                            justify="flex-start"
+                                            alignItems="flex-end"
+                                        >
+                                            <Grid item md={11}>
+                                                <Autocomplete
+                                                    fullWidth
+                                                    options={processes.data?.laboratory.processes}
+                                                    loading={processes.loading}
+                                                    value={form.kind}
+                                                    onChange={(e: any, value: Process | null) => setForm({
+                                                        ...form,
+                                                        kind: value,
+                                                        price: getPrice(value?.price || 0, form.amount),
                                                     })}
+                                                    loadingText={
+                                                        <>
+                                                            <Typography>Carregando...</Typography>
+                                                            <LinearProgress />
+                                                        </>
+                                                    }
+                                                    openOnFocus
+                                                    getOptionLabel={(option: any) => option.name}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            autoComplete="off"
+                                                            error={!!processes.error || errors.kind}
+                                                            label="Modelo"
+                                                            name="kind"
+                                                            helperText={(!!processes.error && processes.error.message) ||
+                                                                (errors.kind && "Informe um processo válido")
+                                                            }
+                                                            inputRef={register({
+                                                                required: true,
+                                                            })}
+                                                        />
+                                                    )}
                                                 />
-                                            )}
-                                        />
+                                            </Grid>
+                                            <Grid item md={1}>
+                                                <CreateProcess onCreate={processes.refetch} />
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item md={1}>
-                                        <CreateProcess onCreate={processes.refetch} />
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                            <Grid item md={4}>
-                                <TextField
-                                    autoComplete="off"
-                                    fullWidth
-                                    onInput={changeForm('amount')}
-                                    onChange={changeForm('amount')}
-                                    type="number"
-                                    label="Quantidade *"
-                                    error={errors.amount}
-                                    helperText={errors.amoutn && "Digite uma quantidade válida"}
-                                    name="amount"
-                                    value={form.amount}
-                                    inputRef={register({
-                                        required: true,
-                                    })}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <TextField
-                                    fullWidth
-                                    onInput={changeForm('price')}
-                                    onChange={changeForm('price')}
-                                    autoComplete="off"
-                                    label="Preço *"
-                                    value={form.price}
-                                    error={errors.price}
-                                    helperText={
-                                        (errors.price && "Informe um preço válido") ||
-                                        (!!processes.data?.laboratory.client.discount && `Cliente com desconto de ${processes.data?.laboratory.client.discount}%`)
-                                    }
-                                    InputProps={{
-                                        inputComponent: CurrencyFormat as any,
-                                        startAdornment: <InputAdornment position='start'>R$</InputAdornment>,
-                                        onChange: changeForm('price')
-                                    }}
-                                    inputRef={register({
-                                        required: true
-                                    })}
-                                />
-                            </Grid>
-                            <Grid item md={6}>
-                                <KeyboardDateTimePicker
-                                    margin="normal"
-                                    id="date-picker-dialog"
-                                    label="Previsão de entrega"
-                                    disablePast
-                                    format="dd/MM/yyyy"
-                                    value={form.deadline}
-                                    autoComplete="off"
-                                    onChange={changeDateForm('deadline')}
-                                    KeyboardButtonProps={{
-                                        "aria-label": 'change date',
-                                    }}
-                                    fullWidth
-                                    name="deadline"
-                                    error={errors.deadline}
-                                    helperText={errors.deadline && "Informe uma data para entrega válida"}
-                                    inputRef={register({
-                                        required: true,
-                                    })}
-                                />
-
-                            </Grid>
-                            {(!!form.kind?.needColor && !processes.data?.laboratory.client.patient.toothColor) &&
-                                <Grow in={true}>
-                                    <Grid item md={12}>
+                                    <Grid item md={4}>
                                         <TextField
-                                            value={form.toothColor}
-                                            onChange={changeForm('toothColor')}
+                                            autoComplete="off"
                                             fullWidth
-                                            label="Cor dos dentes do paciente *"
-                                            helperText="O processo escolhido precisa da cor dos dentes do paciente"
+                                            onInput={changeForm('amount')}
+                                            onChange={changeForm('amount')}
+                                            type="number"
+                                            label="Quantidade *"
+                                            error={errors.amount}
+                                            helperText={errors.amoutn && "Digite uma quantidade válida"}
+                                            name="amount"
+                                            value={form.amount}
                                             inputRef={register({
                                                 required: true,
                                             })}
-                                            name="toothColor"
-                                            error={errors.toothColor}
                                         />
                                     </Grid>
-                                </Grow>
-                            }
+                                    <Grid item md={6}>
+                                        <TextField
+                                            fullWidth
+                                            onInput={changeForm('price')}
+                                            onChange={changeForm('price')}
+                                            autoComplete="off"
+                                            label="Preço *"
+                                            value={form.price}
+                                            error={errors.price}
+                                            helperText={
+                                                (errors.price && "Informe um preço válido") ||
+                                                (!!processes.data?.laboratory.client.discount && `Cliente com desconto de ${processes.data?.laboratory.client.discount}%`)
+                                            }
+                                            InputProps={{
+                                                inputComponent: CurrencyFormat as any,
+                                                startAdornment: <InputAdornment position='start'>R$</InputAdornment>,
+                                                onChange: changeForm('price')
+                                            }}
+                                            inputRef={register({
+                                                required: true
+                                            })}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <KeyboardDateTimePicker
+                                            margin="normal"
+                                            id="date-picker-dialog"
+                                            label="Previsão de entrega"
+                                            disablePast
+                                            ampm={false}
+                                            format="dd/MM/yyyy HH:mm"
+                                            value={form.deadline}
+                                            autoComplete="off"
+                                            onChange={changeDateForm('deadline')}
+                                            KeyboardButtonProps={{
+                                                "aria-label": 'change date',
+                                            }}
+                                            fullWidth
+                                            name="deadline"
+                                            mask="__/__/____ __:__"
+                                            error={errors.deadline}
+                                            helperText={errors.deadline && "Informe uma data para entrega válida"}
+                                            inputRef={register({
+                                                required: true,
+                                            })}
+                                        />
+
+                                    </Grid>
+                                    {(!!form.kind?.needColor && !processes.data?.laboratory.client.patient.toothColor) &&
+                                        <Grow in={true}>
+                                            <Grid item md={12}>
+                                                <TextField
+                                                    value={form.toothColor}
+                                                    onChange={changeForm('toothColor')}
+                                                    fullWidth
+                                                    label="Cor dos dentes do paciente *"
+                                                    helperText="O processo escolhido precisa da cor dos dentes do paciente"
+                                                    inputRef={register({
+                                                        required: true,
+                                                    })}
+                                                    name="toothColor"
+                                                    error={errors.toothColor}
+                                                />
+                                            </Grid>
+                                        </Grow>
+                                    }
+                                </Grid>
+                            </Grid>
+                            <Grid md={6}>
+                                
+                            </Grid>
                         </Grid>
                     </DialogContent>
                 </Dialog>
