@@ -4,8 +4,8 @@ services:
     proxy:
         image: nginx
         volumes:
-          - ./server/proxy/dev/nginx/:/etc/nginx/
-          - ./server/api/static/:/usr/share/nginx/html/api/static/
+          - ./server/proxy/dev/nginx/:/etc/nginx/:ro
+          - ./server/api/static/:/usr/share/nginx/html/api/static/:ro
         restart: always
         environment:
           - NGINX_HOST=172.25.10.30
@@ -44,6 +44,7 @@ services:
             DB_NAME: database
             DB_HOST: 172.25.20.20
             DB_PORT: 5432
+            PYTHONUNBUFFERED: 1
         volumes: 
             - ./server/api:/code
         restart: always
