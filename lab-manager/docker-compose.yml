@@ -4,8 +4,8 @@ services:
     proxy:
         image: nginx
         volumes:
-          - ./server/proxy/dev/nginx/:/etc/nginx/
-          - ./server/api/static/:/usr/share/nginx/html/api/static/
+          - ./server/proxy/dev/nginx/:/etc/nginx/:z
+          - ./server/api/static/:/usr/share/nginx/html/api/static/:z
         restart: always
         environment:
           - NGINX_HOST=172.25.10.30
@@ -21,7 +21,7 @@ services:
         build: ./client/web
         restart: always
         volumes: 
-            - ./client/web:/app
+            - ./client/web:/app:z
         environment: 
             PORT: 80
         command: yarn start
@@ -45,7 +45,7 @@ services:
             DB_HOST: 172.25.20.20
             DB_PORT: 5432
         volumes: 
-            - ./server/api:/code
+            - ./server/api:/code:z
         restart: always
         depends_on: 
             - db
@@ -64,7 +64,7 @@ services:
             POSTGRES_USER: protetics
             POSTGRES_DB: database
         volumes: 
-            - ./server/database/data:/var/lib/postgresql/data
+            - ./server/database/data:/var/lib/postgresql/data:z
         networks: 
             db:
                 ipv4_address: 172.25.20.20
